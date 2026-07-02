@@ -308,8 +308,31 @@ h2 {
     flex-direction: column;
     align-items: stretch;
   }
+}.search-popup-dropdown {
+  scrollbar-width: thin;
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--erp-border, #CFA5EA);
+    border-radius: 3px;
+  }
 }
 
+.dropdown-item-select {
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--erp-text, #2f3542);
+  transition: all 0.2s ease-in-out;
+  margin-bottom: 2px;
+  text-align: left;
+  border-bottom: none !important;
 
-
-
+  &:hover {
+    background-color: var(--erp-primary, #8E24AA) !important;
+    color: #ffffff !important;
+  }
+}

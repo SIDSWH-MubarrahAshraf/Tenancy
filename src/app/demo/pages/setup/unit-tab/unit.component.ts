@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { FormsModule } from '@angular/forms';
 @Component({
@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./unit.component.scss']
 })
 export class UnitComponent {
+  @Input() propertyId = '';
   searchText = '';
   selectedProperty = '';
   properties = [
@@ -42,7 +43,7 @@ export class UnitComponent {
     const row = {
       line: this.units.length + 1,
       ...this.unit,
-      propertyId: this.selectedProperty
+      propertyId: this.propertyId
     };
     this.units.push(row);
     this.filteredUnits = [...this.units];

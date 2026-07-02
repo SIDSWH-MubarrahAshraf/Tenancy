@@ -1,6 +1,7 @@
 // angular import
 import { Component, output, inject, input } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
+import { AuthService } from 'src/app/services/auth.service';
 
 // project import
 import { SharedModule } from 'src/app/theme/shared/shared.module';
@@ -37,6 +38,17 @@ import {
 })
 export class NavRightComponent {
   private iconService = inject(IconService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
+  get username(): string {
+    return localStorage.getItem('username') || 'admin';
+  }
+
+  onLogout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
 
   // public props
   styleSelectorToggle = input<boolean>();

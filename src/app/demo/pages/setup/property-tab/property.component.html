@@ -8,33 +8,90 @@
 
     <div class="card-body">
       <div class="property-form-grid mb-4">
+        <div class="field">
+          <span>Property ID</span>
+          <div style="position: relative; width: 100%;">
+            <div class="d-flex align-items-stretch" style="border: 1px solid var(--erp-border, #CFA5EA); border-radius: 7px; overflow: hidden; background: #fbfaff; height: 38px; width: 100%;">
+              <input type="text" [ngModel]="propertyId" (ngModelChange)="onPropertyIdChange($event)" placeholder="Enter Property Code" style="border: none !important; background: transparent; height: 100%; flex-grow: 1; padding: 0 11px; font-size: 0.86rem; color: var(--erp-text, #2f3542); outline: none; margin: 0; box-shadow: none;">
+              
+              <!-- Search Button -->
+              <button type="button" (click)="toggleSearchPopup()" title="Search Property" style="width: 38px; height: 100%; background: var(--erp-primary, #8E24AA); border: none !important; color: #ffffff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; transition: opacity 0.2s; margin: 0; border-radius: 0;">
+                <svg viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.5;">
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="m16.5 16.5 4 4" />
+                </svg>
+              </button>
+
+              <!-- Refresh (Clear) Button (Yellow) -->
+              <button type="button" (click)="clearPropertyForm()" title="Clear Form" style="width: 38px; height: 100%; background: #e3a008; border: none !important; color: #ffffff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; transition: background 0.2s; margin: 0; border-radius: 0;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
+                  <path d="M21.5 2v6h-6" />
+                  <path d="M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Search Results Dropdown/Popup -->
+            <div *ngIf="showSearchPopup" class="search-popup-dropdown" style="position: absolute; top: 43px; left: 0; width: 100%; background: #ffffff; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 8px; box-shadow: 0 8px 24px rgba(142, 36, 170, 0.15); z-index: 1000; max-height: 250px; overflow-y: auto; padding: 8px;">
+              <div *ngIf="loadingProperties" class="d-flex align-items-center justify-content-center py-4" style="color: var(--erp-primary); gap: 10px; font-weight: 600; font-size: 13px;">
+                <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="color: var(--erp-primary); width: 1.2rem; height: 1.2rem; border-width: 0.2em; margin: 0;"></div>
+                <span>Loading Properties...</span>
+              </div>
+              <div *ngIf="!loadingProperties && dbProperties.length === 0" class="text-center py-3 text-muted" style="font-size: 13px;">
+                No properties found.
+              </div>
+              <div *ngFor="let prop of dbProperties" class="dropdown-item-select" (click)="selectPropertyFromDb(prop)">
+                {{ prop.propertyId }}
+              </div>
+            </div>
+          </div>
+        </div>
+
         <label class="field">
           <span>Property Name</span>
           <input type="text" [(ngModel)]="propertyName" placeholder="Enter Property Name">
         </label>
 
-        <label class="field">
+        <div class="field">
           <span>Property Type</span>
-          <select [(ngModel)]="propertyType">
-            <option value="">Select Property Type</option>
-            <option>Residential</option>
-            <option>Commercial</option>
-            <option>Industrial</option>
-          </select>
-        </label>
+          <div style="position: relative; width: 100%;">
+            <button type="button" (click)="toggleTypeDropdown()" style="width: 100%; height: 38px; padding: 0 11px; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 7px; background: #fbfaff; color: var(--erp-text, #2f3542); font-size: 0.86rem; text-align: left; display: flex; align-items: center; justify-content: space-between; cursor: pointer; margin: 0; outline: none; box-shadow: none;">
+              <span>{{ propertyType || 'Select Property Type' }}</span>
+              <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; margin-left: 8px;">
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+            
+            <!-- Custom Dropdown Popup -->
+            <div *ngIf="showTypeDropdown" class="search-popup-dropdown" style="position: absolute; top: 43px; left: 0; width: 100%; background: #ffffff; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 8px; box-shadow: 0 8px 24px rgba(142, 36, 170, 0.15); z-index: 1000; padding: 6px;">
+              <div class="dropdown-item-select" (click)="selectPropertyType('Residential')">Residential</div>
+              <div class="dropdown-item-select" (click)="selectPropertyType('Commercial')">Commercial</div>
+              <div class="dropdown-item-select" (click)="selectPropertyType('Industrial')">Industrial</div>
+            </div>
+          </div>
+        </div>
 
         <label class="field">
           <span>Property Area</span>
           <input type="text" [(ngModel)]="propertyArea" placeholder="Enter Property Area">
         </label>
 
-        <label class="field">
+        <div class="field">
           <span>Property Country</span>
-          <select [(ngModel)]="propertyCountry">
-            <option value="">Select Country</option>
-            <option>UAE</option>
-          </select>
-        </label>
+          <div style="position: relative; width: 100%;">
+            <button type="button" (click)="toggleCountryDropdown()" style="width: 100%; height: 38px; padding: 0 11px; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 7px; background: #fbfaff; color: var(--erp-text, #2f3542); font-size: 0.86rem; text-align: left; display: flex; align-items: center; justify-content: space-between; cursor: pointer; margin: 0; outline: none; box-shadow: none;">
+              <span>{{ propertyCountry || 'Select Country' }}</span>
+              <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; margin-left: 8px;">
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+            
+            <!-- Custom Dropdown Popup -->
+            <div *ngIf="showCountryDropdown" class="search-popup-dropdown" style="position: absolute; top: 43px; left: 0; width: 100%; background: #ffffff; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 8px; box-shadow: 0 8px 24px rgba(142, 36, 170, 0.15); z-index: 1000; padding: 6px;">
+              <div class="dropdown-item-select" (click)="selectPropertyCountry('UAE')">UAE</div>
+            </div>
+          </div>
+        </div>
 
         <label class="field">
           <span>Property City</span>
@@ -129,13 +186,16 @@
       </svg>
       Delete Property
     </button>
-    <div>
-      <button type="button" class="action-btn secondary" (click)="clearPropertyForm()">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6" />
-        </svg>
-        Reset Fields
-      </button>
+
+    <!-- Success Status Message Indicator -->
+    <span *ngIf="statusMessage" style="color: #2E7D32; font-size: 0.86rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 16px; height: 16px;">
+        <path d="M20 6 9 17l-5-5" />
+      </svg>
+      {{ statusMessage }}
+    </span>
+
+    <div style="display: flex; gap: 8px;">
       <button type="button" class="action-btn primary" (click)="saveProperty()">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
@@ -143,8 +203,37 @@
         </svg>
         Save Property
       </button>
+
+      <button type="button" class="action-btn success" (click)="saveChanges()" [disabled]="!propertyKey" style="background: #2E7D32; border-color: #2E7D32; color: #ffffff;">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+          <path d="M17 21v-8H7v8M7 3v5h8" />
+        </svg>
+        Save Changes
+      </button>
     </div>
   </footer>
+
+  <!-- Custom Delete Confirmation Modal -->
+  <div *ngIf="showDeleteConfirmModal" class="custom-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 2000;">
+    <div class="custom-modal-content" style="background: #ffffff; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 12px; box-shadow: 0 10px 30px rgba(142, 36, 170, 0.2); padding: 24px; max-width: 400px; width: 90%; text-align: center;">
+      <div class="modal-icon" style="color: var(--erp-danger, #C62828); margin-bottom: 16px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 48px; height: 48px; margin: 0 auto;">
+          <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+      </div>
+      <h3 style="margin-top: 0; font-size: 1.15rem; font-weight: 800; color: var(--erp-text, #2f3542); margin-bottom: 12px;">Delete Property</h3>
+      <p style="font-size: 0.9rem; color: var(--erp-muted, #6b7280); margin-bottom: 24px;">Do you really want to delete it?</p>
+      <div style="display: flex; gap: 12px; justify-content: center;">
+        <button type="button" (click)="cancelDelete()" style="padding: 8px 18px; font-size: 0.86rem; border-radius: 7px; border: 1px solid var(--erp-border, #CFA5EA); background: #ffffff; color: var(--erp-text, #2f3542); font-weight: 700; cursor: pointer; transition: background 0.2s;">
+          No
+        </button>
+        <button type="button" (click)="confirmDelete()" style="padding: 8px 18px; font-size: 0.86rem; border-radius: 7px; border: none; background: var(--erp-danger, #C62828); color: #ffffff; font-weight: 700; cursor: pointer; transition: opacity 0.2s;">
+          Yes
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 
 

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { FormsModule } from '@angular/forms';
 import { PropertyService } from 'src/app/services/property.service';
@@ -10,10 +10,131 @@ import { PropertyService } from 'src/app/services/property.service';
   styleUrls: ['./property.component.scss']
 })
 export class PropertyComponent {
-constructor(
+  @Input() inactive = false;
+  @Output() inactiveChange = new EventEmitter<boolean>();
+  @Input() propertyId = '';
+  @Output() propertyIdChange = new EventEmitter<string>();
+
+  constructor(
     private propertyService: PropertyService
   ) { }
+  
   propertyKey: number = 0;
+
+  // Custom dropdown states
+  showTypeDropdown = false;
+  showCountryDropdown = false;
+  showDeleteConfirmModal = false;
+  statusMessage = '';
+
+  // Search popup attributes
+  showSearchPopup = false;
+  loadingProperties = false;
+  dbProperties: any[] = [];
+
+  onPropertyIdChange(val: string): void {
+    this.propertyId = val;
+    this.propertyIdChange.emit(val);
+  }
+
+  toggleTypeDropdown(): void {
+    this.showTypeDropdown = !this.showTypeDropdown;
+    this.showCountryDropdown = false;
+    this.showSearchPopup = false;
+  }
+
+  toggleCountryDropdown(): void {
+    this.showCountryDropdown = !this.showCountryDropdown;
+    this.showTypeDropdown = false;
+    this.showSearchPopup = false;
+  }
+
+  selectPropertyType(val: string): void {
+    this.propertyType = val;
+    this.showTypeDropdown = false;
+  }
+
+  selectPropertyCountry(val: string): void {
+    this.propertyCountry = val;
+    this.showCountryDropdown = false;
+  }
+
+  cancelDelete(): void {
+    this.showDeleteConfirmModal = false;
+  }
+
+  confirmDelete(): void {
+    this.showDeleteConfirmModal = false;
+    this.propertyService.deleteProperty(this.propertyKey).subscribe({
+      next: (response) => {
+        this.clearPropertyForm();
+      },
+      error: (err) => {
+        console.error('Failed to delete property:', err);
+        alert('Failed to delete property: ' + (err.error?.message || err.message));
+      }
+    });
+  }
+
+  toggleSearchPopup(): void {
+    this.showSearchPopup = !this.showSearchPopup;
+    if (this.showSearchPopup) {
+      this.showTypeDropdown = false;
+      this.showCountryDropdown = false;
+      this.loadDbProperties();
+    }
+  }
+
+  loadDbProperties(): void {
+    this.loadingProperties = true;
+    this.propertyService.getProperties().subscribe({
+      next: (response) => {
+        this.loadingProperties = false;
+        if (response && response.data) {
+          this.dbProperties = response.data;
+        } else if (Array.isArray(response)) {
+          this.dbProperties = response;
+        } else {
+          this.dbProperties = [];
+        }
+      },
+      error: (err) => {
+        this.loadingProperties = false;
+        console.error('Failed to load database properties', err);
+        alert('Failed to load properties list from database.');
+      }
+    });
+  }
+
+  selectPropertyFromDb(prop: any): void {
+    this.showSearchPopup = false;
+    this.propertyKey = prop.id || 0;
+    this.propertyId = prop.propertyId || '';
+    this.propertyName = prop.propertyName || '';
+    this.propertyArea = prop.propertyArea || '';
+    this.propertyMakani = prop.propertyMakani || '';
+    this.propertyCountry = prop.propertyCountry || '';
+    this.propertyCity = prop.propertyCity || '';
+    this.propertyType = prop.propertyType || '';
+    this.plotNo = prop.plotNo || '';
+    this.landDmNumber = prop.landDmNumber || '';
+    this.others = prop.others || '';
+    this.inactive = prop.inactive || false;
+    this.inactiveChange.emit(this.inactive);
+    this.propertyIdChange.emit(this.propertyId);
+    this.remarks = prop.remarks || '';
+
+    // Load attachments if any
+    if (prop.attachments && Array.isArray(prop.attachments)) {
+      this.documents = prop.attachments.map((att: any) => ({
+        id: att.id,
+        name: att.fileName || att.name || 'Attachment',
+        uploadDate: att.uploadDate ? new Date(att.uploadDate).toLocaleDateString() : new Date().toLocaleDateString()
+      }));
+    } else {
+      this.documents = [];
+    }
+  }
 
   // =========================
   // Property Fields
@@ -28,7 +149,6 @@ constructor(
   landDmNumber = '';
   others = '';
   remarks = '';
-  inactive = false;
 
   // =========================
   // Document Fields
@@ -41,66 +161,99 @@ constructor(
   // Property Methods
   // =========================
   saveProperty(): void {
+    if (!this.propertyId || !this.propertyId.trim()) {
+      alert('Property ID is required.');
+      return;
+    }
 
-  const property = {
-    propertyId: '',
-    propertyName: this.propertyName,
-    propertyArea: this.propertyArea,
-    propertyMakani: this.propertyMakani,
-    propertyCountry: this.propertyCountry,
-    propertyCity: this.propertyCity,
-    propertyType: this.propertyType,
-    plotNo: this.plotNo,
-    landDmNumber: this.landDmNumber,
-    others: this.others,
-    inactive: this.inactive,
-    inactiveDate: null,
-    remarks: this.remarks
-  };
- console.log('Save button clicked');
-  console.log(property);
-  this.propertyService.addProperty(property).subscribe({
+    const property = {
+      propertyId: this.propertyId,
+      propertyName: this.propertyName,
+      propertyArea: this.propertyArea,
+      propertyMakani: this.propertyMakani,
+      propertyCountry: this.propertyCountry,
+      propertyCity: this.propertyCity,
+      propertyType: this.propertyType,
+      plotNo: this.plotNo,
+      landDmNumber: this.landDmNumber,
+      others: this.others,
+      inactive: this.inactive,
+      inactiveDate: null,
+      remarks: this.remarks
+    };
 
-    next: (response) => {
-
-      console.log(response);
-
-      if (response.success) {
-
-        this.propertyKey = response.data.id;
-
-        alert('Property saved successfully.');
-
-        console.log('Property ID:', this.propertyKey);
-
-      } else {
-
-        alert(response.message);
-
+    this.propertyService.saveProperty(property).subscribe({
+      next: (response) => {
+        if (response && response.success) {
+          this.propertyKey = response.data.id;
+          this.propertyIdChange.emit(this.propertyId);
+          this.statusMessage = 'Property saved successfully.';
+          setTimeout(() => this.statusMessage = '', 4000);
+        } else {
+          alert(response?.message || 'Failed to save property.');
+        }
+      },
+      error: (error) => {
+        alert(`Error saving property: ${error.status || error.message}`);
       }
+    });
+  }
 
-    },
+  saveChanges(): void {
+    if (!this.propertyKey) {
+      alert('No property is currently loaded to update. Please select a property first.');
+      return;
+    }
 
-   error: (error) => {
+    if (!this.propertyId || !this.propertyId.trim()) {
+      alert('Property ID is required.');
+      return;
+    }
 
-  console.log('Status:', error.status);
-  console.log('Headers:', error.headers);
-  console.log('Error Body:', error.error);
-  console.log('Complete Error:', error);
+    const property = {
+      propertyId: this.propertyId,
+      propertyName: this.propertyName,
+      propertyArea: this.propertyArea,
+      propertyMakani: this.propertyMakani,
+      propertyCountry: this.propertyCountry,
+      propertyCity: this.propertyCity,
+      propertyType: this.propertyType,
+      plotNo: this.plotNo,
+      landDmNumber: this.landDmNumber,
+      others: this.others,
+      inactive: this.inactive,
+      inactiveDate: null,
+      remarks: this.remarks
+    };
 
-  alert(`Error ${error.status}`);
-
-}
-
-  });
-
-}
+    this.propertyService.updateProperty(this.propertyKey, property).subscribe({
+      next: (response) => {
+        if (response && response.success) {
+          this.propertyIdChange.emit(this.propertyId);
+          this.statusMessage = 'Changes saved successfully.';
+          setTimeout(() => this.statusMessage = '', 4000);
+        } else {
+          alert(response?.message || 'Failed to save changes.');
+        }
+      },
+      error: (error) => {
+        alert(`Error saving changes: ${error.status || error.message}`);
+      }
+    });
+  }
 
   deleteProperty(): void {
-    console.log('Property Deleted');
+    if (!this.propertyKey) {
+      alert('No property is currently loaded or saved to delete.');
+      return;
+    }
+    this.showDeleteConfirmModal = true;
   }
 
   clearPropertyForm(): void {
+    this.propertyId = '';
+    this.propertyKey = 0;
+    this.propertyIdChange.emit('');
     this.propertyName = '';
     this.propertyArea = '';
     this.propertyMakani = '';
@@ -112,6 +265,7 @@ constructor(
     this.others = '';
     this.remarks = '';
     this.inactive = false;
+    this.inactiveChange.emit(this.inactive);
 
     // Clear uploaded documents as well
     this.selectedFile = null;
@@ -135,23 +289,35 @@ constructor(
 }
 
   saveDocument(): void {
-
     if (!this.selectedFile) {
       alert('Please choose a document first.');
       return;
     }
 
-    const newDocument = {
-      name: this.selectedFile.name,
-      uploadDate: new Date().toLocaleDateString(),
-      file: this.selectedFile
-    };
+    if (!this.propertyKey) {
+      alert('Please save the property details first before uploading documents.');
+      this.selectedFile = null;
+      return;
+    }
 
-    this.documents.unshift(newDocument);
+    const remarks = prompt('Enter remarks for this document (optional):') || '';
 
-    this.selectedFile = null;
-
-    alert('Document uploaded successfully.');
+    this.propertyService.uploadAttachment(this.propertyKey, this.selectedFile, remarks).subscribe({
+      next: (response) => {
+        const newDocument = {
+          id: response?.data?.id || 0,
+          name: response?.data?.fileName || this.selectedFile!.name,
+          uploadDate: new Date().toLocaleDateString(),
+          file: this.selectedFile
+        };
+        this.documents.unshift(newDocument);
+        this.selectedFile = null;
+      },
+      error: (err) => {
+        console.error('Failed to upload document:', err);
+        alert('Failed to upload document: ' + (err.error?.message || err.message));
+      }
+    });
   }
 
   viewDocument(doc: any): void {

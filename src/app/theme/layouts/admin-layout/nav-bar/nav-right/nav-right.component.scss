@@ -1,1 +1,18 @@
-// This file is intentionally left empty to allow customers to add custom CSS if needed.
+.logout-header-btn {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 50% !important;
+  background-color: var(--bs-gray-200) !important;
+  color: var(--bs-body-color) !important;
+  transition: all 0.2s ease-in-out;
+  border: none;
+  
+  &:hover {
+    background-color: #ffebee !important; /* soft red background matching logout theme */
+    color: #c62828 !important;            /* deep red power button color */
+    box-shadow: 0 4px 8px rgba(198, 40, 40, 0.15);
+  }
+}

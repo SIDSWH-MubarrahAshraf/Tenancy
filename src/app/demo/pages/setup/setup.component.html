@@ -12,28 +12,6 @@
     </div>
 
     <div class="header-controls">
-      <label class="property-search">
-        <span>Property ID</span>
-        <div class="search-row">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="7" />
-            <path d="m16.5 16.5 4 4" />
-          </svg>
-          <input type="text" [(ngModel)]="propertyId" placeholder="Enter Property Code">
-          <button type="button" title="Search" (click)="onSearch()">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M5 12h14M13 6l6 6-6 6" />
-            </svg>
-          </button>
-        </div>
-      </label>
-
-      <button type="button" class="new-property-btn" title="New Property" (click)="onNew()">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 5v14M5 12h14" />
-        </svg>
-      </button>
-
       <div class="status-toggle-wrapper">
         <span class="toggle-text" [class.is-inactive]="inactive">{{ inactive ? 'Inactive' : 'Active' }}</span>
         <label class="switch" for="masterInactiveSwitch">
@@ -76,8 +54,8 @@
     </div>
 
     <div class="tab-content">
-      <app-property *ngIf="activeTab === 'property'"></app-property>
-      <app-unit *ngIf="activeTab === 'unit'"></app-unit>
+      <app-property *ngIf="activeTab === 'property'" [(inactive)]="inactive" [(propertyId)]="propertyId"></app-property>
+      <app-unit *ngIf="activeTab === 'unit'" [propertyId]="propertyId"></app-unit>
     </div>
   </section>
 </div>

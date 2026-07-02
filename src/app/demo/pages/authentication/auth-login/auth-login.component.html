@@ -9,38 +9,92 @@
               <polyline points="9 22 9 12 15 12 15 22" />
             </svg>
           </div>
-          <span style="font-family: 'Poppins', 'Outfit', sans-serif; font-size: 24px; font-weight: 800; letter-spacing: 1.5px; color: var(--erp-primary); text-transform: uppercase;">Tanacy</span>
+          <span style="font-family: 'Poppins', 'Outfit', sans-serif; font-size: 24px; font-weight: 800; letter-spacing: 1.5px; color: var(--erp-primary); text-transform: uppercase;">TENANCY</span>
         </div>
       </div>
-      <div class="card my-5" style="border: 1px solid var(--erp-border); border-radius: var(--erp-radius); box-shadow: var(--erp-shadow-sm);">
-        <div class="card-body" style="padding: 30px;">
-          <div class="d-flex justify-content-center align-items-center mb-4">
-            <h3 class="mb-0" style="font-weight: 700; color: var(--erp-text); font-size: 20px;">Login to your account</h3>
-          </div>
-          <div class="form-group mb-3">
-            <label class="form-label" for="username" style="font-weight: 600;">Username / Email Address</label>
-            <input type="text" class="form-control" id="username" placeholder="Enter Username or Email" value="info@codedthemes.com" style="height: 44px; border-radius: var(--erp-control-radius); border: 1px solid var(--erp-border);" />
-          </div>
-          <div class="form-group mb-3">
-            <label class="form-label" for="password" style="font-weight: 600;">Password</label>
-            <input type="password" class="form-control" id="password" placeholder="Enter Password" value="123456789" style="height: 44px; border-radius: var(--erp-control-radius); border: 1px solid var(--erp-border);" />
-          </div>
-          <div class="d-flex mt-1 justify-content-between">
-            <div class="form-check">
-              <input class="form-check-input input-primary" type="checkbox" id="customCheckc1" checked="" style="cursor: pointer;" />
-              <label class="form-check-label text-muted" for="customCheckc1" style="cursor: pointer; font-size: 13px;">Keep me signed in</label>
+      <div class="card my-5" style="border: 1px solid var(--erp-border); border-radius: var(--erp-radius); box-shadow: var(--erp-shadow-sm); width: 100%; max-width: 440px; overflow: visible;">
+        <div class="card-body" style="padding: 35px 30px 30px 30px;">
+          
+          <!-- Circular User Avatar at the top of the card -->
+          <div class="avatar-container d-flex justify-content-center" style="margin-top: -65px; margin-bottom: 20px;">
+            <div class="circular-avatar" style="width: 70px; height: 70px; border-radius: 50%; background: var(--erp-primary-soft); color: var(--erp-primary); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(142, 36, 170, 0.25); border: 4px solid #ffffff;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 32px; height: 32px;">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
             </div>
-            <h5 class="text-secondary f-w-400" style="font-size: 13px;"><button type="button" class="btn btn-link text-secondary p-0 text-decoration-none" style="font-size: inherit; font-weight: inherit; line-height: inherit; vertical-align: baseline; color: var(--erp-primary) !important;">Forgot Password?</button></h5>
           </div>
-          <div class="d-grid mt-4">
-            <button type="button" class="btn btn-primary" (click)="onLogin()" style="background: var(--erp-primary) !important; border-color: var(--erp-primary) !important; font-weight: 700; height: 44px; border-radius: var(--erp-control-radius);">Login</button>
+
+          <div class="d-flex justify-content-center align-items-center mb-4">
+            <h3 class="mb-0" style="font-weight: 700; color: var(--erp-text); font-size: 19px; letter-spacing: 0.2px;">Login to your account</h3>
           </div>
+
+          <!-- Error Message Alert -->
+          <div *ngIf="errorMessage" class="alert alert-danger text-center py-2 px-3 mb-3" style="font-size: 13px; font-weight: 600; border-radius: var(--erp-control-radius); color: #c62828; background-color: #ffebee; border: 1px solid #ffcdd2;">
+            {{ errorMessage }}
+          </div>
+
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            
+            <div class="form-group mb-3">
+              <label class="form-label" for="username" style="font-weight: 600; font-size: 13px;">Username / Email Address <b>*</b></label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="username" 
+                formControlName="username"
+                placeholder="Enter Username or Email" 
+                style="height: 44px; border-radius: var(--erp-control-radius); border: 1px solid var(--erp-border);" 
+                [class.is-invalid]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched"
+              />
+              <div *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched" class="text-danger mt-1" style="font-size: 11px; font-weight: 600;">
+                Username is required.
+              </div>
+            </div>
+
+            <div class="form-group mb-3">
+              <label class="form-label" for="password" style="font-weight: 600; font-size: 13px;">Password <b>*</b></label>
+              <input 
+                type="password" 
+                class="form-control" 
+                id="password" 
+                formControlName="password"
+                placeholder="Enter Password" 
+                style="height: 44px; border-radius: var(--erp-control-radius); border: 1px solid var(--erp-border);" 
+                [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+              />
+              <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-danger mt-1" style="font-size: 11px; font-weight: 600;">
+                Password is required.
+              </div>
+            </div>
+
+            <div class="d-flex mt-2 justify-content-between align-items-center">
+              <div class="form-check">
+                <input class="form-check-input input-primary" type="checkbox" id="customCheckc1" checked="" style="cursor: pointer;" />
+                <label class="form-check-label text-muted" for="customCheckc1" style="cursor: pointer; font-size: 12.5px; font-weight: 500;">Keep me signed in</label>
+              </div>
+              <h5 class="text-secondary f-w-400 m-0" style="font-size: 12.5px;"><button type="button" class="btn btn-link text-secondary p-0 text-decoration-none" style="font-size: inherit; font-weight: inherit; line-height: inherit; vertical-align: baseline; color: var(--erp-primary) !important;">Forgot Password?</button></h5>
+            </div>
+
+            <div class="d-grid mt-4">
+              <button 
+                type="submit" 
+                class="btn btn-primary" 
+                [disabled]="isLoading"
+                style="background: var(--erp-primary) !important; border-color: var(--erp-primary) !important; font-weight: 700; height: 44px; border-radius: var(--erp-control-radius); display: flex; align-items: center; justify-content: center; gap: 8px;"
+              >
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                {{ isLoading ? 'Logging in...' : 'Login' }}
+              </button>
+            </div>
+
+          </form>
         </div>
       </div>
       <div class="auth-footer row">
         <div class="col my-1">
-          <p class="m-0" style="font-size: 12px; color: var(--erp-muted);">
-            Copyright © Tanacy ERP
+          <p class="m-0" style="font-size: 12px; color: var(--erp-muted); text-align: center;">
+            Copyright © TENANCY
           </p>
         </div>
       </div>

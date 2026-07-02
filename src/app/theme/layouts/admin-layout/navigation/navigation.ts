@@ -23,7 +23,7 @@ export const NavigationItems: NavigationItem[] = [
 
   {
     id: 'utilities',
-    title: 'Tanacy',
+    title: 'TENANCY',
     type: 'group',
     icon: 'icon-navigation',
     children: [

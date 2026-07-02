@@ -13,9 +13,6 @@ export class PropertyService {
   private apiUrl = `${environment.apiUrl}/ty/properties`;
 
   constructor(private http: HttpClient) { }
-private headers = new HttpHeaders({
-  Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImFkbWluIiwiZXhwIjoxNzgyOTMyMDQ3LCJpc3MiOiJTSURfVFlFUlAiLCJhdWQiOiJTSURfVFlFUlBfQ0xJRU5UIn0.tqwNj-gOtAOcAj63SzTuXed4u5-EYNjyc5g2W4Kf4jI'
-});
   /**
    * Get all properties
    */
@@ -34,10 +31,14 @@ private headers = new HttpHeaders({
    * Add new property
    */
   addProperty(property: Property): Observable<any> {
-    return this.http.post<any>(this.apiUrl, property,
-    {
-      headers: this.headers
-    });
+    return this.http.post<any>(this.apiUrl, property);
+  }
+
+  /**
+   * Save property (Alias to addProperty)
+   */
+  saveProperty(property: Property): Observable<any> {
+    return this.addProperty(property);
   }
 
   /**
