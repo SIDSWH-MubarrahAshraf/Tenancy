@@ -1,0 +1,217 @@
+<div class="erp-container">
+
+  <header class="erp-page-header">
+    <div class="title-group">
+      <div class="title-icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.5;">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+      </div>
+      <h1>User Information</h1>
+    </div>
+  </header>
+
+  <!-- ========================= USER FORM ========================= -->
+
+  <form #userForm="ngForm" (ngSubmit)="onSave(userForm)" novalidate>
+
+    <div class="erp-card">
+
+
+      <div class="card-body">
+
+        <!-- ROW 1 -->
+        <div class="row g-4">
+
+          <div class="col-lg-3 col-md-6">
+            <label class="form-label required">User ID</label>
+            <input type="text" class="form-control" name="userId"
+              [(ngModel)]="user.userId" placeholder="Enter User ID" required>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <label class="form-label required">Password</label>
+            <input type="password" class="form-control" name="password"
+              [(ngModel)]="user.password" placeholder="Enter Password" required>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <label class="form-label required">First Name</label>
+            <input type="text" class="form-control" name="firstName"
+              [(ngModel)]="user.firstName" placeholder="Enter First Name" required>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <label class="form-label required">Last Name</label>
+            <input type="text" class="form-control" name="lastName"
+              [(ngModel)]="user.lastName" placeholder="Enter Last Name" required>
+          </div>
+
+        </div>
+
+        <!-- ROW 2 -->
+        <div class="row g-4 mt-1">
+
+          <div class="col-lg-4">
+            <label class="form-label required">Contact Number</label>
+            <input type="text" class="form-control" name="contactNumber"
+              [(ngModel)]="user.contactNumber" placeholder="03XXXXXXXXX">
+          </div>
+
+          <!-- Department -->
+          <div class="col-lg-4">
+            <label class="form-label required">Department</label>
+
+            <div class="input-attached">
+              <input
+                type="text"
+                class="form-control"
+                name="department"
+                [(ngModel)]="user.department"
+                placeholder="Select Department"
+                readonly>
+
+              <button type="button" class="attached-btn" title="Search" (click)="onSearch()">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+  <circle cx="11" cy="11" r="7"></circle>
+  <path d="m16.5 16.5 4 4"></path>
+</svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="col-lg-4">
+            <label class="form-label required">Designation</label>
+            <select class="form-select" name="designation" [(ngModel)]="user.designation">
+              <option value="">Select Designation</option>
+              <option *ngFor="let designation of designations" [value]="designation">
+                {{ designation }}
+              </option>
+            </select>
+          </div>
+
+        </div>
+
+        <!-- ROW 3 -->
+        <div class="row g-4 mt-1 align-items-end">
+
+          <!-- Email -->
+          <div class="col-lg-4">
+            <label class="form-label required">Email</label>
+
+            <div class="input-attached">
+              <input
+                type="email"
+                class="form-control"
+                name="email"
+                [(ngModel)]="user.email"
+                placeholder="example@company.com">
+
+              <button type="button" class="attached-btn" title="Search" (click)="onSearch()">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+  <circle cx="11" cy="11" r="7"></circle>
+  <path d="m16.5 16.5 4 4"></path>
+</svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="col-lg-4">
+            <label class="form-label required">Branch</label>
+            <select class="form-select" name="branch" [(ngModel)]="user.branch">
+              <option value="">Select Branch</option>
+              <option *ngFor="let branch of branches" [value]="branch">
+                {{ branch }}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-lg-4">
+            <label class="form-label">Gender</label>
+            <select class="form-select" name="gender" [(ngModel)]="user.gender">
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Custom">Custom</option>
+            </select>
+          </div>
+
+        </div>
+
+        <!-- ROW 4 -->
+        <div class="row g-4 mt-2 align-items-start">
+
+          <div class="col-lg-3">
+            <label class="form-label">City</label>
+            <input type="text" class="form-control" name="city"
+              [(ngModel)]="user.city" placeholder="Enter City">
+          </div>
+
+          <div class="col-lg-3">
+            <label class="form-label">Country</label>
+            <input type="text" class="form-control" name="country"
+              [(ngModel)]="user.country" value="UAE" readonly>
+          </div>
+
+          <div class="col-lg-3">
+            <label class="form-label">Security Group</label>
+            <select class="form-select" name="securityGroup" [(ngModel)]="user.securityGroup">
+              <option value="">Select Security Group</option>
+              <option value="Admin">Admin</option>
+              <option value="Warehouse">Warehouse</option>
+              <option value="Office">Office</option>
+              <option value="Branch">Branch</option>
+            </select>
+          </div>
+
+          <div class="col-lg-3">
+            <label class="form-label d-block mb-2">Status</label>
+            <div class="status-toggle-wrapper">
+              <span class="toggle-text" [class.is-inactive]="user.status !== 'Active'">{{ user.status }}</span>
+              <label class="switch" for="userStatusSwitch">
+                <input
+                  type="checkbox"
+                  id="userStatusSwitch"
+                  [checked]="user.status === 'Active'"
+                  (change)="toggleStatus($event)"
+                >
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+      <!-- card-body closed here -->
+
+      <!-- ========================= FOOTER ========================= -->
+      <div class="card-footer text-end">
+
+        <button type="submit" class="btn erp-btn-success me-2">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M19 8v6M16 11h6"></path>
+          </svg>
+          Add User
+        </button>
+
+        <button type="button" class="btn erp-btn-danger" (click)="deleteUser()">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"></path>
+          </svg>
+          Delete User
+        </button>
+
+      </div>
+
+    </div>
+    <!-- erp-card closed -->
+
+  </form>
+
+</div>

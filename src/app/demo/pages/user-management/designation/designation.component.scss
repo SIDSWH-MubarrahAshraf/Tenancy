@@ -1,0 +1,276 @@
+/* ==========================================================
+   DESIGNATION MANAGEMENT
+========================================================== */
+
+.erp-container {
+  padding: 24px;
+  background: var(--erp-bg);
+  min-height: 100vh;
+}
+
+/* ==========================================================
+   HEADER
+   ========================================================== */
+
+.erp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--erp-primary);
+  margin-bottom: 4px;
+}
+
+.page-subtitle {
+  margin: 0;
+  color: var(--erp-muted);
+  font-size: 14px;
+}
+
+/* ==========================================================
+   CARD
+   ========================================================== */
+
+.erp-card {
+  background: var(--erp-card-bg);
+  border-radius: var(--erp-radius);
+  border: 1px solid var(--erp-border);
+  overflow: hidden;
+  box-shadow: var(--erp-shadow-sm);
+}
+
+.card-header {
+  background: var(--erp-header-bg);
+  color: var(--erp-text);
+  padding: 18px 25px;
+  border-bottom: 1px solid var(--erp-border);
+}
+
+.card-header h4 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--erp-text);
+}
+
+.card-body {
+  padding: 30px;
+}
+
+.card-footer {
+  background: var(--erp-bg);
+  padding: 20px 30px;
+  border-top: 1px solid var(--erp-border);
+}
+
+/* ==========================================================
+   LABELS
+========================================================== */
+
+.form-label {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 8px;
+}
+
+.required::after {
+  content: " *";
+  color: #dc3545;
+}
+
+/* ==========================================================
+   INPUTS
+========================================================== */
+
+.form-control {
+  height: 44px;
+  border-radius: var(--erp-control-radius);
+  border: 1px solid var(--erp-border);
+  background: #ffffff;
+  transition: all 200ms ease;
+  font-size: 14px;
+}
+
+.form-control:hover {
+  border-color: var(--erp-primary);
+}
+
+.form-control:focus {
+  border-color: var(--erp-primary);
+  box-shadow: 0 0 0 4px rgba(142, 36, 170, 0.15);
+  background: #ffffff;
+}
+
+.form-control[readonly] {
+  background: #f3f4f6;
+  cursor: not-allowed;
+}
+
+/* ==========================================================
+   BUTTONS
+========================================================== */
+
+.erp-btn-primary {
+  background: #6c5ce7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  height: 46px;
+  font-weight: 600;
+  transition: .3s;
+}
+
+.erp-btn-primary:hover {
+  background: #0144aa;
+  color: white;
+}
+
+.erp-btn-danger {
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  height: 46px;
+  font-weight: 600;
+  transition: .3s;
+}
+
+.erp-btn-danger:hover {
+  background: #bb2d3b;
+  color: white;
+}
+
+.erp-btn-search {
+  background: #0d6efd;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  height: 46px;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: .3s;
+}
+
+.erp-btn-search:hover {
+  background: #0b5ed7;
+  color: white;
+}
+
+.erp-btn-secondary {
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  height: 46px;
+  font-weight: 600;
+  transition: .3s;
+}
+
+.erp-btn-secondary:hover {
+  background: #5c636a;
+  color: white;
+}
+
+.erp-btn-primary i,
+.erp-btn-danger i,
+.erp-btn-secondary i {
+  margin-right: 6px;
+}
+
+.erp-btn-search svg {
+  margin-right: 6px;
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 991px) {
+
+  .erp-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .card-body {
+    padding: 20px;
+  }
+
+  .row > div {
+    margin-bottom: 15px;
+  }
+
+  .card-footer {
+    text-align: center !important;
+  }
+
+  .card-footer .btn {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+}
+$primary: var(--erp-primary, #8E24AA);
+$primary-soft: var(--erp-primary-soft, #F3E5F5);
+$border: var(--erp-border, #CFA5EA);
+
+/* Same attached-search pattern as Department / User components */
+.input-attached {
+  display: flex;
+  align-items: stretch;
+  height: 42px;
+  border: 1px solid $border;
+  border-radius: var(--erp-control-radius);
+  overflow: hidden;
+  background: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-attached:focus-within {
+  border-color: $primary;
+  box-shadow: 0 0 0 4px rgba(142, 36, 170, 0.15);
+}
+
+.input-attached .form-control {
+  flex: 1;
+  min-width: 0;
+  height: 100% !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.input-attached .attached-btn {
+  flex: 0 0 42px;
+  width: 42px;
+  border: none;
+  border-left: 1px solid $border;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.input-attached .attached-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: $primary;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.input-attached .attached-btn:hover {
+  background: $primary-soft;
+}

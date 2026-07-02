@@ -1,0 +1,151 @@
+<div class="unit-tab">
+  <section class="unit-card">
+    <div class="card-header">
+      <h2>Unit Details</h2>
+      <button type="button" class="btn erp-btn-success py-1 px-3 d-flex align-items-center gap-2" (click)="addUnit()" style="height: 34px; font-size: 13px;">
+        <svg viewBox="0 0 24 24" aria-hidden="true" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5;">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+        Add Unit
+      </button>
+    </div>
+
+    <div class="unit-form-grid">
+      <label class="field">
+        <span>Unit ID</span>
+        <input type="text" [(ngModel)]="unit.unitId" placeholder="UNIT-101">
+      </label>
+
+      <label class="field">
+        <span>Unit No</span>
+        <input type="text" [(ngModel)]="unit.unitNo" placeholder="101">
+      </label>
+
+      <label class="field">
+        <span>Block</span>
+        <input type="text" [(ngModel)]="unit.block" placeholder="A">
+      </label>
+
+      <label class="field">
+        <span>Floor</span>
+        <input type="text" [(ngModel)]="unit.floor" placeholder="1st Floor">
+      </label>
+
+      <label class="field">
+        <span>Unit Type</span>
+        <select [(ngModel)]="unit.unitType">
+          <option value="">Select Type</option>
+          <option>Apartment</option>
+          <option>Villa</option>
+          <option>Office</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Tax Authority</span>
+        <input type="text" [(ngModel)]="unit.taxAuthority" placeholder="Tax Authority">
+      </label>
+
+      <label class="field">
+        <span>Unit Purpose</span>
+        <select [(ngModel)]="unit.unitPurpose">
+          <option value="">Select Purpose</option>
+          <option>Residential</option>
+          <option>Commercial</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Unit Size</span>
+        <input type="text" [(ngModel)]="unit.unitSize" placeholder="1,200 Sq Ft">
+      </label>
+
+      <label class="field">
+        <span>DEWA Prefix</span>
+        <input type="text" [(ngModel)]="unit.dewaPrefix" placeholder="Prefix">
+      </label>
+
+      <label class="field">
+        <span>Default Account</span>
+        <input type="text" [(ngModel)]="unit.defaultAccount" placeholder="Default Account">
+      </label>
+
+      <label class="field">
+        <span>AC Charge</span>
+        <input type="number" [(ngModel)]="unit.acCharge" placeholder="0.00">
+      </label>
+
+      <label class="field">
+        <span>Electricity Charge</span>
+        <input type="number" [(ngModel)]="unit.electricityCharge" placeholder="0.00">
+      </label>
+
+      <label class="field">
+        <span>Unit Description</span>
+        <input type="text" [(ngModel)]="unit.description" placeholder="Enter Unit Description">
+      </label>
+    </div>
+  </section>
+
+  <section class="unit-card unit-list-card">
+    <div class="card-header">
+      <h2>Units List</h2>
+      <label class="search-box">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" />
+          <path d="m16.5 16.5 4 4" />
+        </svg>
+        <input
+          type="text"
+          placeholder="Search unit by ID or number..."
+          [(ngModel)]="searchText"
+          (input)="filterUnits()"
+        >
+      </label>
+    </div>
+
+    <div class="table-responsive">
+      <table class="unit-table">
+        <thead>
+          <tr>
+            <th>Line</th>
+            <th>Unit ID</th>
+            <th>Unit No</th>
+            <th>Block</th>
+            <th>Floor</th>
+            <th>Type</th>
+            <th>Purpose</th>
+            <th class="numeric">AC Charge</th>
+            <th class="numeric">Elec. Charge</th>
+            <th class="action-cell">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of filteredUnits">
+            <td>{{ row.line }}</td>
+            <td><span class="unit-badge">{{ row.unitId }}</span></td>
+            <td>{{ row.unitNo }}</td>
+            <td>{{ row.block || '-' }}</td>
+            <td>{{ row.floor || '-' }}</td>
+            <td><span class="type-tag" [class]="row.unitType?.toLowerCase()">{{ row.unitType || '-' }}</span></td>
+            <td>{{ row.unitPurpose || '-' }}</td>
+            <td class="numeric">{{ row.acCharge | number:'1.2-2' }}</td>
+            <td class="numeric">{{ row.electricityCharge | number:'1.2-2' }}</td>
+            <td class="action-cell">
+              <button type="button" class="icon-action text-danger" (click)="deleteUnit(row.line)" title="Delete Unit">
+                <svg viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.5;">
+                  <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6" />
+                </svg>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="filteredUnits.length === 0">
+            <td colspan="10" class="empty-cell">No units found. Add a unit above to display.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+

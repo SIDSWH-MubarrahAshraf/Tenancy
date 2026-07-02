@@ -1,0 +1,305 @@
+<div class="erp-container">
+  <!-- Page Header -->
+  <header class="erp-header mb-4">
+    <div class="header-left">
+      <div class="breadcrumb">
+      </div>
+      <h1 class="page-title">Property Details</h1>
+    </div>
+
+  </header>
+  <div class="erp-content-grid">
+    <!-- Main Form Section -->
+    <main class="erp-main-content">
+      <!-- Property Information Card -->
+      <div class="erp-card mb-4">
+        <div class="erp-card-header">
+          <div class="header-icon-title">
+            <div class="header-text-group">
+              <h5 class="card-title">Property Information</h5>
+              <span class="card-subtitle"></span>
+            </div>
+          </div>
+        </div>
+        <div class="erp-card-body">
+          <div class="row g-4">
+            <!-- Property Name -->
+            <div class="col-md-6 col-lg-6">
+              <label class="form-label erp-label">Property Name</label>
+              <div class="erp-input-wrapper">
+                <span class="input-icon"><i class="ti ti-building"></i></span>
+                <input
+                  type="text"
+                  class="form-control erp-input"
+                  [(ngModel)]="propertyName"
+                  placeholder="Enter Property Name">
+              </div>
+            </div>
+            <!-- Property Type -->
+            <div class="col-md-6 col-lg-6">
+              <label class="form-label erp-label">Property Type</label>
+              <div class="erp-input-wrapper">
+                <span class="input-icon"><i class="ti ti-category-2"></i></span>
+                <select
+                  class="form-select erp-select"
+                  [(ngModel)]="propertyType">
+                  <option value="">Select Property Type</option>
+                  <option>Residential</option>
+                  <option>Commercial</option>
+                  <option>Industrial</option>
+                </select>
+              </div>
+            </div>
+            <!-- Property Area -->
+            <div class="col-md-6 col-lg-4">
+              <label class="form-label erp-label">Property Area</label>
+              <div class="erp-input-wrapper">
+                <span class="input-icon"><i class="ti ti-ruler-measure"></i></span>
+                <input
+                  type="text"
+                  class="form-control erp-input"
+                  [(ngModel)]="propertyArea"
+                  placeholder="Enter Property Area">
+              </div>
+            </div>
+            <!-- Property Country -->
+            <div class="col-md-6 col-lg-4">
+              <label class="form-label erp-label">Property Country</label>
+              <div class="erp-input-wrapper">
+                <span class="input-icon"><i class="ti ti-world"></i></span>
+                <select
+                  class="form-select erp-select"
+                  [(ngModel)]="propertyCountry">
+                  <option value="">Select Country</option>
+                  <option>Pakistan</option>
+                  <option>UAE</option>
+                  <option>Saudi Arabia</option>
+                </select>
+              </div>
+            </div>
+            <!-- Property City -->
+            <div class="col-md-6 col-lg-4">
+              <label class="form-label erp-label">Property City</label>
+              <div class="erp-input-wrapper">
+                <span class="input-icon"><i class="ti ti-map-pin"></i></span>
+                <input
+                  type="text"
+                  class="form-control erp-input"
+                  [(ngModel)]="propertyCity"
+                  placeholder="Enter Property City">
+              </div>
+            </div>
+            <!-- Plot No -->
+            <div class="col-md-6 col-lg-4">
+              <label class="form-label erp-label">Plot No</label>
+              <div class="erp-input-wrapper">
+                <span class="input-icon"><i class="ti ti-hash"></i></span>
+                <input
+                  type="text"
+                  class="form-control erp-input"
+                  [(ngModel)]="plotNo"
+                  placeholder="Enter Plot Number">
+              </div>
+            </div>
+            <!-- Property Makani -->
+            <div class="col-md-6 col-lg-4">
+              <label class="form-label erp-label">Property Makani</label>
+              <div class="erp-input-wrapper">
+                <span class="input-icon"><i class="ti ti-location"></i></span>
+                <input
+                  type="text"
+                  class="form-control erp-input"
+                  [(ngModel)]="propertyMakani"
+                  placeholder="Enter Makani Number">
+              </div>
+            </div>
+            <!-- Land DM Number -->
+            <div class="col-md-6 col-lg-4">
+              <label class="form-label erp-label">Land DM Number</label>
+              <div class="erp-input-wrapper">
+                <span class="input-icon"><i class="ti ti-file-certificate"></i></span>
+                <input
+                  type="text"
+                  class="form-control erp-input"
+                  [(ngModel)]="landDmNumber"
+                  placeholder="Enter Land DM Number">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Additional Information Card -->
+      
+      <div class="property-upload-card">
+
+    <div class="upload-title">
+        Upload Property Document
+    </div>
+
+    <div class="upload-subtitle">
+        Upload lease agreements, title deeds or any supporting documents.
+    </div>
+
+    <button
+        class="erp-upload-btn"
+        (click)="fileInput.click()">
+
+        <i class="ti ti-upload me-2"></i>
+
+        Browse Files
+
+    </button>
+
+    <input
+        hidden
+        #fileInput
+        type="file"
+        (change)="onFileSelected($event)">
+
+</div>
+
+<!-- Uploaded Documents -->
+<div class="erp-card uploaded-documents mb-4">
+
+  <div class="erp-card-header">
+    <div class="header-icon-title">
+
+      <div class="header-text-group">
+        <h5 class="card-title">Uploaded Documents</h5>
+      </div>
+    </div>
+  </div>
+
+  <div class="erp-card-body p-0">
+
+    <div class="table-responsive">
+
+      <table class="table erp-table mb-0">
+
+        <thead>
+          <tr>
+            <th>Document</th>
+            <th>Uploaded Date</th>
+            <th width="120">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <tr *ngIf="documents.length === 0">
+            <td colspan="3" class="text-center text-muted py-4">
+              No documents uploaded.
+            </td>
+          </tr>
+
+          <tr *ngFor="let doc of documents">
+
+            <td>
+              <div class="d-flex align-items-center">
+
+                <div class="document-icon">
+                  <i class="ti ti-file-text"></i>
+                </div>
+
+                {{ doc.name }}
+
+              </div>
+            </td>
+
+            <td>
+              {{ doc.uploadDate }}
+            </td>
+
+            <td>
+
+              <!-- View Button -->
+<button
+  type="button"
+  class="btn btn-sm btn-outline-primary me-2"
+  (click)="viewDocument(doc)"
+  title="View">
+
+  <svg xmlns="http://www.w3.org/2000/svg"
+       width="16"
+       height="16"
+       fill="none"
+       viewBox="0 0 24 24"
+       stroke="currentColor"
+       stroke-width="2"
+       stroke-linecap="round"
+       stroke-linejoin="round">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/>
+    <circle cx="12" cy="12" r="3"/>
+  </svg>
+
+</button>
+
+<!-- Download Button -->
+<button
+  type="button"
+  class="btn btn-sm btn-outline-success"
+  (click)="downloadDocument(doc)"
+  title="Download">
+
+  <svg xmlns="http://www.w3.org/2000/svg"
+       width="16"
+       height="16"
+       fill="none"
+       viewBox="0 0 24 24"
+       stroke="currentColor"
+       stroke-width="2"
+       stroke-linecap="round"
+       stroke-linejoin="round">
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+    <polyline points="7 10 12 15 17 10"/>
+    <line x1="12" y1="15" x2="12" y2="3"/>
+  </svg>
+
+</button>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</div>
+      <!-- Actions Footer -->
+      <footer class="erp-actions-footer">
+        <div class="left-actions">
+          <button
+            type="button"
+            class="btn erp-btn erp-btn-danger"
+            (click)="deleteProperty()">
+            <i class="ti ti-trash"></i>
+            <span>Delete Property</span>
+          </button>
+        </div>
+        
+        <div class="right-actions">
+          <button
+            type="button"
+            class="btn erp-btn erp-btn-secondary"
+            (click)="clearPropertyForm()">
+            <i class="ti ti-refresh"></i>
+            <span>Reset Fields</span>
+          </button>
+          
+          <button
+            type="button"
+            class="btn erp-btn erp-btn-primary"
+            (click)="saveProperty()">
+            <i class="ti ti-device-floppy"></i>
+            <span>Save Property</span>
+          </button>
+        </div>
+      </footer>
+    </main>
+  </div>
+</div>

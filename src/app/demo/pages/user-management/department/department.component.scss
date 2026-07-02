@@ -1,0 +1,157 @@
+$toolbar-h: 42px;
+$primary: var(--erp-primary, #8E24AA);
+$primary-soft: var(--erp-primary-soft, #F3E5F5);
+$border: var(--erp-border, #CFA5EA);
+$danger: var(--erp-danger, #C62828);
+
+/* Row 1: ID + Name, equal width, equal spacing */
+.erp-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.erp-toolbar .field-id,
+.erp-toolbar .field-name {
+  flex: 1;          // equal spacing — both fields take equal share of the row
+  min-width: 240px;
+}
+
+.erp-toolbar .erp-input {
+  width: 100%;
+  height: $toolbar-h !important;
+  box-sizing: border-box;
+  border: 1px solid $border;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 13px;
+  outline: none;
+  background: #fff;
+}
+
+.erp-toolbar .erp-input:focus {
+  border-color: $primary;
+  box-shadow: 0 0 0 4px rgba(142, 36, 170, 0.15);
+}
+
+/* Department ID input + attached search/refresh icons, one visual unit */
+.input-attached {
+  display: flex;
+  align-items: stretch;
+  height: $toolbar-h;
+  border: 1px solid $border;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-attached:focus-within {
+  border-color: $primary;
+  box-shadow: 0 0 0 4px rgba(142, 36, 170, 0.15);
+}
+
+.input-attached .erp-input {
+  flex: 1;
+  min-width: 0;
+  height: 100% !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.input-attached .attached-btn {
+  flex: 0 0 40px;
+  width: 40px;
+  border: none;
+  border-left: 1px solid $border;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.input-attached .attached-btn svg {
+  width: 17px;
+  height: 17px;
+  stroke: $primary;
+  fill: none;
+  stroke-width: 2;
+}
+
+.input-attached .attached-btn:hover {
+  background: $primary-soft;
+}
+/* Row 2: Save / Delete — icon + text */
+.erp-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .erp-actions-row {
+    justify-content: center;
+  }
+}
+
+.erp-actions-row .text-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: $toolbar-h;
+  padding: 0 18px;
+  border-radius: 8px;
+  border: 1px solid $border;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: 0.2s ease;
+}
+
+.erp-actions-row .text-btn svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke-width: 2;
+  flex-shrink: 0;
+}
+
+.erp-actions-row .text-btn.primary {
+  background: $primary;
+  border-color: $primary;
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(108, 92, 231, 0.25);
+}
+
+.erp-actions-row .text-btn.primary svg {
+  stroke: #fff;
+}
+
+.erp-actions-row .text-btn.primary:hover {
+  background: var(--erp-primary-hover);
+  border-color: var(--erp-primary-hover);
+}
+
+.erp-actions-row .text-btn.danger {
+  background: $danger;
+  border-color: $danger;
+  color: #fff;
+}
+
+.erp-actions-row .text-btn.danger svg {
+  stroke: #fff;
+}
+
+.erp-actions-row .text-btn.danger:hover {
+  background: #b71c1c;
+  border-color: #b71c1c;
+}

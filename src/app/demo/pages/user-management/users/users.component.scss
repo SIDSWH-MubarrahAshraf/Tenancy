@@ -1,0 +1,534 @@
+/* ==========================================================
+   USER MANAGEMENT
+========================================================== */
+
+.erp-container {
+  padding: 24px;
+  background: var(--erp-bg);
+  min-height: 100vh;
+}
+
+/* ==========================================================
+   PAGE HEADER
+   ========================================================== */
+
+.erp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--erp-primary);
+  margin-bottom: 4px;
+}
+
+.page-subtitle {
+  color: var(--erp-muted);
+  margin: 0;
+  font-size: 14px;
+}
+
+/* ==========================================================
+   CARD
+   ========================================================== */
+
+.erp-card {
+  background: var(--erp-card-bg);
+  border-radius: var(--erp-radius);
+  border: 1px solid var(--erp-border);
+  box-shadow: var(--erp-shadow-sm);
+  overflow: hidden;
+}
+
+.card-header {
+  background: var(--erp-header-bg);
+  color: var(--erp-text);
+  padding: 18px 24px;
+  border-bottom:none;
+}
+
+.card-header h4 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--erp-text);
+}
+
+.card-body {
+  padding: 30px;
+}
+
+.card-footer {
+  background: transparent !important;
+  padding: 20px 30px;
+  border-top: none !important;
+}
+
+/* ==========================================================
+   LABELS
+========================================================== */
+
+.form-label {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 8px;
+}
+
+.required::after {
+  content: " *";
+  color: #dc3545;
+}
+
+/* ==========================================================
+   INPUTS
+========================================================== */
+
+.form-control,
+.form-select {
+  height: 44px;
+  border-radius: var(--erp-control-radius);
+  border: 1px solid var(--erp-border);
+  background: #ffffff;
+  transition: all 200ms ease;
+  font-size: 14px;
+}
+
+.form-control:hover,
+.form-select:hover {
+  border-color: var(--erp-primary);
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--erp-primary);
+  box-shadow: 0 0 0 4px rgba(142, 36, 170, 0.15);
+  background: #ffffff;
+}
+
+.form-control::placeholder {
+  color: #adb5bd;
+}
+
+/* ==========================================================
+   INPUT GROUP
+========================================================== */
+
+.input-group .btn {
+
+  width: 50px;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+
+}
+/* ==========================================================
+   SEARCH BUTTON
+========================================================== */
+
+.input-group .erp-btn-search {
+  width: 46px;
+  min-width: 46px;
+  height: 44px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: 1px solid #d7dce3;
+  border-left: 0;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  color: #6c5ce7;
+  transition: all .25s ease;
+}
+
+.input-group .erp-btn-search:hover {
+  background: #f4f1ff;
+  border-color: #6c5ce7;
+  color: #6c5ce7;
+}
+
+.input-group .erp-btn-search:focus {
+  box-shadow: none;
+}
+
+.input-group .erp-btn-search svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+/* ==========================================================
+   GENDER
+========================================================== */
+
+.gender-group{
+
+    display:flex;
+    gap:30px;
+    align-items:center;
+    flex-wrap:wrap;
+
+}
+
+.gender-group .form-check{
+
+    padding:12px 18px;
+    border:1px solid #dee2e6;
+    border-radius:8px;
+    background:#fafafa;
+    min-width:120px;
+
+}
+
+/* ==========================================================
+   SECURITY
+========================================================== */
+
+.security-box{
+
+    border:1px solid #dee2e6;
+    border-radius:10px;
+    padding:15px;
+    background:#fbfcff;
+
+}
+
+.security-box .form-check{
+
+    margin-bottom:10px;
+
+}
+
+.security-box .form-check:last-child{
+
+    margin-bottom:0;
+
+}
+
+/* ==========================================================
+   STATUS
+========================================================== */
+
+.status-card{
+
+    border:1px solid #dee2e6;
+    border-radius:10px;
+    background:#fbfcff;
+    padding:15px;
+    min-height:165px;
+
+}
+
+/* ==========================================================
+   RADIO
+========================================================== */
+
+.form-check-input{
+
+    cursor:pointer;
+
+}
+
+.form-check-input:checked{
+
+    background:#6c5ce7;
+    border-color:#6c5ce7;
+
+}
+
+/* ==========================================================
+   BUTTONS
+========================================================== */
+
+.erp-btn-primary{
+
+    background:#6c5ce7;
+    color:white;
+    border:none;
+    border-radius:8px;
+    padding:11px 28px;
+    font-weight:600;
+    transition:.3s;
+
+}
+
+.erp-btn-primary:hover{
+
+    background:#0144aa;
+    color:white;
+
+}
+
+.erp-btn-danger{
+
+    background:#dc3545;
+    color:white;
+    border:none;
+    border-radius:8px;
+    padding:11px 28px;
+    font-weight:600;
+    transition:.3s;
+
+}
+
+.erp-btn-danger:hover{
+
+    background:#bb2d3b;
+    color:white;
+
+}
+
+.erp-btn-primary i,
+.erp-btn-danger i{
+
+    margin-right:8px;
+
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media(max-width:991px){
+
+.card-body{
+
+padding:20px;
+
+}
+
+.erp-header{
+
+flex-direction:column;
+align-items:flex-start;
+gap:10px;
+
+}
+
+.gender-group{
+
+flex-direction:column;
+align-items:flex-start;
+
+}
+
+.status-card{
+
+min-height:auto;
+
+}
+
+.card-footer{
+
+text-align:center !important;
+
+}
+
+.card-footer .btn{
+
+width:100%;
+margin-bottom:10px;
+
+}
+
+}
+.status-toggle {
+  display: flex;
+  gap: 12px;
+}
+
+.status-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: 1px solid #dce3ea;
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  transition: .25s;
+  min-width: 110px;
+  justify-content: center;
+}
+
+.status-option:hover {
+  border-color: #6c5ce7;
+  background: #f5f8ff;
+}
+
+.status-option input {
+  margin: 0;
+}
+
+.input-group .erp-btn-search {
+  width: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-select,
+.form-control {
+  height: 44px;
+}
+
+.card-body {
+  padding: 2rem;
+}
+/* SVG inside the button */
+
+
+/* Search Button */
+.erp-btn-search {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  min-width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid #e6e8ef;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #6c5ce7;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Hover */
+.erp-btn-search:hover {
+  background: #f4f1ff;
+  border-color: #6c5ce7;
+}
+
+/* Focus */
+.erp-btn-search:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
+}
+$primary: var(--erp-primary, #8E24AA);
+$primary-soft: var(--erp-primary-soft, #F3E5F5);
+$border: var(--erp-border, #CFA5EA);
+
+/* Attached search button — glued to the right edge of the input,
+   same visual pattern as the Department module */
+.input-attached {
+  display: flex;
+  align-items: stretch;
+  height: 42px;
+  border: 1px solid $border;
+  border-radius: var(--erp-control-radius);
+  overflow: hidden;
+  background: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-attached:focus-within {
+  border-color: $primary;
+  box-shadow: 0 0 0 4px rgba(142, 36, 170, 0.15);
+}
+
+.input-attached .form-control {
+  flex: 1;
+  min-width: 0;
+  height: 100% !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.input-attached .attached-btn {
+  flex: 0 0 42px;
+  width: 42px;
+  border: none;
+  border-left: 1px solid $border;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.input-attached .attached-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: $primary;   
+}
+
+.input-attached .attached-btn:hover {
+  background: $primary-soft;
+}
+/* Modern Toggle Switch */
+.status-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  height: 38px;
+}
+
+.toggle-text {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--erp-success);
+  &.is-inactive {
+    color: var(--erp-danger);
+  }
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  margin: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #d1d5db;
+  transition: .3s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .3s;
+}
+
+input:checked + .slider {
+  background-color: var(--erp-primary);
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+.slider.round {
+  border-radius: 24px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}

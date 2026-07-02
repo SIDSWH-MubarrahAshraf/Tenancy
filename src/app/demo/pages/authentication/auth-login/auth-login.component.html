@@ -1,0 +1,50 @@
+<div class="auth-main">
+  <div class="auth-wrapper v3">
+    <div class="auth-form">
+      <div class="auth-header d-flex justify-content-center w-100 mb-2">
+        <div class="d-flex align-items-center gap-2">
+          <div class="logo-icon-wrapper" style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, var(--erp-primary), var(--erp-border)); box-shadow: 0 4px 12px rgba(142, 36, 170, 0.3); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 22px; height: 22px;">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>
+          </div>
+          <span style="font-family: 'Poppins', 'Outfit', sans-serif; font-size: 24px; font-weight: 800; letter-spacing: 1.5px; color: var(--erp-primary); text-transform: uppercase;">Tanacy</span>
+        </div>
+      </div>
+      <div class="card my-5" style="border: 1px solid var(--erp-border); border-radius: var(--erp-radius); box-shadow: var(--erp-shadow-sm);">
+        <div class="card-body" style="padding: 30px;">
+          <div class="d-flex justify-content-center align-items-center mb-4">
+            <h3 class="mb-0" style="font-weight: 700; color: var(--erp-text); font-size: 20px;">Login to your account</h3>
+          </div>
+          <div class="form-group mb-3">
+            <label class="form-label" for="username" style="font-weight: 600;">Username / Email Address</label>
+            <input type="text" class="form-control" id="username" placeholder="Enter Username or Email" value="info@codedthemes.com" style="height: 44px; border-radius: var(--erp-control-radius); border: 1px solid var(--erp-border);" />
+          </div>
+          <div class="form-group mb-3">
+            <label class="form-label" for="password" style="font-weight: 600;">Password</label>
+            <input type="password" class="form-control" id="password" placeholder="Enter Password" value="123456789" style="height: 44px; border-radius: var(--erp-control-radius); border: 1px solid var(--erp-border);" />
+          </div>
+          <div class="d-flex mt-1 justify-content-between">
+            <div class="form-check">
+              <input class="form-check-input input-primary" type="checkbox" id="customCheckc1" checked="" style="cursor: pointer;" />
+              <label class="form-check-label text-muted" for="customCheckc1" style="cursor: pointer; font-size: 13px;">Keep me signed in</label>
+            </div>
+            <h5 class="text-secondary f-w-400" style="font-size: 13px;"><button type="button" class="btn btn-link text-secondary p-0 text-decoration-none" style="font-size: inherit; font-weight: inherit; line-height: inherit; vertical-align: baseline; color: var(--erp-primary) !important;">Forgot Password?</button></h5>
+          </div>
+          <div class="d-grid mt-4">
+            <button type="button" class="btn btn-primary" (click)="onLogin()" style="background: var(--erp-primary) !important; border-color: var(--erp-primary) !important; font-weight: 700; height: 44px; border-radius: var(--erp-control-radius);">Login</button>
+          </div>
+        </div>
+      </div>
+      <div class="auth-footer row">
+        <div class="col my-1">
+          <p class="m-0" style="font-size: 12px; color: var(--erp-muted);">
+            Copyright © Tanacy ERP
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

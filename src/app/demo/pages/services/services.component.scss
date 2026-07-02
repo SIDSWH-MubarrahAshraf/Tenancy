@@ -1,0 +1,578 @@
+$primary: var(--erp-primary, #8E24AA);
+$primary-soft: var(--erp-primary-soft, #F3E5F5);
+$accent: var(--erp-success, #2E7D32);
+$danger: var(--erp-danger, #C62828);
+$ink: var(--erp-text, #2f3542);
+$muted: var(--erp-muted, #6b7280);
+$line: var(--erp-border, #CFA5EA);
+$border: var(--erp-border, #CFA5EA);
+
+.services-shell {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 14px;
+  color: $ink;
+}
+
+svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.service-card {
+  border: 1px solid $line;
+  border-radius: var(--erp-radius);
+  background: var(--erp-card-bg);
+  box-shadow: var(--erp-shadow-sm);
+  overflow: hidden !important;
+}
+
+.service-card .services-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px 24px !important;
+  background: var(--erp-header-bg) !important;
+  border: none !important;
+  border-bottom: 1px solid var(--erp-border) !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+}
+
+.title-group,
+.header-actions,
+.service-actions,
+.service-actions div,
+.status-toggle,
+.icon-btn,
+.action-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.title-group {
+  gap: 12px;
+}
+
+.title-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background: $primary-soft;
+  color: $primary;
+}
+
+h1,
+h2 {
+  margin: 0;
+  font-weight: 800;
+}
+
+h1 {
+  font-size: 1.35rem;
+}
+
+h2 {
+  font-size: 1.02rem;
+}
+
+.header-actions {
+  gap: 8px;
+}
+
+.icon-btn,
+.status-toggle,
+.action-btn {
+  justify-content: center;
+  height: 38px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.icon-btn {
+  width: 38px;
+  min-width: 38px;
+  border: 1px solid $line;
+  background: #ffffff;
+  color: $primary;
+}
+
+.icon-btn.primary {
+  border-color: $primary;
+  background: $primary;
+  color: #ffffff;
+}
+
+/* Modern Toggle Switch */
+.status-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.toggle-text {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--erp-success);
+  &.is-inactive {
+    color: var(--erp-danger);
+  }
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  margin: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--erp-danger);
+  transition: .3s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .3s;
+}
+
+input:checked + .slider {
+  background-color: var(--erp-success);
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+.slider.round {
+  border-radius: 24px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.service-card {
+  margin-top: 12px;
+  padding: 0 !important;
+}
+
+/* ---------- Form Grid ---------- */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.field {
+  min-width: 0;
+  display: block;
+}
+
+.field span {
+  display: block;
+  margin-bottom: 5px;
+  color: $muted;
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.field b {
+  color: $danger;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  height: 38px;
+  padding: 0 11px;
+  border: 1px solid $line;
+  border-radius: 7px;
+  background: #fbfaff;
+  color: $ink;
+  font-size: 0.86rem;
+  outline: 0;
+  box-sizing: border-box;
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: $primary;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(142, 36, 170, 0.15);
+}
+
+.field small {
+  display: block;
+  margin-top: 4px;
+  color: $danger;
+  font-size: 0.72rem;
+}
+
+/* ---------- Account Row (Revenue / Recurring) ---------- */
+
+.account-row {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.account-panel {
+  display: flex;
+  align-items: stretch;
+  flex: 1 1 0;   // flex-basis 0 forces true proportional fill of the row
+  min-width: 0;  // no fixed min-width, so it can actually expand to fill space
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid $line;
+  border-radius: 8px;
+  background: #fbfaff;
+}
+
+/* label + attached input, sized like a normal field column */
+.field.account-code {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-width: 180px;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.field.account-code span {
+  display: block;
+  height: 19px;
+  margin: 0 0 6px 0;
+  padding: 0;
+  color: $muted;
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: 19px;
+  box-sizing: border-box;
+}
+
+/* input + search icon glued into one control */
+.input-attached {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: nowrap !important;
+  height: 38px;
+  border: 1px solid $line;
+  border-radius: var(--erp-control-radius);
+  overflow: hidden;
+  background: #fbfaff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-attached:focus-within {
+  border-color: $primary;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(142, 36, 170, 0.15);
+}
+
+.input-attached input {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  width: 1% !important;
+  height: 100% !important;
+  border: none !important;
+  border-radius: 0 !important;
+  outline: none !important;
+  padding: 0 11px !important;
+  font-size: 0.86rem !important;
+  background: transparent !important;
+  color: $ink !important;
+  box-shadow: none !important;
+  box-sizing: border-box !important;
+}
+
+.input-attached .attached-btn {
+  flex: 0 0 38px !important;
+  width: 38px !important;
+  border: none;
+  border-left: 1px solid $line;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.input-attached .attached-btn svg {
+  width: 16px;
+  height: 16px;
+  stroke: $primary;
+}
+
+.input-attached .attached-btn:hover {
+  background: $primary-soft;
+}
+
+/* resolved account name — spacer matches label height so both
+   columns stay pixel-aligned and account-name-col fills remaining space */
+.account-name-col {
+  display: flex;
+  flex-direction: column;
+  flex: 1.4 1 0;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.account-name-spacer {
+  display: block;
+  height: 19px;
+  margin: 0 0 6px 0;
+  padding: 0;
+  font-size: 0.74rem;
+  line-height: 19px;
+  visibility: hidden;
+  box-sizing: border-box;
+}
+
+.account-name {
+  display: flex;
+  align-items: center;
+  height: 38px;
+  box-sizing: border-box;
+  padding: 0 11px;
+  border: 1px solid $line;
+  border-radius: 7px;
+  background: #ffffff;
+  color: $muted;
+  font-size: 0.86rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recurring-panel {
+  margin-top: 12px;
+}
+
+.recurring-check {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 8px;
+  height: 42px;
+  padding: 0 13px;
+  border: 1px solid $line;
+  border-radius: 8px;
+  background: #ffffff;
+  color: $ink;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.recurring-check input {
+  width: 16px;
+  height: 16px;
+  accent-color: $primary;
+}
+
+/* ---------- Footer Actions ---------- */
+
+.service-actions {
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 10px;
+  box-shadow: none;
+}
+
+.service-actions div {
+  gap: 8px;
+}
+
+.action-btn {
+  gap: 7px;
+  padding: 0 14px;
+  border: none ;
+  font-size: 0.84rem;
+}
+
+.action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.action-btn.primary {
+  background: $primary;
+  color: #ffffff;
+}
+
+.action-btn.secondary {
+  background: #ffffff;
+  color: $ink;
+  border-color: $line;
+}
+
+.action-btn.danger {
+  background: #fff5f5;
+  color: $danger;
+  border-color: #ffd2d4;
+}
+
+/* ---------- Toast ---------- */
+
+.erp-toast {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 1055;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: $primary;
+  color: #ffffff;
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: 0.25s ease;
+}
+
+.erp-toast--show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.erp-toast--danger {
+  background: $danger;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 900px) {
+  .services-header,
+  .service-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .account-row {
+    flex-direction: column;
+  }
+
+  .account-panel {
+    flex-wrap: wrap;
+  }
+
+  .field.account-code,
+  .account-name-col,
+  .recurring-check,
+  .service-actions div,
+  .action-btn {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+}
+
+/* ---------- New row layout helpers ---------- */
+
+.service-card .card-body {
+  padding: 20px !important;
+}
+
+.form-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.form-row--single .field {
+  flex: 0 0 calc(50% - 6px);
+  max-width: calc(50% - 6px);
+}
+
+.form-row--two .field {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Service Type's attached Search + New buttons */
+.input-attached .attached-btn.primary {
+  background: $primary;
+  border-left-color: $primary;
+}
+
+.input-attached .attached-btn.primary svg {
+  stroke: #ffffff;
+}
+
+.input-attached .attached-btn.primary:hover {
+  background: var(--erp-primary-hover);
+}
+
+/* ---------- Recurring checkbox: align to the input row, not the whole panel ---------- */
+
+.account-row {
+  align-items: flex-end;   // bottom-align checkbox with input row instead of vertical center
+}
+
+.recurring-check {
+  align-self: flex-end;
+  height: 38px;             // match input height exactly (was 42px, mismatched)
+  margin-bottom: 0;
+}
+
+/* ---------- Footer moved inside the card ---------- */
+
+.card-actions {
+  display: flex;
+  justify-content: space-between !important;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px 24px 20px !important;
+  margin-top: 14px;
+  border-top: none;
+  background: transparent;
+}
+
+.card-actions > div {
+  display: flex;
+  gap: 8px;
+}

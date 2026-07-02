@@ -1,0 +1,538 @@
+// ERP Theme Styles
+// Primary Brand Color: #003a8c (Deep Navy Blue)
+$primary-color: #003a8c;
+$primary-hover: #002766;
+$primary-light: #f0f5ff;
+$primary-border: #adc6ff;
+$danger-color: #ff4d4f;
+$danger-hover: #d9363e;
+$danger-bg: #fff1f0;
+$danger-border: #ffccc7;
+$secondary-color: #8c8c8c;
+$secondary-hover: #595959;
+$secondary-light: #f5f5f5;
+$secondary-border: #d9d9d9;
+$text-main: #1f1f1f;
+$text-secondary: #595959;
+$text-muted: #8c8c8c;
+$bg-main: #f0f2f5;
+$card-bg: #ffffff;
+$border-radius: 8px;
+$transition-speed: 0.2s;
+
+// ==========================================================
+//   ERP Container
+// ==========================================================
+
+.erp-container {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: $text-main;
+  background-color: transparent;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+
+  // Page Header
+  .erp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid #e8e8e8;
+
+    .header-left {
+      .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: $text-muted;
+        margin-bottom: 0.35rem;
+
+        .divider {
+          color: $secondary-border;
+          font-weight: normal;
+        }
+
+        .active {
+          color: $primary-color;
+          font-weight: 600;
+        }
+      }
+
+      .page-title {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: $text-main;
+        margin: 0;
+      }
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+
+      .status-toggle-card {
+        background: #fafafa;
+        border-radius: 20px;
+        padding: 0.4rem 1rem;
+        transition: all $transition-speed ease;
+        display: flex;
+        align-items: center;
+
+        &:hover {
+          border-color: $primary-border;
+          background: $primary-light;
+        }
+
+        &.is-inactive {
+          border-color: $danger-border;
+          background: $danger-bg;
+
+          .status-label {
+            color: $danger-hover;
+          }
+
+          .erp-switch {
+            background-color: $danger-color;
+            border-color: $danger-color;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='%23fff' d='M10 2a8 8 0 100 16 8 8 0 000-16zm3.707 10.293a1 1 0 11-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 01-1.414-1.414L8.586 10 6.293 7.707a1 1 0 011.414-1.414L10 8.586l2.293-2.293a1 1 0 011.414 1.414L11.414 10l2.293 2.293z'/%3e%3c/svg%3e");
+          }
+        }
+
+        .status-label {
+          font-size: 0.85rem;
+          font-weight: 600;
+          color: $text-secondary;
+          cursor: pointer;
+          user-select: none;
+          transition: color $transition-speed ease;
+        }
+
+        .erp-switch {
+          width: 2.2rem;
+          height: 1.15rem;
+          margin-top: 0;
+          cursor: pointer;
+
+          &:focus {
+            box-shadow: none;
+          }
+
+          &:checked {
+            background-color: $danger-color;
+            border-color: $danger-color;
+          }
+        }
+      }
+    }
+  }
+
+  // Cards Layout
+  .erp-card {
+    background: $card-bg;
+    border: 1px solid #e8e8e8;
+    border-radius: $border-radius;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: box-shadow $transition-speed ease;
+
+    &:hover {
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    }
+
+    .erp-card-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid #f0f0f0;
+
+      .header-icon-title {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+
+        .icon-wrapper {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 38px;
+          height: 38px;
+          border-radius: 8px;
+          background: $primary-light;
+          color: $primary-color;
+          font-size: 1.25rem;
+          flex-shrink: 0;
+        }
+
+        .header-text-group {
+          .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: $text-main;
+            margin: 0 0 0.15rem 0;
+          }
+
+          .card-subtitle {
+            font-size: 0.75rem;
+            color: $text-muted;
+            display: block;
+          }
+        }
+      }
+    }
+
+    .erp-card-body {
+      padding: 1.5rem;
+    }
+  }
+
+  // Form Controls
+  .erp-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: $text-secondary;
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .erp-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+    .input-icon {
+      position: absolute;
+      left: 12px;
+      color: $text-muted;
+      font-size: 1.1rem;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color $transition-speed ease;
+    }
+
+    .erp-input,
+    .erp-select,
+    .erp-textarea {
+      padding-left: 38px;
+      border: 1px solid $secondary-border;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      height: 42px;
+      color: $text-main;
+      background-color: $card-bg;
+      transition: all $transition-speed ease;
+
+      &::placeholder {
+        color: #bfbfbf;
+      }
+
+      &:hover {
+        border-color: $secondary-color;
+      }
+
+      &:focus {
+        border-color: $primary-color;
+        box-shadow: 0 0 0 3px rgba(0, 58, 140, 0.12);
+        outline: none;
+
+        ~ .input-icon {
+          color: $primary-color;
+        }
+      }
+    }
+
+    .erp-textarea {
+      height: auto;
+      min-height: 90px;
+      padding-top: 10px;
+      resize: vertical;
+    }
+
+    .erp-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%238c8c8c' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 12px 10px;
+      padding-right: 38px;
+    }
+  }
+
+  // Action Footer
+  .erp-actions-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 1rem 0;
+
+    .left-actions,
+    .right-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .erp-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.55rem 1.25rem;
+      height: 40px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all $transition-speed ease;
+      border: 1px solid transparent;
+
+      i {
+        font-size: 1rem;
+      }
+
+      &-primary {
+        background-color: $primary-color;
+        color: #ffffff;
+
+        &:hover,
+        &:focus {
+          background-color: $primary-hover;
+          box-shadow: 0 0 0 3px rgba(0, 58, 140, 0.25);
+        }
+      }
+
+      &-secondary {
+        background-color: $card-bg;
+        color: $text-secondary;
+        border-color: $secondary-border;
+
+        &:hover,
+        &:focus {
+          color: $text-main;
+          border-color: $secondary-hover;
+          background-color: $secondary-light;
+          box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+        }
+      }
+
+      &-danger {
+        background-color: $danger-bg;
+        color: $danger-color;
+        border-color: $danger-border;
+
+        &:hover,
+        &:focus {
+          background-color: $danger-color;
+          color: #ffffff;
+          border-color: $danger-color;
+          box-shadow: 0 0 0 3px rgba(255, 77, 79, 0.25);
+        }
+      }
+    }
+  }
+}
+
+// ==========================================================
+//   Responsive
+// ==========================================================
+
+@media (max-width: 768px) {
+  .erp-container {
+    padding: 1rem;
+
+    .erp-header {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .header-right {
+        width: 100%;
+
+        .status-toggle-card {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    }
+
+    .erp-actions-footer {
+      flex-direction: column;
+      align-items: stretch;
+
+      .left-actions,
+      .right-actions {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .erp-btn {
+        width: 100%;
+      }
+    }
+  }
+}
+
+// ==========================================================
+//   Property Documents
+// ==========================================================
+
+.property-upload-card {
+  background: $card-bg;
+  border: 2px dashed $secondary-border;
+  border-radius: 12px;
+  padding: 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  // Single hover block — no duplicate plain CSS override
+  &:hover {
+    border-color: $primary-color;
+    background: $primary-light;
+    transform: translateY(-2px);
+  }
+}
+
+.upload-icon {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: $primary-light;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $primary-color;
+
+  svg {
+    width: 34px;
+    height: 34px;
+  }
+
+  i {
+    font-size: 34px;
+  }
+}
+
+.upload-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: $text-main;
+  margin-bottom: 6px;
+}
+
+.upload-subtitle {
+  color: $text-muted;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.erp-upload-btn {
+  padding: 11px 28px;
+  border-radius: 10px;
+  background: $primary-hover;
+  color: #ffffff;
+  border: none;
+  font-weight: 600;
+  transition: all $transition-speed ease;
+
+  &:hover {
+    background: $primary-color;
+    box-shadow: 0 0 0 3px rgba(0, 58, 140, 0.25);
+  }
+}
+
+.selected-file-card {
+  margin-top: 20px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  background: $primary-light;
+  border: 1px solid $primary-border;
+}
+
+.selected-file-name {
+  font-weight: 600;
+  color: $text-main;
+}
+
+.selected-file-size {
+  color: $text-muted;
+  font-size: 13px;
+}
+
+// Uploaded Documents Table
+.uploaded-documents {
+  margin-top: 35px;
+
+  .table {
+    margin-bottom: 0;
+  }
+
+  th {
+    font-weight: 600;
+    color: $text-secondary;
+    border-bottom: 2px solid $secondary-border;
+  }
+
+  td {
+    vertical-align: middle;
+  }
+}
+
+.document-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: $primary-light;
+  color: $primary-hover;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+
+  i {
+    font-size: 20px;
+  }
+}
+.btn svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-outline-primary {
+  color: #002766;
+  border-color: #002766;
+
+  &:hover {
+    background-color: #002766;
+    border-color: #002766;
+    color: #ffffff;
+  }
+
+  &:focus,
+  &:active {
+    background-color: #002766;
+    border-color: #002766;
+    color: #ffffff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 39, 102, 0.25);
+  }
+
+  svg {
+    stroke: currentColor;
+  }
+}

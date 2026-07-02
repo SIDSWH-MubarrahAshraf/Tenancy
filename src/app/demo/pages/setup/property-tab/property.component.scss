@@ -1,0 +1,315 @@
+$primary: var(--erp-primary, #8E24AA);
+$primary-soft: var(--erp-primary-soft, #F3E5F5);
+$accent: var(--erp-success, #2E7D32);
+$danger: var(--erp-danger, #C62828);
+$ink: var(--erp-text, #2f3542);
+$muted: var(--erp-muted, #6b7280);
+$line: var(--erp-border, #CFA5EA);
+
+.property-tab {
+  color: $ink;
+}
+
+svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.property-upload-card {
+  border: 1px solid $line;
+  border-radius: var(--erp-radius);
+  background: var(--erp-card-bg);
+  box-shadow: var(--erp-shadow-sm);
+}
+
+.property-card {
+  border: 1px solid $line;
+  border-radius: var(--erp-radius);
+  background: var(--erp-card-bg);
+  box-shadow: var(--erp-shadow-sm);
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.property-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(207, 165, 234, 0.25) !important;
+  background: var(--erp-header-bg) !important;
+  margin: 0 !important;
+  padding: 16px 20px !important;
+  border-radius: 0 !important;
+}
+
+.property-card .card-body {
+  padding: 20px !important;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 800;
+}
+
+.property-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.field {
+  min-width: 0;
+  display: block;
+}
+
+.field span {
+  display: block;
+  margin-bottom: 5px;
+  color: $muted;
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  height: 38px;
+  padding: 0 11px;
+  border: 1px solid $line;
+  border-radius: 7px;
+  background: #fbfaff;
+  color: $ink;
+  font-size: 0.86rem;
+  outline: 0;
+  box-sizing: border-box;
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: $primary;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(142, 36, 170, 0.15);
+}
+
+.document-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.property-upload-card {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 150px; gap: 10px; padding: 22px; text-align: center; cursor: pointer;
+  border: 2px dotted var(--erp-border) !important;
+  background: var(--erp-primary-soft) !important;
+  transition: all 200ms ease;
+}
+
+.property-upload-card:hover {
+  background: #ede2f7 !important;
+  border-color: var(--erp-primary) !important;
+}
+
+.upload-icon,
+.document-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: $primary-soft;
+  color: $primary;
+}
+
+.upload-icon {
+  width: 48px;
+  height: 48px;
+}
+
+.upload-title {
+  font-size: 0.98rem;
+  font-weight: 800;
+}
+
+.upload-subtitle {
+  margin-top: 3px;
+  color: $muted;
+  font-size: 0.82rem;
+}
+
+.erp-upload-btn {
+  justify-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  margin-top: 2px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 7px;
+  background: $primary;
+  color: #ffffff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.table-responsive {
+  overflow: auto;
+}
+
+.documents-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+}
+
+.documents-table th,
+.documents-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid $line;
+}
+
+.documents-table th {
+  color: $muted;
+  background: #f5f1fc;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.document-name {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.document-icon {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+}
+
+.actions-cell {
+  width: 112px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.icon-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  margin: 0 4px;
+  border: 1px solid var(--erp-info);
+  border-radius: 50% !important;
+  background: var(--erp-primary-soft);
+  color: var(--erp-info) !important;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.icon-action:hover {
+  background: var(--erp-info) !important;
+  color: #ffffff !important;
+  transform: scale(1.1);
+}
+
+.icon-action.success {
+  border-color: var(--erp-success) !important;
+  background: #ffffff !important;
+  color: var(--erp-success) !important;
+}
+
+.icon-action.success:hover {
+  background: var(--erp-success) !important;
+  color: #ffffff !important;
+  transform: scale(1.1) !important;
+}
+
+.empty-cell {
+  height: 62px;
+  color: $muted;
+  text-align: center;
+}
+
+.property-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.property-actions div {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  font-size: 0.84rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.action-btn.primary {
+  background: $primary;
+  color: #ffffff;
+}
+
+.action-btn.secondary {
+  background: #ffffff;
+  color: $ink;
+  border-color: $line;
+}
+
+.action-btn.danger {
+  background: #fff5f5;
+  color: $danger;
+  border-color: #ffd2d4;
+}
+@media (max-width: 980px) {
+  .property-form-grid {
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  }
+
+  .document-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .property-form-grid,
+  .document-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .property-actions,
+  .property-actions div {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+
+
+
