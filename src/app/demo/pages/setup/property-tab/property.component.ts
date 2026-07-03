@@ -90,6 +90,7 @@ export class PropertyComponent {
     this.propertyService.getProperties().subscribe({
       next: (response) => {
         this.loadingProperties = false;
+        console.log('Database properties response:', response);
         if (response && response.data) {
           this.dbProperties = response.data;
         } else if (Array.isArray(response)) {
@@ -160,27 +161,48 @@ export class PropertyComponent {
   // =========================
   // Property Methods
   // =========================
+  private cleanPropertyPayload(): any {
+    const property: any = {
+      propertyId: this.propertyId ? this.propertyId.trim() : '',
+      propertyName: this.propertyName ? this.propertyName.trim() : ''
+    };
+
+    const addOptionalString = (key: string, val: string) => {
+      if (val && val.trim()) {
+        property[key] = val.trim();
+      } else {
+        property[key] = null;
+      }
+    };
+
+    addOptionalString('propertyArea', this.propertyArea);
+    addOptionalString('propertyMakani', this.propertyMakani);
+    addOptionalString('propertyCountry', this.propertyCountry);
+    addOptionalString('propertyCity', this.propertyCity);
+    addOptionalString('propertyType', this.propertyType);
+    addOptionalString('plotNo', this.plotNo);
+    addOptionalString('landDmNumber', this.landDmNumber);
+    addOptionalString('others', this.others);
+    addOptionalString('remarks', this.remarks);
+
+    property.inactive = !!this.inactive;
+    property.inactiveDate = property.inactive ? new Date() : null;
+
+    return property;
+  }
+
   saveProperty(): void {
     if (!this.propertyId || !this.propertyId.trim()) {
       alert('Property ID is required.');
       return;
     }
 
-    const property = {
-      propertyId: this.propertyId,
-      propertyName: this.propertyName,
-      propertyArea: this.propertyArea,
-      propertyMakani: this.propertyMakani,
-      propertyCountry: this.propertyCountry,
-      propertyCity: this.propertyCity,
-      propertyType: this.propertyType,
-      plotNo: this.plotNo,
-      landDmNumber: this.landDmNumber,
-      others: this.others,
-      inactive: this.inactive,
-      inactiveDate: null,
-      remarks: this.remarks
-    };
+    if (!this.propertyName || !this.propertyName.trim()) {
+      alert('Property Name is required.');
+      return;
+    }
+
+    const property = this.cleanPropertyPayload();
 
     this.propertyService.saveProperty(property).subscribe({
       next: (response) => {
@@ -194,7 +216,9 @@ export class PropertyComponent {
         }
       },
       error: (error) => {
-        alert(`Error saving property: ${error.status || error.message}`);
+        console.error('Detailed error saving property:', error);
+        const errorMsg = error.error?.message || error.message || 'Internal Server Error';
+        alert(`Error saving property: ${errorMsg}`);
       }
     });
   }
@@ -210,21 +234,12 @@ export class PropertyComponent {
       return;
     }
 
-    const property = {
-      propertyId: this.propertyId,
-      propertyName: this.propertyName,
-      propertyArea: this.propertyArea,
-      propertyMakani: this.propertyMakani,
-      propertyCountry: this.propertyCountry,
-      propertyCity: this.propertyCity,
-      propertyType: this.propertyType,
-      plotNo: this.plotNo,
-      landDmNumber: this.landDmNumber,
-      others: this.others,
-      inactive: this.inactive,
-      inactiveDate: null,
-      remarks: this.remarks
-    };
+    if (!this.propertyName || !this.propertyName.trim()) {
+      alert('Property Name is required.');
+      return;
+    }
+
+    const property = this.cleanPropertyPayload();
 
     this.propertyService.updateProperty(this.propertyKey, property).subscribe({
       next: (response) => {
@@ -237,7 +252,9 @@ export class PropertyComponent {
         }
       },
       error: (error) => {
-        alert(`Error saving changes: ${error.status || error.message}`);
+        console.error('Detailed error updating property:', error);
+        const errorMsg = error.error?.message || error.message || 'Internal Server Error';
+        alert(`Error saving changes: ${errorMsg}`);
       }
     });
   }

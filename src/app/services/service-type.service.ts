@@ -1,52 +1,50 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { ServiceType } from '../models/service-type.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ServiceTypeService {
-
+  // Base API URL
   private readonly apiUrl = `${environment.apiUrl}/ty/service-types`;
-
-  // Paste your JWT token here temporarily
-  private readonly token = '';
 
   constructor(private http: HttpClient) {}
 
-  private getHeaders(): HttpHeaders {
-    return new HttpHeaders({
-      Authorization: `Bearer ${this.token}`
-    });
+  /**
+   * Get all service types
+   */
+  getAll(): Observable<any> {
+    return this.http.get<any>(this.apiUrl);
   }
 
-  getAll() {
-    return this.http.get(this.apiUrl, {
-      headers: this.getHeaders()
-    });
+  /**
+   * Get a single service type by ID
+   */
+  getById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
-  getById(id: number) {
-    return this.http.get(`${this.apiUrl}/${id}`, {
-      headers: this.getHeaders()
-    });
+  /**
+   * Create a new service type
+   */
+  create(model: ServiceType): Observable<any> {
+    return this.http.post<any>(this.apiUrl, model);
   }
 
-  create(model: any) {
-    return this.http.post(this.apiUrl, model, {
-      headers: this.getHeaders()
-    });
+  /**
+   * Update an existing service type by ID
+   */
+  update(id: number, model: ServiceType): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}`, model);
   }
 
-  update(id: number, model: any) {
-    return this.http.put(`${this.apiUrl}/${id}`, model, {
-      headers: this.getHeaders()
-    });
-  }
-
-  delete(id: number) {
-    return this.http.delete(`${this.apiUrl}/${id}`, {
-      headers: this.getHeaders()
-    });
+  /**
+   * Delete a service type by ID
+   */
+  delete(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
 }

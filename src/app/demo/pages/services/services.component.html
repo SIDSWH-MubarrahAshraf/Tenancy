@@ -1,5 +1,5 @@
 <div class="services-shell">
-  <form #serviceForm="ngForm" (ngSubmit)="onSave(serviceForm)" novalidate>
+  <form #serviceForm="ngForm" novalidate>
 
     <div class="service-card">
       <header class="services-header">
@@ -14,9 +14,9 @@
         </div>
 
         <div class="status-toggle-wrapper">
-          <span class="toggle-text" [class.is-inactive]="!model.isActive">{{ model.isActive ? 'Active' : 'Inactive' }}</span>
+          <span class="toggle-text" [class.is-inactive]="!isActive">{{ isActive ? 'Active' : 'Inactive' }}</span>
           <label class="switch" for="serviceActiveSwitch">
-            <input type="checkbox" id="serviceActiveSwitch" [checked]="model.isActive" (change)="model.isActive = !model.isActive">
+            <input type="checkbox" id="serviceActiveSwitch" [checked]="isActive" (change)="toggleActive()">
             <span class="slider round"></span>
           </label>
         </div>
@@ -47,9 +47,9 @@
           </label>
         </div>
 
-        <!-- ROW 2: Service Type (with attached Search + New) + Description -->
+        <!-- ROW 2: Service Type (with attached Search) + Description -->
         <div class="form-row form-row--two">
-          <label class="field">
+          <div class="field" style="position: relative; width: 100%;">
             <span>Service Type <b>*</b></span>
             <div class="input-attached">
               <input
@@ -62,20 +62,29 @@
                 required
                 maxlength="50"
               />
-              <button type="button" class="attached-btn" title="Search" (click)="onSearch()">
+              <button type="button" class="attached-btn" title="Search Services" (click)="toggleSearchPopup()">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <circle cx="11" cy="11" r="7" />
                   <path d="m16.5 16.5 4 4" />
                 </svg>
               </button>
-              <button type="button" class="attached-btn primary" title="New Service" (click)="onNew()">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M12 5v14M5 12h14" />
-                </svg>
-              </button>
             </div>
             <small *ngIf="serviceTypeRef.invalid && serviceTypeRef.touched">Service type is required.</small>
-          </label>
+
+            <!-- Search Results Dropdown/Popup (Shows only service type code) -->
+            <div *ngIf="showSearchPopup" class="search-popup-dropdown" style="position: absolute; top: 68px; left: 0; width: 100%; background: #ffffff; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 8px; box-shadow: 0 8px 24px rgba(142, 36, 170, 0.15); z-index: 1000; max-height: 250px; overflow-y: auto; padding: 8px;">
+              <div *ngIf="loadingServices" class="d-flex align-items-center justify-content-center py-4" style="color: var(--erp-primary); gap: 10px; font-weight: 600; font-size: 13px;">
+                <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="color: var(--erp-primary); width: 1.2rem; height: 1.2rem; border-width: 0.2em; margin: 0;"></div>
+                <span>Loading Services...</span>
+              </div>
+              <div *ngIf="!loadingServices && dbServices.length === 0" class="text-center py-3 text-muted" style="font-size: 13px;">
+                No services found.
+              </div>
+              <div *ngFor="let svc of dbServices" class="dropdown-item-select" (click)="selectServiceFromDb(svc)" style="padding: 8px 12px; border-radius: 6px; cursor: pointer; transition: background 0.2s, color 0.2s; font-size: 13px; color: var(--erp-text); margin-bottom: 2px;">
+                <strong>{{ svc.serviceTypeCode }}</strong>
+              </div>
+            </div>
+          </div>
 
           <label class="field">
             <span>Description</span>
@@ -161,27 +170,48 @@
 
       </div>
 
-      <!-- Footer now lives inside the SAME card -->
+      <!-- Footer Actions -->
       <div class="card-actions">
-        <button type="button" class="action-btn danger" [disabled]="isNew" (click)="onDelete()">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6" />
-          </svg>
-          Delete
-        </button>
-        <div>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="action-btn danger" [disabled]="!selectedServiceId" (click)="onDelete()">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6" />
+            </svg>
+            Delete
+          </button>
+          
           <button type="button" class="action-btn secondary" (click)="onClose()">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M18 6 6 18M6 6l12 12" />
             </svg>
             Close
           </button>
-          <button type="submit" class="action-btn primary">
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <!-- Clear Button -->
+          <button type="button" class="action-btn" (click)="clearForm()" style="background: #e3a008; border-color: #e3a008; color: #ffffff;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; margin-right: 4px;">
+              <path d="M21.5 2v6h-6" />
+              <path d="M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+            </svg>
+            Clear Form
+          </button>
+          
+          <!-- Save Button (POST) -->
+          <button type="button" class="action-btn primary" (click)="saveNewService(serviceForm)">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+            Save
+          </button>
+
+          <!-- Save Changes Button (PUT) -->
+          <button type="button" class="action-btn success" [disabled]="!selectedServiceId" (click)="saveChanges(serviceForm)" style="background: #2E7D32; border-color: #2E7D32; color: #ffffff;">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
               <path d="M17 21v-8H7v8M7 3v5h8" />
             </svg>
-            Save
+            Save Changes
           </button>
         </div>
       </div>
