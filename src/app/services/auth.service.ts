@@ -3,12 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { LoginRequest, LoginResponse } from '../models/login.model';
+import { ThemeService } from './theme.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private http = inject(HttpClient);
+  private themeService = inject(ThemeService);
   private readonly apiUrl = `${environment.apiUrl}/auth/login`;
 
   /**
@@ -32,7 +34,7 @@ export class AuthService {
   }
 
   /**
-   * Log out user by deleting stored JWT token
+   * Log out user by deleting stored JWT token and resetting theme
    */
   logout(): void {
     localStorage.removeItem('token');

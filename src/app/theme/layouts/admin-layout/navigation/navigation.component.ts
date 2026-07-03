@@ -3,6 +3,7 @@ import { Component, output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
+import { ThemeService } from 'src/app/services/theme.service';
 
 // project import
 import { SharedModule } from 'src/app/theme/shared/shared.module';
@@ -26,6 +27,7 @@ import {
 export class NavigationComponent {
   private iconService = inject(IconService);
   private authService = inject(AuthService);
+  private themeService = inject(ThemeService);
   private router = inject(Router);
 
   // media 1025 After Use Menu Open
@@ -40,9 +42,9 @@ export class NavigationComponent {
   selectedThemeId = 'sunset';
   availableThemes = [
     { id: 'sunset', name: 'Sunset Lavender', primaryColor: '#8E24AA', desc: 'Default theme' },
-    { id: 'emerald', name: 'Emerald Mint', primaryColor: '#00897B', desc: 'Fresh & clean' },
+    { id: 'emerald', name: 'Emerald Forest', primaryColor: '#00897B', desc: 'Fresh & clean' },
     { id: 'oceanic', name: 'Oceanic Blue', primaryColor: '#4292C6', desc: 'Calming blue' },
-    { id: 'carbon', name: 'Carbon Dark', primaryColor: '#546E7A', desc: 'Sleek dark theme' }
+    { id: 'amber', name: 'Golden Amber', primaryColor: '#E5A93C', desc: 'Warm & bright' }
   ];
 
   get username(): string {
@@ -56,6 +58,7 @@ export class NavigationComponent {
 
   onProfileClick(action: string): void {
     if (action === 'theme') {
+      this.selectedThemeId = this.themeService.getCurrentThemeId();
       this.showThemeModal = true;
     } else {
       console.log(`${action} Profile clicked`);
@@ -71,14 +74,15 @@ export class NavigationComponent {
   }
 
   applyThemeOption(): void {
+    this.themeService.setTheme(this.selectedThemeId);
     this.showThemeModal = false;
-    alert(`Theme "${this.availableThemes.find(t => t.id === this.selectedThemeId)?.name}" selected!`);
   }
 
   // Constructor
   constructor() {
     this.windowWidth = window.innerWidth;
     this.navCollapsedMob = false;
+    this.selectedThemeId = this.themeService.getCurrentThemeId();
 
     // Register icons used in the sidebar profile dropdown
     this.iconService.addIcon(

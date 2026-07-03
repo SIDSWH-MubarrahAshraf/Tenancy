@@ -42,7 +42,7 @@
 
       .auth-form {
         flex-direction: column;
-        background: linear-gradient(135deg, #f8f6ff 0%, #fbfaff 100%) !important;
+        background: linear-gradient(135deg, var(--erp-bg) 0%, var(--erp-white) 100%) !important;
         min-height: 100vh;
         padding: 24px;
         position: relative;

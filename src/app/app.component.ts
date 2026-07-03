@@ -1,9 +1,10 @@
 // angular import
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 // project import
 import { SpinnerComponent } from './theme/shared/components/spinner/spinner.component';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -12,6 +13,10 @@ import { SpinnerComponent } from './theme/shared/components/spinner/spinner.comp
   imports: [RouterOutlet, SpinnerComponent]
 })
 export class AppComponent {
-  // public props
   title = 'mantis-free-version';
+  private themeService = inject(ThemeService);
+
+  constructor() {
+    this.themeService.initTheme();
+  }
 }
