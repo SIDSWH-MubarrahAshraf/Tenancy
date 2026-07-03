@@ -1,11 +1,21 @@
 // Angular import
-import { Component, output } from '@angular/core';
+import { Component, output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
+import { AuthService } from 'src/app/services/auth.service';
 
 // project import
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { NavContentComponent } from './nav-content/nav-content.component';
+
+// Icon import
+import { IconService } from '@ant-design/icons-angular';
+import {
+  UserOutline,
+  EditOutline,
+  SettingOutline,
+  LogoutOutline
+} from '@ant-design/icons-angular/icons';
 
 @Component({
   selector: 'app-navigation',
@@ -14,6 +24,10 @@ import { NavContentComponent } from './nav-content/nav-content.component';
   styleUrls: ['./navigation.component.scss']
 })
 export class NavigationComponent {
+  private iconService = inject(IconService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
   // media 1025 After Use Menu Open
   NavCollapsedMob = output();
   SubmenuCollapse = output();
@@ -21,10 +35,60 @@ export class NavigationComponent {
   navCollapsedMob;
   windowWidth: number;
 
+  // Theme selector state
+  showThemeModal = false;
+  selectedThemeId = 'sunset';
+  availableThemes = [
+    { id: 'sunset', name: 'Sunset Lavender', primaryColor: '#8E24AA', desc: 'Default theme' },
+    { id: 'emerald', name: 'Emerald Mint', primaryColor: '#00897B', desc: 'Fresh & clean' },
+    { id: 'oceanic', name: 'Oceanic Blue', primaryColor: '#4292C6', desc: 'Calming blue' },
+    { id: 'carbon', name: 'Carbon Dark', primaryColor: '#546E7A', desc: 'Sleek dark theme' }
+  ];
+
+  get username(): string {
+    return localStorage.getItem('username') || 'admin';
+  }
+
+  onLogout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
+  onProfileClick(action: string): void {
+    if (action === 'theme') {
+      this.showThemeModal = true;
+    } else {
+      console.log(`${action} Profile clicked`);
+    }
+  }
+
+  closeThemeModal(): void {
+    this.showThemeModal = false;
+  }
+
+  selectThemeOption(t: any): void {
+    this.selectedThemeId = t.id;
+  }
+
+  applyThemeOption(): void {
+    this.showThemeModal = false;
+    alert(`Theme "${this.availableThemes.find(t => t.id === this.selectedThemeId)?.name}" selected!`);
+  }
+
   // Constructor
   constructor() {
     this.windowWidth = window.innerWidth;
     this.navCollapsedMob = false;
+
+    // Register icons used in the sidebar profile dropdown
+    this.iconService.addIcon(
+      ...[
+        UserOutline,
+        EditOutline,
+        SettingOutline,
+        LogoutOutline
+      ]
+    );
   }
 
   // public method

@@ -1,9 +1,4 @@
 <ul class="list-unstyled">
-  <li class="pc-h-item">
-    <a href="https://github.com/codedthemes/mantis-free-angular-admin-template" target="_blank" class="pc-head-link me-0 bg-gray-200">
-      <i antIcon type="github" theme="outline"></i>
-    </a>
-  </li>
   <li class="pc-h-item" ngbDropdown>
     <a href="javascript:void(0)" class="pc-head-link dropdown-toggle arrow-none me-0 bg-gray-200" data-bs-toggle="dropdown" ngbDropdownToggle>
       <i antIcon type="bell" theme="outline"></i>
@@ -87,79 +82,6 @@
       <div class="text-center py-2">
         <a href="javascript:void(0)" class="link-primary">View all</a>
       </div>
-    </div>
-  </li>
-  <li class="pc-h-item">
-    <a href="javascript:void(0)" class="pc-head-link me-0 logout-header-btn" (click)="onLogout()" title="Logout" style="display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50% !important; background-color: var(--bs-gray-200); color: var(--bs-body-color); transition: all 0.2s ease-in-out;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
-        <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
-        <line x1="12" y1="2" x2="12" y2="12" />
-      </svg>
-    </a>
-  </li>
-  <li class="pc-h-item header-user-profile" ngbDropdown>
-    <a href="javascript:void(0)" class="pc-head-link arrow-none me-0 d-flex align-items-center" ngbDropdownToggle>
-      <div class="user-avatar-circle me-2" style="width: 32px; height: 32px; border-radius: 50%; background: var(--erp-primary-soft); color: var(--erp-primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; border: 2px solid var(--erp-primary); flex-shrink: 0;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-          <circle cx="12" cy="7" r="4" />
-        </svg>
-      </div>
-      <span class="f-w-600">{{ username }}</span>
-    </a>
-    <div class="dropdown-user-profile dropdown-menu-end pc-h-dropdown" ngbDropdownMenu>
-      <div class="dropdown-header">
-        <div class="d-flex mb-1 align-items-center">
-          <div class="flex-shrink-0">
-            <div class="user-avatar-circle" style="width: 35px; height: 35px; border-radius: 50%; background: var(--erp-primary-soft); color: var(--erp-primary); display: flex; align-items: center; justify-content: center; font-weight: 700; border: 2px solid var(--erp-primary);">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
-            </div>
-          </div>
-          <div class="flex-grow-1 ms-3 text-start">
-            <h6 class="mb-0">{{ username }}</h6>
-            <span style="font-size: 11px; color: var(--erp-muted);">Administrator</span>
-          </div>
-          <a href="javascript:void(0)" class="bg-transparent" (click)="onLogout()" title="Logout"><i class="d-flex f-20" antIcon theme="outline" type="logout"></i></a>
-        </div>
-      </div>
-      <ul ngbNav #nav="ngbNav" class="drp-tabs nav-fill nav-tabs">
-        <li ngbNavItem="1">
-          <a ngbNavLink>
-            <i antIcon theme="outline" type="user" class="me-2"></i>
-            Profile
-          </a>
-          <ng-template ngbNavContent>
-            @for (task of profile; track task) {
-              <div>
-                <a href="javascript:void(0)" class="dropdown-item" (click)="task.icon === 'logout' ? onLogout() : null">
-                  <i class="text-muted" antIcon theme="outline" type="{{ task.icon }}"></i>
-                  <span>{{ task.title }}</span>
-                </a>
-              </div>
-            }
-          </ng-template>
-        </li>
-        <li ngbNavItem="2">
-          <a ngbNavLink>
-            <i class="me-2" antIcon theme="outline" type="setting"></i>
-            Setting
-          </a>
-          <ng-template ngbNavContent>
-            @for (task of setting; track task) {
-              <div>
-                <a href="javascript:void(0)" class="dropdown-item">
-                  <i class="text-muted" antIcon theme="outline" type="{{ task.icon }}"></i>
-                  <span>{{ task.title }}</span>
-                </a>
-              </div>
-            }
-          </ng-template>
-        </li>
-      </ul>
-      <div [ngbNavOutlet]="nav"></div>
     </div>
   </li>
 </ul>

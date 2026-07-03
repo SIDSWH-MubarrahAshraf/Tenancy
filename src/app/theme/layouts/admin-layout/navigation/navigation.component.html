@@ -1,6 +1,33 @@
 <nav>
-  <div class="navbar-wrapper">
-    <div class="m-header">
+  <!-- Custom styles for caret, hover effects, and modal animation -->
+  <style>
+    .sidebar-admin-profile .dropdown-toggle::after {
+      display: none !important;
+    }
+    .dropdown-user-profile .dropdown-item {
+      color: var(--erp-text, #2f3542) !important;
+      transition: background 0.2s, color 0.2s;
+    }
+    .dropdown-user-profile .dropdown-item:hover {
+      background: rgba(142, 36, 170, 0.08) !important;
+      color: var(--erp-primary) !important;
+    }
+    .theme-card-option {
+      transition: all 0.25s ease;
+    }
+    .theme-card-option:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(142, 36, 170, 0.15);
+      border-color: var(--erp-primary, #8E24AA) !important;
+    }
+    @keyframes themeModalFadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+
+  <div class="navbar-wrapper" style="display: flex; flex-direction: column; height: 100vh; background: var(--erp-sidebar-bg) !important;">
+    <div class="m-header" style="flex-shrink: 0;">
       <a href="javascript:void(0)" class="b-brand d-flex align-items-center gap-2">
         <div class="logo-icon-wrapper">
           <svg viewBox="0 0 24 24" aria-hidden="true" class="sidebar-logo-svg">
@@ -12,10 +39,112 @@
         <span class="brand-text">TENANCY</span>
       </a>
     </div>
-    <app-nav-content
-      (NavCollapsedMob)="navCollapseMob()"
-      (SubmenuCollapse)="navSubmenuCollapse()"
-      class="scroll-div w-100 compact"
-    />
+
+    <!-- Scrollable content list wrapper -->
+    <div style="flex-grow: 1; overflow-y: auto; min-height: 0;">
+      <app-nav-content
+        (NavCollapsedMob)="navCollapseMob()"
+        (SubmenuCollapse)="navSubmenuCollapse()"
+        class="scroll-div w-100 compact"
+      />
+    </div>
+
+    <!-- Admin Profile Section at the Bottom of Sidebar -->
+    <div class="sidebar-admin-profile" style="padding: 16px 20px; border-top: 1px solid rgba(255, 255, 255, 0.08) !important; background: var(--erp-sidebar-bg) !important; flex-shrink: 0;" ngbDropdown placement="top-start">
+      <a href="javascript:void(0)" class="d-flex align-items-center justify-content-between text-decoration-none w-100 dropdown-toggle" ngbDropdownToggle style="outline: none;">
+        <div class="d-flex align-items-center gap-2">
+          <!-- Avatar Icon matching the topbar's icon -->
+          <div class="user-avatar-circle" style="width: 32px; height: 32px; border-radius: 50%; background: var(--erp-primary-soft); color: var(--erp-primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; border: 2px solid var(--erp-primary); flex-shrink: 0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </div>
+          <!-- Username (Clean, premium font styling) -->
+          <span style="font-family: 'Poppins', 'Outfit', sans-serif !important; font-size: 14px !important; font-weight: 600 !important; color: #ffffff !important;">{{ username }}</span>
+        </div>
+        <!-- Settings/Chevron Icon in Light Purple -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px; color: var(--erp-border, #CFA5EA) !important;">
+          <path d="m6 9 6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </a>
+
+      <!-- Pop-up Menu: styled with light purple background same color as card headers -->
+      <div class="dropdown-user-profile dropdown-menu" ngbDropdownMenu style="min-width: 210px; margin-bottom: 8px; border-radius: 12px; border: 1px solid var(--erp-border, #CFA5EA) !important; box-shadow: 0 10px 30px rgba(142, 36, 170, 0.15); background: var(--erp-header-bg, #E9D8F5) !important; padding: 8px 0;">
+        <div class="dropdown-header" style="border-bottom: 1px solid var(--erp-border, #CFA5EA); padding: 8px 16px 12px 16px; margin-bottom: 6px;">
+          <div class="d-flex align-items-center">
+            <div class="flex-shrink-0">
+              <div class="user-avatar-circle" style="width: 36px; height: 36px; border-radius: 50%; background: #ffffff; color: var(--erp-primary); display: flex; align-items: center; justify-content: center; font-weight: 700; border: 2px solid var(--erp-primary);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </div>
+            </div>
+            <div class="flex-grow-1 ms-3 text-start">
+              <h6 class="mb-0" style="font-weight: 700; color: var(--erp-text, #2f3542); font-size: 14px;">{{ username }}</h6>
+              <span style="font-size: 11px; color: var(--erp-muted, #6b7280);">Administrator</span>
+            </div>
+          </div>
+        </div>
+        
+        <a href="javascript:void(0)" class="dropdown-item d-flex align-items-center gap-2" (click)="onProfileClick('view')" style="padding: 8px 16px; font-size: 13px;">
+          <i antIcon type="user" theme="outline" style="font-size: 14px;"></i>
+          <span>View Profile</span>
+        </a>
+        <a href="javascript:void(0)" class="dropdown-item d-flex align-items-center gap-2" (click)="onProfileClick('edit')" style="padding: 8px 16px; font-size: 13px;">
+          <i antIcon type="edit" theme="outline" style="font-size: 14px;"></i>
+          <span>Edit Profile</span>
+        </a>
+        <a href="javascript:void(0)" class="dropdown-item d-flex align-items-center gap-2" (click)="onProfileClick('theme')" style="padding: 8px 16px; font-size: 13px;">
+          <i antIcon type="setting" theme="outline" style="font-size: 14px;"></i>
+          <span>Theme Settings</span>
+        </a>
+        
+        <div style="border-top: 1px solid var(--erp-border, #CFA5EA); margin: 6px 0;"></div>
+        
+        <a href="javascript:void(0)" class="dropdown-item d-flex align-items-center gap-2 text-danger" (click)="onLogout()" style="padding: 8px 16px; font-size: 13px; font-weight: 700; background: transparent;">
+          <i antIcon type="logout" theme="outline" style="font-size: 14px; color: var(--erp-danger);"></i>
+          <span>Logout</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Theme Selector Popup Dialog -->
+  <div *ngIf="showThemeModal" class="theme-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+    <div class="theme-modal-container" style="width: 480px; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.25); border: 1px solid var(--erp-border, #CFA5EA); animation: themeModalFadeIn 0.3s ease;">
+      <!-- Modal Header (matches erp-card-header style) -->
+      <div class="modal-header-custom" style="background: var(--erp-header-bg, #E9D8F5); border-bottom: 1px solid var(--erp-border, #CFA5EA); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;">
+        <div class="d-flex align-items-center gap-2">
+          <i antIcon type="setting" theme="outline" style="font-size: 18px; color: var(--erp-primary);"></i>
+          <h5 style="margin: 0; font-size: 16px; font-weight: 700; color: var(--erp-text, #2f3542);">Select Project Theme</h5>
+        </div>
+        <button type="button" (click)="closeThemeModal()" style="background: transparent; border: none; font-size: 20px; font-weight: 700; color: var(--erp-text); cursor: pointer; outline: none;">&times;</button>
+      </div>
+      
+      <!-- Modal Body -->
+      <div class="modal-body-custom" style="padding: 24px; max-height: 400px; overflow-y: auto;">
+        <p style="font-size: 13px; color: var(--erp-muted, #6b7280); margin-bottom: 18px;">Choose a color palette to personalize the look and feel of the Tenancy platform.</p>
+        
+        <div class="theme-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+          <div *ngFor="let t of availableThemes" class="theme-card-option" (click)="selectThemeOption(t)" [style.border-color]="selectedThemeId === t.id ? 'var(--erp-primary)' : 'rgba(0,0,0,0.08)'" style="border: 2px solid; padding: 12px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px; background: #ffffff;">
+            <!-- Color dot -->
+            <div [style.background]="t.primaryColor" style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); flex-shrink: 0;"></div>
+            <div>
+              <div style="font-weight: 700; font-size: 13px; color: var(--erp-text);">{{ t.name }}</div>
+              <div style="font-size: 11px; color: var(--erp-muted);">{{ t.desc }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Modal Footer -->
+      <div class="modal-footer-custom" style="padding: 16px 20px; border-top: 1px solid rgba(0,0,0,0.08); display: flex; justify-content: flex-end; gap: 10px; background: #fafafa;">
+        <button type="button" class="btn btn-secondary" (click)="closeThemeModal()" style="font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 6px; border: 1px solid #ccc; background: #fff; color: #333;">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="applyThemeOption()" style="font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 6px; border: none; background: var(--erp-primary, #8E24AA); color: #fff;">Apply Theme</button>
+      </div>
+    </div>
   </div>
 </nav>
