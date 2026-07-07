@@ -532,3 +532,23 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+
+// Edit Button (Yellow/Warning hover override)
+.icon-action.edit-btn {
+  color: var(--erp-warning, #EF6C00) !important;
+  
+  &:hover {
+    background: #FFF3E0 !important; // Light warning soft background
+    color: #E65100 !important; // Darker warning icon color
+  }
+}
+
+// Delete Button (Red/Danger hover override)
+.icon-action.delete-btn {
+  color: var(--erp-danger, #C62828) !important;
+  
+  &:hover {
+    background: #FFEBEE !important; // Light danger soft background
+    color: #B71C1C !important; // Darker danger icon color
+  }
+}

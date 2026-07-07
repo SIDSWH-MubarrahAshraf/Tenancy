@@ -61,24 +61,6 @@ export const NavigationItems: NavigationItem[] = [
             breadcrumbs: false
           },
           {
-            id: 'department',
-            title: 'Department',
-            type: 'item',
-            url: '/user-management/department',
-            classes: 'nav-item',
-            icon: 'cluster',
-            breadcrumbs: false
-          },
-          {
-            id: 'designation',
-            title: 'Designation',
-            type: 'item',
-            url: '/user-management/designation',
-            classes: 'nav-item',
-            icon: 'idcard',
-            breadcrumbs: false
-          },
-          {
             id: 'document-number',
             title: 'Document Number',
             type: 'item',
