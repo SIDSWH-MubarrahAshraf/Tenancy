@@ -253,6 +253,111 @@ h2 {
   }
 }
 
+.search-popup-dropdown {
+  scrollbar-width: thin;
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--erp-border, #CFA5EA);
+    border-radius: 3px;
+  }
+}
+
+.dropdown-item-select {
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--erp-text, #2f3542);
+  transition: all 0.2s ease-in-out;
+  margin-bottom: 2px;
+  text-align: left;
+  border-bottom: none !important;
+
+  &:hover {
+    background-color: var(--erp-primary, #8E24AA) !important;
+    color: #ffffff !important;
+  }
+}
+
+.input-attached {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: nowrap !important;
+  height: 38px;
+  border: 1px solid $line;
+  border-radius: var(--erp-control-radius);
+  overflow: hidden;
+  background: #fbfaff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+}
+
+.input-attached:focus-within {
+  border-color: $primary;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(142, 36, 170, 0.15);
+}
+
+.input-attached input {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  width: 1% !important;
+  height: 100% !important;
+  border: none !important;
+  border-radius: 0 !important;
+  outline: none !important;
+  padding: 0 11px !important;
+  font-size: 0.86rem !important;
+  background: transparent !important;
+  color: $ink !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+}
+
+.input-attached .attached-btn {
+  width: 38px;
+  height: 100%;
+  border: none !important;
+  border-radius: 0 !important;
+  background: $primary;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0 !important;
+  margin: 0 !important;
+  flex-shrink: 0;
+  transition: opacity 0.2s;
+  
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+// Edit Button (Yellow/Warning hover override)
+.icon-action.edit-btn {
+  color: var(--erp-warning, #EF6C00) !important;
+  
+  &:hover {
+    background: #FFF3E0 !important; // Light warning soft background
+    color: #E65100 !important; // Darker warning icon color
+  }
+}
+
+// Delete Button (Red/Danger hover override)
+.icon-action.delete-btn {
+  color: var(--erp-danger, #C62828) !important;
+  
+  &:hover {
+    background: #FFEBEE !important; // Light danger soft background
+    color: #B71C1C !important; // Darker danger icon color
+  }
+}
+
 
 
 
