@@ -7,7 +7,12 @@
           <polyline points="22,6 12,13 2,6" />
         </svg>
       </div>
-      <h1>Company Email</h1>
+      <div class="d-flex align-items-center">
+        <h1>Company Email</h1>
+        <span *ngIf="statusMessage" class="text-success ms-3" style="font-size: 13px; font-weight: 600;">
+          {{ statusMessage }}
+        </span>
+      </div>
     </div>
   </header>
 
@@ -30,7 +35,8 @@
               name="emailHost"
               [(ngModel)]="email.emailHost"
               placeholder="smtp.gmail.com"
-              required>
+              required
+              [disabled]="isReadOnly || isSaving || isTesting">
           </div>
           <div class="col-lg-6">
             <label class="form-label required">Email Port</label>
@@ -40,7 +46,8 @@
               name="emailPort"
               [(ngModel)]="email.emailPort"
               placeholder="587"
-              required>
+              required
+              [disabled]="isReadOnly || isSaving || isTesting">
           </div>
         </div>
 
@@ -54,7 +61,8 @@
               name="emailUser"
               [(ngModel)]="email.emailUser"
               placeholder="Enter Email User"
-              required>
+              required
+              [disabled]="isReadOnly || isSaving || isTesting">
           </div>
           <div class="col-lg-6">
             <label class="form-label required">Email Password</label>
@@ -64,13 +72,14 @@
               name="emailPassword"
               [(ngModel)]="email.emailPassword"
               placeholder="Enter Password"
-              required>
+              required
+              [disabled]="isReadOnly || isSaving || isTesting">
           </div>
         </div>
 
         <!-- ROW 3 -->
-        <div class="row g-4 mt-1">
-          <div class="col-lg-6">
+        <div class="row g-4 mt-1 align-items-end">
+          <div class="col-lg-5">
             <label class="form-label required">Email From Address</label>
             <input
               type="email"
@@ -78,29 +87,60 @@
               name="emailFromAddress"
               [(ngModel)]="email.emailFromAddress"
               placeholder="noreply@company.com"
-              required>
+              required
+              [disabled]="isReadOnly || isSaving || isTesting">
           </div>
-          <div class="col-lg-6">
-            <label class="form-label">Email CC Address</label>
+          <div class="col-lg-5">
+            <label class="form-label required">From Name (Display Name)</label>
             <input
-              type="email"
+              type="text"
               class="form-control"
               name="emailCcAddress"
               [(ngModel)]="email.emailCcAddress"
-              placeholder="accounts@company.com">
+              placeholder="e.g. System Admin"
+              required
+              [disabled]="isReadOnly || isSaving || isTesting">
+          </div>
+          <div class="col-lg-2">
+            <label class="form-label d-block mb-2">Enable SSL</label>
+            <div class="status-toggle-wrapper" style="height: 38px;">
+              <label class="switch" for="emailSslSwitch">
+                <input
+                  type="checkbox"
+                  id="emailSslSwitch"
+                  name="enableSsl"
+                  [(ngModel)]="email.enableSsl"
+                  [disabled]="isReadOnly || isSaving || isTesting"
+                >
+                <span class="slider round"></span>
+              </label>
+            </div>
           </div>
         </div>
 
         <!-- Settings buttons directly here -->
         <div class="text-end mt-4 pt-3 border-top" style="border-color: rgba(207, 165, 234, 0.25) !important;">
-          <button type="submit" class="btn erp-btn-success me-2">
+          <button *ngIf="!email.id" type="submit" [disabled]="isSaving || isTesting" class="btn erp-btn-success me-2">
             <svg viewBox="0 0 24 24" aria-hidden="true" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5;"><path d="M12 5v14M5 12h14"></path></svg>
-            Add
+            {{ isSaving ? 'Adding...' : 'Add' }}
           </button>
-          <button type="button" class="btn erp-btn-info" (click)="updateEmailSetup()">
-            <svg viewBox="0 0 24 24" aria-hidden="true" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5;"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
-            Update
-          </button>
+          
+          <!-- Edit/Update Actions -->
+          <ng-container *ngIf="email.id">
+            <button *ngIf="isReadOnly" type="button" [disabled]="isSaving || isTesting" class="btn erp-btn-info me-2" (click)="enableEditing()">
+              <svg viewBox="0 0 24 24" aria-hidden="true" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5;"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
+              Update
+            </button>
+            
+            <button *ngIf="!isReadOnly" type="button" [disabled]="isSaving || isTesting" class="btn erp-btn-success me-2" (click)="updateEmailSetup()">
+              <svg viewBox="0 0 24 24" aria-hidden="true" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><path d="M17 21v-8H7v8M7 3v5h8"></path></svg>
+              {{ isSaving ? 'Saving...' : 'Save Changes' }}
+            </button>
+            
+            <button *ngIf="!isReadOnly" type="button" [disabled]="isSaving || isTesting" class="btn btn-secondary" (click)="cancelEditing()">
+              Cancel
+            </button>
+          </ng-container>
         </div>
 
         <div style="margin: 28px 0;"></div>
@@ -120,12 +160,13 @@
                   class="form-control"
                   name="testEmail"
                   [(ngModel)]="email.testEmail"
-                  placeholder="Enter Test Email Address">
+                  placeholder="Enter Test Email Address"
+                  [disabled]="isSaving || isTesting">
               </div>
               <div class="col-lg-3">
-                <button type="button" class="btn erp-btn-primary w-100" (click)="sendTestEmail()">
+                <button type="button" [disabled]="isSaving || isTesting" class="btn erp-btn-primary w-100" (click)="sendTestEmail()">
                   <svg viewBox="0 0 24 24" aria-hidden="true" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5;"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg>
-                  Send Test Email
+                  {{ isTesting ? 'Sending...' : 'Send Test Email' }}
                 </button>
               </div>
             </div>

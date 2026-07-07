@@ -304,39 +304,7 @@ export class UsersComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  // ============================================
-  // DELETE USER
-  // ============================================
-  deleteUser(row?: any): void {
-    const userToDelete = row || this.usersList.find(u => u.id === this.editingUserId);
-    if (!userToDelete || !userToDelete.id) {
-      alert('Please select a user from the table first to delete.');
-      return;
-    }
 
-    if (confirm(`Delete user "${userToDelete.userName}"?`)) {
-      this.userService.delete(userToDelete.id).subscribe({
-        next: () => {
-          this.ngZone.run(() => {
-            // Optimistic local delete
-            this.usersList = this.usersList.filter(u => u.id !== userToDelete.id);
-            this.filteredUsers = [...this.usersList];
-            this.resetForm();
-            this.isEditMode = false;
-            this.editingUserId = null;
-            this.cdr.detectChanges();
-          });
-        },
-        error: (err: any) => {
-          this.ngZone.run(() => {
-            console.error('Failed to delete user:', err);
-            alert(err.error?.message || 'Failed to delete user.');
-            this.cdr.detectChanges();
-          });
-        }
-      });
-    }
-  }
 
   onSearch(): void {
     console.log('Search Email clicked');
