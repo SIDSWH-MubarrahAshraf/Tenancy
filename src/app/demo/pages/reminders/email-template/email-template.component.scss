@@ -1,0 +1,320 @@
+.modal-content {
+  border: 1px solid var(--erp-border) !important;
+  border-radius: var(--erp-radius) !important;
+  background: var(--erp-card-bg) !important;
+  box-shadow: var(--erp-shadow) !important;
+  overflow: hidden;
+  animation: popup 0.25s ease;
+}
+
+.modal-header {
+  background: var(--erp-header-bg);
+  color: var(--erp-text);
+  border-bottom: 1px solid var(--erp-border);
+  padding: 14px 20px;
+}
+
+.modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--erp-text);
+}
+
+.modal-body {
+  padding: 14px 20px !important;
+}
+
+.modal-footer {
+  border-top: 1px solid var(--erp-border);
+  padding: 14px 20px;
+  background: var(--erp-bg);
+}
+
+.btn-close {
+  filter: grayscale(1) invert(0.5);
+}
+
+@keyframes popup {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.full-table {
+  width: 100%;
+  min-width: 100%;
+}
+
+.erp-table th,
+.erp-table td {
+  padding: 14px 18px !important;
+  vertical-align: middle;
+}
+
+/* Edit Button Warning override */
+.icon-action.edit-btn {
+  color: var(--erp-warning, #EF6C00) !important;
+  
+  &:hover {
+    background: #FFF3E0 !important;
+    color: #E65100 !important;
+  }
+}
+
+/* Layout Columns */
+@media (min-width: 992px) {
+  .border-end-desktop {
+    border-right: 1px solid var(--erp-border);
+  }
+}
+
+/* Code Editor Textarea */
+.html-code-textarea {
+  font-family: var(--bs-font-monospace), monospace;
+  font-size: 12.5px;
+  line-height: 1.5;
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  border: 1px solid var(--erp-border) !important;
+  border-radius: var(--erp-control-radius);
+  padding: 12px;
+  resize: vertical;
+}
+
+/* Status Button Toggle */
+.status-btn-toggle {
+  border: 1px solid var(--erp-border);
+  border-radius: var(--erp-control-radius);
+  padding: 4px;
+  background: #fbfaff;
+  max-width: 280px;
+}
+
+.status-btn-toggle .btn {
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 200ms ease;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.active-status-btn {
+  background: #edfdf3 !important;
+  color: #188553 !important;
+  box-shadow: 0 2px 4px rgba(24, 133, 83, 0.1);
+}
+
+.active-danger-btn {
+  background: #fff5f5 !important;
+  color: #c62828 !important;
+  box-shadow: 0 2px 4px rgba(198, 40, 40, 0.1);
+}
+
+.inactive-status-btn {
+  background: transparent !important;
+  color: var(--erp-muted, #8a8a8a) !important;
+}
+
+.inactive-status-btn:hover {
+  background: #f1f0f7 !important;
+  color: var(--erp-text) !important;
+}
+
+/* Email Live Preview window */
+.email-preview-window {
+  border: 1px solid var(--erp-border);
+  border-radius: var(--erp-radius);
+  background: #ffffff;
+  box-shadow: var(--erp-shadow-sm);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 440px;
+  max-height: 480px;
+  overflow: hidden;
+}
+
+.preview-browser-header {
+  background: #f1f5f9;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.browser-circles {
+  display: flex;
+  gap: 6px;
+}
+
+.circle {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.circle-red { background: #ff5f56; }
+.circle-yellow { background: #ffbd2e; }
+.circle-green { background: #27c93f; }
+
+.browser-address-bar {
+  flex-grow: 1;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-mail-meta {
+  padding: 12px 20px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #fafafc;
+  font-size: 12px;
+}
+
+.meta-row {
+  margin-bottom: 6px;
+  display: flex;
+  gap: 8px;
+}
+
+.meta-row:last-child {
+  margin-bottom: 0;
+}
+
+.meta-label {
+  color: #64748b;
+  font-weight: 500;
+  width: 55px;
+}
+
+.meta-val {
+  color: #334155;
+}
+
+.preview-mail-content-area {
+  padding: 20px;
+  overflow-y: auto;
+  flex-grow: 1;
+  background: #fbfbfe;
+}
+
+/* Overrides for Add Template button */
+.erp-btn-success {
+  background: #2E7D32 !important; /* Rich forest green */
+  border-color: #2E7D32 !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(46, 125, 50, 0.15);
+  display: inline-flex;
+  align-items: center;
+  
+  &:hover:not(:disabled) {
+    background: #1B5E20 !important; /* Darker green on hover */
+    border-color: #1B5E20 !important;
+    box-shadow: 0 6px 16px rgba(27, 94, 32, 0.25);
+  }
+}
+
+/* Category-specific styling for template grid names and badges */
+.template-title {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.badge-template {
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+}
+
+/* Theme styling mapping to settings */
+.title-leaseexpiry { color: #a16207 !important; }
+.badge-leaseexpiry { background: #fffbeb !important; border-color: #fef08a !important; color: #a16207 !important; }
+
+.title-rentdue { color: #b91c1c !important; }
+.badge-rentdue { background: #fee2e2 !important; border-color: #fecaca !important; color: #b91c1c !important; }
+
+.title-maintenance { color: #1d4ed8 !important; }
+.badge-maintenance { background: #dbeafe !important; border-color: #bfdbfe !important; color: #1d4ed8 !important; }
+
+.title-contractrenewal { color: #15803d !important; }
+.badge-contractrenewal { background: #f0fdf4 !important; border-color: #bbf7d0 !important; color: #15803d !important; }
+
+.title-inspection { color: #4338ca !important; }
+.badge-inspection { background: #e0e7ff !important; border-color: #c7d2fe !important; color: #4338ca !important; }
+
+.title-default { color: var(--erp-text) !important; }
+.badge-default { background: var(--erp-primary-soft) !important; color: var(--erp-primary) !important; }
+
+/* Premium iOS Switch styling inside dialog */
+.ios-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  margin-bottom: 0;
+}
+
+.ios-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.ios-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--erp-danger, #C62828);
+  transition: .3s;
+  border-radius: 24px;
+}
+
+.ios-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+input:checked + .ios-slider {
+  background-color: var(--erp-success, #2E7D32); /* active green */
+}
+
+input:checked + .ios-slider:before {
+  transform: translateX(20px);
+}

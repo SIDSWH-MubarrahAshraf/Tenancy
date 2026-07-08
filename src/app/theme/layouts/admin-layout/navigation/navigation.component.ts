@@ -41,7 +41,7 @@ export class NavigationComponent {
   showThemeModal = false;
   selectedThemeId = 'sunset';
   availableThemes = [
-    { id: 'sunset', name: 'Sunset Lavender', primaryColor: '#8E24AA', desc: 'Default theme' },
+    { id: 'sunset', name: 'Sunset Indigo', primaryColor: '#30277C', desc: 'Default theme' },
     { id: 'emerald', name: 'Emerald Forest', primaryColor: '#00897B', desc: 'Fresh & clean' },
     { id: 'oceanic', name: 'Oceanic Blue', primaryColor: '#4292C6', desc: 'Calming blue' },
     { id: 'amber', name: 'Golden Amber', primaryColor: '#E5A93C', desc: 'Warm & bright' }

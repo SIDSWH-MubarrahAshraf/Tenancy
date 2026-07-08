@@ -29,7 +29,7 @@ svg {
   border-radius: var(--erp-radius);
   background: var(--erp-card-bg);
   box-shadow: var(--erp-shadow-sm);
-  overflow: hidden !important;
+  overflow: visible !important;
 }
 
 .service-card .services-header {
@@ -575,4 +575,75 @@ input:checked + .slider:before {
 .card-actions > div {
   display: flex;
   gap: 8px;
+}
+
+/* Custom Dropdown Button & Popup Selector styling */
+.custom-dropdown-btn {
+  width: 100% !important;
+  height: 38px !important;
+  padding: 0 11px !important;
+  border: 1px solid var(--erp-border, #CFA5EA) !important;
+  border-radius: 7px !important;
+  background: #fbfaff !important;
+  color: var(--erp-text, #2f3542) !important;
+  font-size: 0.86rem !important;
+  text-align: left !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  cursor: pointer !important;
+  margin: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease;
+  
+  &:hover:not(:disabled) {
+    border-color: var(--erp-primary, #8E24AA) !important;
+    background: #ffffff !important;
+  }
+  
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+}
+
+.chevron-down-svg {
+  width: 14px !important;
+  height: 14px !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 2.5 !important;
+  margin-left: 8px !important;
+  flex-shrink: 0;
+}
+
+.custom-dropdown-popup {
+  position: absolute !important;
+  top: 43px !important;
+  left: 0 !important;
+  width: 100% !important;
+  background: #ffffff !important;
+  border: 1px solid var(--erp-border, #CFA5EA) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 24px rgba(142, 36, 170, 0.12) !important;
+  z-index: 1050 !important;
+  padding: 6px !important;
+  max-height: 250px !important;
+  overflow-y: auto !important;
+}
+
+.dropdown-item-select {
+  padding: 9px 12px !important;
+  font-size: 0.85rem !important;
+  font-weight: 500 !important;
+  color: var(--erp-text, #2f3542) !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease;
+  
+  &:hover {
+    background: var(--erp-primary, #8E24AA) !important;
+    color: #ffffff !important;
+  }
 }

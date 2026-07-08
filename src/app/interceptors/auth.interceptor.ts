@@ -1,19 +1,74 @@
-import { HttpInterceptorFn } from '@angular/common/http';
+import { HttpInterceptorFn, HttpErrorResponse, HttpRequest, HttpHandlerFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { AuthService } from '../services/auth.service';
+import { catchError, switchMap, filter, take, throwError, BehaviorSubject } from 'rxjs';
+
+let isRefreshing = false;
+const refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const token = localStorage.getItem('token');
-  console.log('authInterceptor - Intercepting request:', req.url);
-  console.log('authInterceptor - Token found in localStorage:', token ? 'YES' : 'NO');
+  const authService = inject(AuthService);
+  const token = authService.getToken();
   
+  let authReq = req;
   if (token) {
-    const clonedRequest = req.clone({
+    authReq = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log('authInterceptor - Attached Bearer Authorization header.');
-    return next(clonedRequest);
   }
-  
-  return next(req);
+
+  return next(authReq).pipe(
+    catchError((error) => {
+      // If unauthorized, attempt to perform a silent refresh
+      if (error instanceof HttpErrorResponse && error.status === 401) {
+        return handle401Error(authReq, next, authService);
+      }
+      return throwError(() => error);
+    })
+  );
 };
+
+function handle401Error(req: HttpRequest<any>, next: HttpHandlerFn, authService: AuthService) {
+  if (!isRefreshing) {
+    isRefreshing = true;
+    refreshTokenSubject.next(null);
+
+    return authService.refreshToken().pipe(
+      switchMap((response: any) => {
+        isRefreshing = false;
+        const newToken = response?.data?.accessToken || response?.accessToken;
+        if (newToken) {
+          refreshTokenSubject.next(newToken);
+          return next(req.clone({
+            setHeaders: {
+              Authorization: `Bearer ${newToken}`
+            }
+          }));
+        }
+        
+        authService.logout();
+        return throwError(() => new Error('Refresh token did not return an access token'));
+      }),
+      catchError((err) => {
+        isRefreshing = false;
+        authService.logout();
+        return throwError(() => err);
+      })
+    );
+  } else {
+    // If a refresh is already in progress, wait for the new token in the subject queue
+    return refreshTokenSubject.pipe(
+      filter(token => token !== null),
+      take(1),
+      switchMap((token) => {
+        return next(req.clone({
+          setHeaders: {
+            Authorization: `Bearer ${token}`
+          }
+        }));
+      })
+    );
+  }
+}

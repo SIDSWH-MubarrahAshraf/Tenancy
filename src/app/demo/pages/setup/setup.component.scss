@@ -29,7 +29,7 @@ $panel: var(--erp-card-bg, #FCFBFE);
   gap: 16px;
   align-items: center;
   flex-wrap: nowrap;
-  padding: 16px 18px;
+  padding: 12px 24px;
   background: linear-gradient(180deg, #ffffff 0%, #fbf9ff 100%);
 }
 
@@ -51,8 +51,8 @@ $panel: var(--erp-card-bg, #FCFBFE);
 .title-icon {
   display: grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
+  width: 36px;
+  height: 36px;
   border-radius: 8px;
   background: $primary-soft;
   color: $primary;
@@ -71,8 +71,8 @@ svg {
 
 h1 {
   margin: 0;
-  font-size: 1.35rem;
-  font-weight: 800;
+  font-size: 1.15rem;
+  font-weight: 700;
 }
 
 /* ---------- Header Controls ---------- */
@@ -238,11 +238,11 @@ h1 {
 }
 
 input:checked + .slider {
-  background-color: var(--erp-danger);
+  background-color: var(--erp-success);
 }
 
 input:not(:checked) + .slider {
-  background-color: var(--erp-success);
+  background-color: var(--erp-danger);
 }
 
 input:checked + .slider:before {

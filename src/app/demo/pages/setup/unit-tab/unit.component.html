@@ -175,54 +175,59 @@
       </label>
     </div>
 
-    <div class="table-responsive">
-      <table class="unit-table">
-        <thead>
-          <tr>
-            <th>Line</th>
-            <th>Unit ID</th>
-            <th>Unit No</th>
-            <th>Block</th>
-            <th>Floor</th>
-            <th>Type</th>
-            <th>Purpose</th>
-            <th class="numeric">AC Charge</th>
-            <th class="numeric">Elec. Charge</th>
-            <th class="action-cell">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let row of filteredUnits">
-            <td>{{ row.line }}</td>
-            <td><span class="unit-badge">{{ row.unitId }}</span></td>
-            <td>{{ row.unitNo }}</td>
-            <td>{{ row.block || '-' }}</td>
-            <td>{{ row.floor || '-' }}</td>
-            <td><span class="type-tag" [class]="row.unitType?.toLowerCase()">{{ row.unitType || '-' }}</span></td>
-            <td>{{ row.unitPurpose || '-' }}</td>
-            <td class="numeric">{{ row.acCharge | number:'1.2-2' }}</td>
-            <td class="numeric">{{ row.electricityCharge | number:'1.2-2' }}</td>
-            <td class="action-cell">
-              <div class="d-flex gap-2 justify-content-end">
-                <button type="button" class="icon-action edit-btn" (click)="editUnit(row)" title="Edit Unit">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
-                    <path d="M12 20h9" />
-                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-                  </svg>
-                </button>
-                <button type="button" class="icon-action delete-btn" (click)="deleteUnit(row.line)" title="Delete Unit">
-                  <svg viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.5;">
-                    <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6" />
-                  </svg>
-                </button>
-              </div>
-            </td>
-          </tr>
-          <tr *ngIf="filteredUnits.length === 0">
-            <td colspan="10" class="empty-cell">No units found. Enter a Property ID above to load units.</td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- Space on all 4 sides wrapper containing the nested table card -->
+    <div class="px-4 pb-4 pt-4">
+      <div class="table-card border rounded shadow-sm bg-white overflow-hidden">
+        <div class="table-responsive">
+          <table class="unit-table">
+            <thead>
+              <tr>
+                <th>#Sr</th>
+                <th>Unit ID</th>
+                <th>Unit No</th>
+                <th>Block</th>
+                <th>Floor</th>
+                <th>Type</th>
+                <th>Purpose</th>
+                <th class="numeric">AC Charge</th>
+                <th class="numeric">Elec. Charge</th>
+                <th class="action-cell">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of filteredUnits">
+                <td>{{ row.line }}</td>
+                <td><span class="unit-badge">{{ row.unitId }}</span></td>
+                <td>{{ row.unitNo }}</td>
+                <td>{{ row.block || '-' }}</td>
+                <td>{{ row.floor || '-' }}</td>
+                <td><span class="type-tag" [class]="row.unitType?.toLowerCase()">{{ row.unitType || '-' }}</span></td>
+                <td>{{ row.unitPurpose || '-' }}</td>
+                <td class="numeric">{{ row.acCharge | number:'1.2-2' }}</td>
+                <td class="numeric">{{ row.electricityCharge | number:'1.2-2' }}</td>
+                <td class="action-cell">
+                  <div class="d-flex gap-2 justify-content-end">
+                    <button type="button" class="icon-action edit-btn" (click)="editUnit(row)" title="Edit Unit">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
+                        <path d="M12 20h9" />
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                      </svg>
+                    </button>
+                    <button type="button" class="icon-action delete-btn" (click)="deleteUnit(row.line)" title="Delete Unit">
+                      <svg viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.5;">
+                        <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6" />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="filteredUnits.length === 0">
+                <td colspan="10" class="empty-cell">No units found. Enter a Property ID above to load units.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </section>
 </div>

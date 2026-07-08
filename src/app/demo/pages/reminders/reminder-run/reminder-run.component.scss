@@ -1,0 +1,124 @@
+/* Engine Graphic Circle Indicator */
+.engine-graphic {
+  display: flex;
+  justify-content: center;
+}
+
+.pulse-circle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--erp-primary-soft, #f1f0f7);
+  color: var(--erp-primary, #6c5ce7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.4);
+  
+  &.spinning {
+    animation: pulse 1.5s infinite;
+    
+    .engine-icon {
+      animation: spin 2s linear infinite;
+    }
+  }
+}
+
+.engine-icon {
+  width: 32px;
+  height: 32px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+
+/* Animations */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(108, 92, 231, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(108, 92, 231, 0);
+  }
+}
+
+/* Custom Alert Layouts */
+.result-alert {
+  border-radius: var(--erp-radius, 8px);
+  border: 1px solid transparent;
+  font-size: 13.5px;
+  
+  &.success-alert {
+    background: #edfdf3;
+    border-color: #c3f2d2;
+  }
+  
+  &.danger-alert {
+    background: #fff5f5;
+    border-color: #ffd1d1;
+  }
+}
+
+.alert-heading {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.alert-desc {
+  color: #475569;
+}
+
+.alert-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  
+  &.success {
+    background: #c3f2d2;
+    color: #188553;
+  }
+  
+  &.danger {
+    background: #ffd1d1;
+    color: #c62828;
+  }
+}
+
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+  border-width: 0.2em;
+}
+
+/* Primary Button Large styling matching ERP theme */
+.erp-btn-primary {
+  background: var(--erp-primary, #6c5ce7) !important;
+  border-color: var(--erp-primary, #6c5ce7) !important;
+  color: #ffffff !important;
+  border-radius: var(--erp-control-radius, 6px);
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: var(--erp-shadow-sm);
+  
+  &:hover:not(:disabled) {
+    background: var(--erp-primary-hover, #5b4dbf) !important;
+    border-color: var(--erp-primary-hover, #5b4dbf) !important;
+  }
+  
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+}

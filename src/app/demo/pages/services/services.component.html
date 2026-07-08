@@ -26,25 +26,41 @@
 
         <!-- ROW 1: Service Mode alone -->
         <div class="form-row form-row--single">
-          <label class="field">
+          <div class="field">
             <span>Service Mode <b>*</b></span>
-            <select
-              id="serviceMode"
+            <div style="position: relative; width: 100%;">
+              <button
+                type="button"
+                (click)="toggleServiceModeDropdown()"
+                class="custom-dropdown-btn"
+              >
+                <span>{{ getServiceModeLabel() }}</span>
+                <svg viewBox="0 0 24 24" class="chevron-down-svg">
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </button>
+              
+              <!-- Custom Dropdown Popup -->
+              <div *ngIf="showServiceModeDropdown" class="custom-dropdown-popup">
+                <div
+                  *ngFor="let mode of serviceModes"
+                  class="dropdown-item-select"
+                  (click)="selectServiceMode(mode.value)">
+                  {{ mode.label }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Hidden input for Angular Form Validation -->
+            <input
+              type="hidden"
               name="serviceMode"
               [(ngModel)]="model.serviceMode"
               #serviceModeRef="ngModel"
-              (ngModelChange)="onServiceModeChange()"
               required
             >
-              <option value="">Select Service Mode</option>
-              <option value="rent">Rent</option>
-              <option value="subscription">Utility</option>
-              <option value="maintenance">Miscellaneous</option>
-              <option value="sale">Security Deposit</option>
-              <option value="lease">Penalty</option>
-            </select>
             <small *ngIf="serviceModeRef.invalid && serviceModeRef.touched">Service mode is required.</small>
-          </label>
+          </div>
         </div>
 
         <!-- ROW 2: Service Type (with attached Search) + Description -->

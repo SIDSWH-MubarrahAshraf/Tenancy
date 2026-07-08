@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, NgZone, ChangeDetectorRef, HostListener, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { UserService } from 'src/app/services/user.service';
@@ -31,7 +31,8 @@ export class UsersComponent implements OnInit {
     city: '',
     country: 'UAE',
     status: 'Active',
-    securityGroup: ''
+    securityGroup: '',
+    selectedTheme: 'Purple'
   };
 
   // State Management
@@ -43,6 +44,13 @@ export class UsersComponent implements OnInit {
   statusMessage = '';
   isSaving = false;
   debugError = ''; // Diagnostic visual helper
+  showSecurityGroupDropdown = false;
+  showGenderDropdown = false;
+  showBranchDropdown = false;
+  showThemeDropdown = false;
+  securityGroups: string[] = ['Admin', 'Warehouse', 'Office', 'Branch'];
+  genders: string[] = ['Male', 'Female', 'Custom'];
+  themes: string[] = ['Purple', 'Green', 'Blue', 'Orange'];
 
   // ============================================
   // DROPDOWNS
@@ -61,7 +69,8 @@ export class UsersComponent implements OnInit {
   constructor(
     private userService: UserService,
     private ngZone: NgZone,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private elementRef: ElementRef
   ) {}
 
   ngOnInit(): void {
@@ -131,7 +140,8 @@ export class UsersComponent implements OnInit {
       email: this.user.email,
       password: this.user.password || undefined,
       isActive: this.user.status === 'Active',
-      securityGroupIds: []
+      securityGroupIds: [],
+      selectedTheme: this.user.selectedTheme || 'Purple'
     };
 
     // Add UI specific optional mapping properties matching backend response schema
@@ -179,7 +189,8 @@ export class UsersComponent implements OnInit {
                     country: this.user.country,
                     isActive: this.user.status === 'Active',
                     firstName: this.user.firstName,
-                    lastName: this.user.lastName
+                    lastName: this.user.lastName,
+                    selectedTheme: this.user.selectedTheme
                   };
                 }
                 return u;
@@ -245,7 +256,8 @@ export class UsersComponent implements OnInit {
                 country: this.user.country,
                 isActive: this.user.status === 'Active',
                 firstName: this.user.firstName,
-                lastName: this.user.lastName
+                lastName: this.user.lastName,
+                selectedTheme: this.user.selectedTheme
               };
               this.usersList = [...this.usersList, newRow];
               this.filteredUsers = [...this.usersList];
@@ -286,6 +298,10 @@ export class UsersComponent implements OnInit {
   editUser(row: any): void {
     this.isEditMode = true;
     this.editingUserId = row.id;
+    this.showSecurityGroupDropdown = false;
+    this.showGenderDropdown = false;
+    this.showBranchDropdown = false;
+    this.showThemeDropdown = false;
 
     this.user = {
       userId: row.userName,
@@ -299,7 +315,8 @@ export class UsersComponent implements OnInit {
       city: row.city || '',
       country: row.country || 'UAE',
       status: row.isActive ? 'Active' : 'Inactive',
-      securityGroup: row.securityGroup || ''
+      securityGroup: row.securityGroup || '',
+      selectedTheme: row.selectedTheme || 'Purple'
     };
     this.cdr.detectChanges();
   }
@@ -337,6 +354,10 @@ export class UsersComponent implements OnInit {
   resetForm(): void {
     this.isEditMode = false;
     this.editingUserId = null;
+    this.showSecurityGroupDropdown = false;
+    this.showGenderDropdown = false;
+    this.showBranchDropdown = false;
+    this.showThemeDropdown = false;
     this.user = {
       userId: '',
       password: '',
@@ -349,8 +370,98 @@ export class UsersComponent implements OnInit {
       city: '',
       country: 'UAE',
       status: 'Active',
-      securityGroup: ''
+      securityGroup: '',
+      selectedTheme: 'Purple'
     };
     this.cdr.detectChanges();
+  }
+
+  // ============================================
+  // CUSTOM DROPDOWN HELPERS
+  // ============================================
+  toggleSecurityGroupDropdown(): void {
+    if (this.isSaving) return;
+    this.showSecurityGroupDropdown = !this.showSecurityGroupDropdown;
+    this.showGenderDropdown = false;
+    this.showBranchDropdown = false;
+    this.showThemeDropdown = false;
+    this.cdr.detectChanges();
+  }
+
+  selectSecurityGroup(group: string): void {
+    this.user.securityGroup = group;
+    this.showSecurityGroupDropdown = false;
+    this.cdr.detectChanges();
+  }
+
+  toggleGenderDropdown(): void {
+    if (this.isSaving) return;
+    this.showGenderDropdown = !this.showGenderDropdown;
+    this.showSecurityGroupDropdown = false;
+    this.showBranchDropdown = false;
+    this.showThemeDropdown = false;
+    this.cdr.detectChanges();
+  }
+
+  selectGender(gender: string): void {
+    this.user.gender = gender;
+    this.showGenderDropdown = false;
+    this.cdr.detectChanges();
+  }
+
+  toggleBranchDropdown(): void {
+    if (this.isSaving) return;
+    this.showBranchDropdown = !this.showBranchDropdown;
+    this.showSecurityGroupDropdown = false;
+    this.showGenderDropdown = false;
+    this.showThemeDropdown = false;
+    this.cdr.detectChanges();
+  }
+
+  selectBranch(branch: string): void {
+    this.user.branch = branch;
+    this.showBranchDropdown = false;
+    this.cdr.detectChanges();
+  }
+
+  toggleThemeDropdown(): void {
+    if (this.isSaving) return;
+    this.showThemeDropdown = !this.showThemeDropdown;
+    this.showSecurityGroupDropdown = false;
+    this.showGenderDropdown = false;
+    this.showBranchDropdown = false;
+    this.cdr.detectChanges();
+  }
+
+  selectTheme(theme: string): void {
+    this.user.selectedTheme = theme;
+    this.showThemeDropdown = false;
+    this.cdr.detectChanges();
+  }
+
+  // ============================================
+  // DYNAMIC STATS CALCULATORS
+  // ============================================
+  getActiveUsersCount(): number {
+    return this.usersList.filter(u => u.isActive).length;
+  }
+
+  getInactiveUsersCount(): number {
+    return this.usersList.filter(u => !u.isActive).length;
+  }
+
+  // ============================================
+  // DOCUMENT CLICK HOST LISTENER
+  // ============================================
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.custom-dropdown-btn') && !target.closest('.custom-dropdown-popup')) {
+      this.showSecurityGroupDropdown = false;
+      this.showGenderDropdown = false;
+      this.showBranchDropdown = false;
+      this.showThemeDropdown = false;
+      this.cdr.detectChanges();
+    }
   }
 }

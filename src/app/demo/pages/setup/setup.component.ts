@@ -12,7 +12,7 @@ import { UnitComponent } from './unit-tab/unit.component';
 })
 export class SetupComponent {
   propertyId = '';
-  inactive = false;
+  isActive = true;
   activeTab: 'property' | 'unit' | 'document' = 'property';
 
   setTab(tab: 'property' | 'unit' | 'document'): void {

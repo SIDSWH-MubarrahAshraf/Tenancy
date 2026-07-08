@@ -1,0 +1,90 @@
+<div class="erp-container" style="max-width: 600px !important; margin: 0 auto !important;">
+  <header class="erp-page-header">
+    <div class="title-group d-flex align-items-center">
+      <div class="title-icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.5;">
+          <polygon points="5 3 19 12 5 21 5 3" />
+        </svg>
+      </div>
+      <h1>Run Reminder Engine</h1>
+    </div>
+  </header>
+
+  <div class="erp-card mt-4">
+    
+    <div class="card-body text-center py-5">
+      <!-- Icon/Header Graphics -->
+      <div class="engine-graphic mb-4">
+        <div class="pulse-circle" [class.spinning]="isRunning">
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="engine-icon">
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Action Descriptions -->
+      <h3 class="h5 mb-3 text-dark">Process Reminder Rules</h3>
+      <p class="text-muted mb-4 px-3" style="font-size: 13.5px; line-height: 1.6;">
+        This will immediately run the background reminder engine. It scans the database for due triggers (such as leases expiring or rent invoices becoming due) and sends customized automated emails instantly.
+      </p>
+
+      <!-- Action Button -->
+      <button 
+        type="button" 
+        class="btn erp-btn-primary btn-lg px-5 py-2.5" 
+        (click)="triggerReminderJob()" 
+        [disabled]="isRunning">
+        
+        <!-- Loading Spinner -->
+        <span *ngIf="isRunning" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        
+        <span *ngIf="!isRunning">
+          <svg viewBox="0 0 24 24" aria-hidden="true" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5; margin-right: 6px; vertical-align: -1px;">
+            <polygon points="5 3 19 12 5 21 5 3" />
+          </svg>
+          Run Engine Now
+        </span>
+        <span *ngIf="isRunning">Executing Engine...</span>
+      </button>
+
+      <!-- ================= RESULT STATUS PANELS ================= -->
+      
+      <!-- Loading State -->
+      <div *ngIf="isRunning" class="mt-4 text-primary fw-semibold" style="font-size: 13.5px;">
+        {{ statusMessage }}
+      </div>
+
+      <!-- Success Panel -->
+      <div *ngIf="runResult && !isRunning" class="result-alert success-alert mt-4 p-3 text-start">
+        <div class="d-flex align-items-start">
+          <div class="alert-icon-wrapper success me-3">
+            <svg viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.5;">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </div>
+          <div>
+            <h4 class="alert-heading text-success mb-1">Execution Complete</h4>
+            <p class="alert-desc mb-0">{{ statusMessage }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Failure Panel -->
+      <div *ngIf="debugError && !isRunning" class="result-alert danger-alert mt-4 p-3 text-start">
+        <div class="d-flex align-items-start">
+          <div class="alert-icon-wrapper danger me-3">
+            <svg viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.5;">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </div>
+          <div>
+            <h4 class="alert-heading text-danger mb-1">Execution Failed</h4>
+            <p class="alert-desc mb-0">{{ debugError }}</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

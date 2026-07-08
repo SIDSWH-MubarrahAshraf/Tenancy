@@ -13,9 +13,9 @@
 
     <div class="header-controls">
       <div class="status-toggle-wrapper">
-        <span class="toggle-text" [class.is-inactive]="inactive">{{ inactive ? 'Inactive' : 'Active' }}</span>
-        <label class="switch" for="masterInactiveSwitch">
-          <input type="checkbox" id="masterInactiveSwitch" [(ngModel)]="inactive">
+        <span class="toggle-text" [class.is-inactive]="!isActive">{{ isActive ? 'Active' : 'Inactive' }}</span>
+        <label class="switch" for="masterActiveSwitch">
+          <input type="checkbox" id="masterActiveSwitch" [(ngModel)]="isActive">
           <span class="slider round"></span>
         </label>
       </div>
@@ -49,12 +49,12 @@
           <rect x="3" y="14" width="7" height="7" />
           <rect x="14" y="14" width="7" height="7" />
         </svg>
-        Units List
+        Units Details
       </button>
     </div>
 
     <div class="tab-content">
-      <app-property *ngIf="activeTab === 'property'" [(inactive)]="inactive" [(propertyId)]="propertyId"></app-property>
+      <app-property *ngIf="activeTab === 'property'" [inactive]="!isActive" (inactiveChange)="isActive = !$event" [(propertyId)]="propertyId"></app-property>
       <app-unit *ngIf="activeTab === 'unit'" [propertyId]="propertyId"></app-unit>
     </div>
   </section>

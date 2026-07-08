@@ -34,28 +34,23 @@ svg {
   padding-bottom: 0 !important;
 }
 
-.unit-list-card .card-header {
-  border-bottom: none !important;
-  padding-bottom: 0 !important;
-  margin-bottom: 0 !important;
-}
-
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  background: transparent !important;
-  border-bottom: 1px solid rgba(207, 165, 234, 0.25) !important;
+  background: var(--erp-header-bg) !important;
+  border-bottom: 1px solid var(--erp-border, rgba(207, 165, 234, 0.25)) !important;
   margin: 0 !important;
   padding: 16px 20px !important;
-  border-radius: 0 !important;
+  border-top-left-radius: 8px !important;
+  border-top-right-radius: 8px !important;
 }
 
 h2 {
   margin: 0;
-  font-size: 1.05rem !important;
-  font-weight: 700 !important;
+  font-size: 1.02rem !important;
+  font-weight: 800 !important;
   color: var(--erp-text) !important;
 }
 
@@ -355,6 +350,46 @@ h2 {
   &:hover {
     background: #FFEBEE !important; // Light danger soft background
     color: #B71C1C !important; // Darker danger icon color
+  }
+}
+
+/* Nested Table Card and layout adjustments */
+.table-card {
+  border: 1px solid var(--erp-border, #CFA5EA) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
+  background: #ffffff !important;
+  overflow: hidden !important;
+  
+  table {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    width: 100% !important;
+    
+    // Top corners
+    tr:first-child th:first-child {
+      border-top-left-radius: 7px !important;
+    }
+    tr:first-child th:last-child {
+      border-top-right-radius: 7px !important;
+    }
+    
+    // Bottom corners
+    tr:last-child td:first-child {
+      border-bottom-left-radius: 7px !important;
+    }
+    tr:last-child td:last-child {
+      border-bottom-right-radius: 7px !important;
+    }
+  }
+
+  .table-responsive {
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    overflow: auto !important;
+    box-shadow: none !important;
   }
 }
 

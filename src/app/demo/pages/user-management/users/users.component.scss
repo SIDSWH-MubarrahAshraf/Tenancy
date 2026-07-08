@@ -502,7 +502,7 @@ $border: var(--erp-border, #CFA5EA);
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #d1d5db;
+  background-color: var(--erp-danger);
   transition: .3s;
 }
 
@@ -518,7 +518,7 @@ $border: var(--erp-border, #CFA5EA);
 }
 
 input:checked + .slider {
-  background-color: var(--erp-primary);
+  background-color: var(--erp-success);
 }
 
 input:checked + .slider:before {
@@ -550,5 +550,143 @@ input:checked + .slider:before {
   &:hover {
     background: #FFEBEE !important; // Light danger soft background
     color: #B71C1C !important; // Darker danger icon color
+  }
+}
+
+/* Custom Security Group Dropdown styling */
+.custom-dropdown-btn {
+  width: 100%;
+  height: 44px; /* matches .form-control height in users */
+  padding: 0 12px;
+  border: 1px solid var(--erp-border) !important;
+  border-radius: var(--erp-control-radius) !important;
+  background: #ffffff !important;
+  color: var(--erp-text, #2f3542) !important;
+  font-size: 14px !important;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  margin: 0;
+  outline: none;
+  box-shadow: none;
+  transition: border-color 0.2s ease;
+  
+  &:focus {
+    border-color: var(--erp-primary) !important;
+  }
+  &:hover {
+    border-color: var(--erp-primary) !important;
+  }
+}
+
+.chevron-down-svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  margin-left: 8px;
+  opacity: 0.7;
+}
+
+.custom-dropdown-popup {
+  position: absolute;
+  top: 48px;
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid var(--erp-border, #CFA5EA);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(142, 36, 170, 0.15);
+  z-index: 1000;
+  padding: 6px;
+  max-height: 180px;
+  overflow-y: auto;
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--erp-border);
+    border-radius: 3px;
+  }
+}
+
+.dropdown-item-select {
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--erp-text, #2f3542);
+  transition: all 0.2s ease-in-out;
+  margin-bottom: 2px;
+  text-align: left;
+  border-bottom: none !important;
+
+  &:hover {
+    background-color: var(--erp-primary, #8E24AA) !important;
+    color: #ffffff !important;
+  }
+}
+
+/* User Card modifications */
+.erp-card {
+  overflow: visible !important; /* Make sure dropdown popup can render outside form card boundaries */
+}
+
+/* Nested Table Card and layout adjustments */
+.table-card {
+  border: 1px solid var(--erp-border) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
+  background: #ffffff !important;
+  overflow: hidden !important;
+  
+  table {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    width: 100% !important;
+    
+    // Top corners
+    tr:first-child th:first-child {
+      border-top-left-radius: 7px !important;
+    }
+    tr:first-child th:last-child {
+      border-top-right-radius: 7px !important;
+    }
+    
+    // Bottom corners
+    tr:last-child td:first-child {
+      border-bottom-left-radius: 7px !important;
+    }
+    tr:last-child td:last-child {
+      border-bottom-right-radius: 7px !important;
+    }
+  }
+
+  .table-responsive {
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    overflow: auto !important;
+    box-shadow: none !important;
+  }
+}
+
+/* User stats capsules styling */
+.stats-capsule {
+  box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+  transition: all 0.25s ease;
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
   }
 }

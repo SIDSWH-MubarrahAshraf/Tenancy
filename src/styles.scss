@@ -38,15 +38,15 @@ File: style.css
 @import 'scss/themes/preset-style.scss';
 
 :root {
-  --erp-sidebar-bg: #210535;
-  --erp-bg: #F7F2FC;
+  --erp-sidebar-bg: #1B1647;
+  --erp-bg: #F5F4FA;
   --erp-card-bg: #FCFBFE;
-  --erp-header-bg: #E9D8F5;
-  --erp-primary: #8E24AA;
-  --erp-primary-hover: #7B1FA2;
-  --erp-primary-soft: #F3E5F5;
-  --erp-primary-soft-hover: #E8D0F0;
-  --erp-border: #CFA5EA;
+  --erp-header-bg: #E5E2F8;
+  --erp-primary: #30277C;
+  --erp-primary-hover: #241D60;
+  --erp-primary-soft: #EAE8FC;
+  --erp-primary-soft-hover: #DFDCFA;
+  --erp-border: #C6C3F2;
   --erp-white: #ffffff;
   --erp-text: #2f3542;
   --erp-muted: #6b7280;
@@ -56,11 +56,11 @@ File: style.css
   --erp-info: #0277BD;
   --erp-radius: 12px;
   --erp-control-radius: 8px;
-  --erp-shadow: 0 8px 24px rgba(106, 27, 154, 0.06);
-  --erp-shadow-sm: 0 4px 12px rgba(106, 27, 154, 0.04);
+  --erp-shadow: 0 8px 24px rgba(48, 39, 124, 0.06);
+  --erp-shadow-sm: 0 4px 12px rgba(48, 39, 124, 0.04);
   
   --bs-primary: var(--erp-primary);
-  --bs-primary-rgb: 142, 36, 170;
+  --bs-primary-rgb: 48, 39, 124;
   --bs-body-color: var(--erp-text);
   --bs-body-bg: var(--erp-bg);
   --pc-sidebar-background: var(--erp-sidebar-bg);

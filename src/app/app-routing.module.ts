@@ -110,6 +110,37 @@ const routes: Routes = [
     }
   ]
 },
+      {
+        path: 'reminders',
+        loadComponent: () =>
+          import('./demo/pages/reminders/reminders.component')
+            .then(c => c.RemindersComponent),
+        children: [
+          {
+            path: '',
+            redirectTo: 'email-templates',
+            pathMatch: 'full'
+          },
+          {
+            path: 'email-templates',
+            loadComponent: () =>
+              import('./demo/pages/reminders/email-template/email-template.component')
+                .then(c => c.EmailTemplateComponent)
+          },
+          {
+            path: 'settings',
+            loadComponent: () =>
+              import('./demo/pages/reminders/reminder-setting/reminder-setting.component')
+                .then(c => c.ReminderSettingComponent)
+          },
+          {
+            path: 'run',
+            loadComponent: () =>
+              import('./demo/pages/reminders/reminder-run/reminder-run.component')
+                .then(c => c.ReminderRunComponent)
+          }
+        ]
+      }
    ]  
   },
   {

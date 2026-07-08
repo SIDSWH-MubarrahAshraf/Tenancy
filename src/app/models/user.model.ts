@@ -22,6 +22,7 @@ export interface User {
   passwordExpiryDate?: string;
   groups?: UserGroup[];
   securityGroupIds?: number[]; // used only when POST/PUT
+  selectedTheme?: string;
 }
 
 export interface ApiResponse<T> {

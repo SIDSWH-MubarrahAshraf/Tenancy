@@ -79,6 +79,41 @@ export const NavigationItems: NavigationItem[] = [
             breadcrumbs: false
           }
         ]
+      },
+      {
+        id: 'reminders',
+        title: 'Reminders',
+        type: 'collapse',
+        icon: 'bell',
+        children: [
+          {
+            id: 'email-templates',
+            title: 'Email Templates',
+            type: 'item',
+            url: '/reminders/email-templates',
+            classes: 'nav-item',
+            icon: 'mail',
+            breadcrumbs: false
+          },
+          {
+            id: 'reminder-settings',
+            title: 'Reminder Settings',
+            type: 'item',
+            url: '/reminders/settings',
+            classes: 'nav-item',
+            icon: 'setting',
+            breadcrumbs: false
+          },
+          {
+            id: 'reminder-run',
+            title: 'Run Reminder',
+            type: 'item',
+            url: '/reminders/run',
+            classes: 'nav-item',
+            icon: 'play-circle',
+            breadcrumbs: false
+          }
+        ]
       }
     ]
   }

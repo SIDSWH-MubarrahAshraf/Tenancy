@@ -23,16 +23,16 @@ export class ThemeService {
   private themes: Record<string, ThemeConfig> = {
     sunset: {
       id: 'sunset',
-      sidebarBg: '#210535',
-      bg: '#F7F2FC',
+      sidebarBg: '#1B1647',
+      bg: '#F5F4FA',
       cardBg: '#FCFBFE',
-      headerBg: '#E9D8F5',
-      primary: '#8E24AA',
-      primaryHover: '#7B1FA2',
-      primarySoft: '#F3E5F5',
-      primarySoftHover: '#E8D0F0',
-      border: '#CFA5EA',
-      shadow: '0 8px 24px rgba(106, 27, 154, 0.06)'
+      headerBg: '#E5E2F8',
+      primary: '#30277C',
+      primaryHover: '#241D60',
+      primarySoft: '#EAE8FC',
+      primarySoftHover: '#DFDCFA',
+      border: '#C6C3F2',
+      shadow: '0 8px 24px rgba(48, 39, 124, 0.06)'
     },
     emerald: {
       id: 'emerald',

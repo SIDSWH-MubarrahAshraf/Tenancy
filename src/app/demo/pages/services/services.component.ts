@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -43,7 +43,8 @@ export class ServicesComponent implements OnInit {
   
   constructor(
     private router: Router,
-    private serviceTypeService: ServiceTypeService
+    private serviceTypeService: ServiceTypeService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   // ── State ─────────────────────────────────────────────────────────────────
@@ -51,6 +52,14 @@ export class ServicesComponent implements OnInit {
   showSearchPopup = false;
   loadingServices = false;
   dbServices: any[] = [];
+  showServiceModeDropdown = false;
+  serviceModes = [
+    { value: 'rent', label: 'Rent' },
+    { value: 'subscription', label: 'Utility' },
+    { value: 'maintenance', label: 'Miscellaneous' },
+    { value: 'sale', label: 'Security Deposit' },
+    { value: 'lease', label: 'Penalty' }
+  ];
 
   model: ServiceTypeModel = this.emptyModel();
   isActive = true;
@@ -284,6 +293,7 @@ export class ServicesComponent implements OnInit {
     this.model = this.emptyModel();
     this.isActive = true;
     this.showSearchPopup = false;
+    this.showServiceModeDropdown = false;
     
     const activeForm = form || this.serviceForm;
     if (activeForm) {
@@ -325,5 +335,32 @@ export class ServicesComponent implements OnInit {
     clearTimeout(this.toastTimer);
     this.toast = { visible: true, message, type };
     this.toastTimer = setTimeout(() => (this.toast.visible = false), 3000);
+  }
+
+  // ── Custom Dropdown Helpers ───────────────────────────────────────────────
+  toggleServiceModeDropdown(): void {
+    this.showServiceModeDropdown = !this.showServiceModeDropdown;
+    this.cdr.detectChanges();
+  }
+
+  selectServiceMode(value: string): void {
+    this.model.serviceMode = value;
+    this.showServiceModeDropdown = false;
+    this.onServiceModeChange();
+    this.cdr.detectChanges();
+  }
+
+  getServiceModeLabel(): string {
+    const mode = this.serviceModes.find(m => m.value === this.model.serviceMode);
+    return mode ? mode.label : 'Select Service Mode';
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.custom-dropdown-btn') && !target.closest('.custom-dropdown-popup')) {
+      this.showServiceModeDropdown = false;
+      this.cdr.detectChanges();
+    }
   }
 }
