@@ -1,7 +1,9 @@
 // angular import
-import { Component, output, inject, input } from '@angular/core';
+import { Component, output, inject, input, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
+import { DashboardService } from 'src/app/services/dashboard.service';
+import { CommonModule } from '@angular/common';
 
 // project import
 import { SharedModule } from 'src/app/theme/shared/shared.module';
@@ -32,17 +34,79 @@ import {
 
 @Component({
   selector: 'app-nav-right',
-  imports: [SharedModule, RouterModule],
+  imports: [SharedModule, RouterModule, CommonModule],
   templateUrl: './nav-right.component.html',
   styleUrls: ['./nav-right.component.scss']
 })
-export class NavRightComponent {
+export class NavRightComponent implements OnInit {
   private iconService = inject(IconService);
   private authService = inject(AuthService);
+  private dashboardService = inject(DashboardService);
+  private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
+
+  notifications: any[] = [];
+  unreadCount = 0;
 
   get username(): string {
     return localStorage.getItem('username') || 'admin';
+  }
+
+  ngOnInit(): void {
+    this.loadAlerts();
+  }
+
+  loadAlerts(): void {
+    this.dashboardService.getAlerts().subscribe({
+      next: (res) => {
+        let alertsData = res?.data;
+        if (typeof alertsData === 'string') {
+          try {
+            alertsData = JSON.parse(alertsData);
+          } catch (e) {
+            console.error('Failed to parse alerts data', e);
+          }
+        }
+        if (alertsData) {
+          const chequesDue = alertsData.chequesDue || [];
+          const bouncedCheques = alertsData.bouncedCheques || [];
+          
+          this.notifications = [];
+
+          // Map bounced cheques
+          bouncedCheques.forEach((item: any) => {
+            this.notifications.push({
+              id: item.id,
+              type: 'bounced',
+              title: `Bounced: ${item.chequeNo}`,
+              message: `${item.bankName} · AED ${item.chequeAmount}`,
+              reason: item.bounceReason || 'Clearance failure',
+              time: 'Action Needed',
+              colorClass: 'bg-light-danger text-danger'
+            });
+          });
+
+          // Map due cheques
+          chequesDue.forEach((item: any) => {
+            this.notifications.push({
+              id: item.id,
+              type: 'due',
+              title: `Due: ${item.chequeNo}`,
+              message: `${item.bankName} · AED ${item.chequeAmount}`,
+              reason: `Due: ${new Date(item.chequeDate).toLocaleDateString()}`,
+              time: 'Pending',
+              colorClass: 'bg-light-warning text-warning'
+            });
+          });
+
+          this.unreadCount = this.notifications.length;
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Failed to fetch navbar alerts', err);
+      }
+    });
   }
 
   onLogout(): void {

@@ -28,6 +28,15 @@ export const NavigationItems: NavigationItem[] = [
     icon: 'icon-navigation',
     children: [
       {
+        id: 'dashboard',
+        title: 'Dashboard',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/dashboard/default',
+        icon: 'dashboard',
+        breadcrumbs: false
+      },
+      {
         id: 'property-setup',
         title: 'Property Setup',
         type: 'item',
@@ -77,6 +86,15 @@ export const NavigationItems: NavigationItem[] = [
             classes: 'nav-item',
             icon: 'mail',
             breadcrumbs: false
+          },
+          {
+            id: 'security-groups',
+            title: 'Security Groups',
+            type: 'item',
+            url: '/user-management/security-groups',
+            classes: 'nav-item',
+            icon: 'safety-certificate',
+            breadcrumbs: false
           }
         ]
       },
@@ -114,6 +132,15 @@ export const NavigationItems: NavigationItem[] = [
             breadcrumbs: false
           }
         ]
+      },
+      {
+        id: 'announcement',
+        title: 'Announcement',
+        type: 'item',
+        url: '/announcement',
+        classes: 'nav-item',
+        icon: 'sound',
+        breadcrumbs: false
       }
     ]
   }

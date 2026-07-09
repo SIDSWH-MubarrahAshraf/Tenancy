@@ -1,0 +1,160 @@
+.modal-content {
+  border: 1px solid var(--erp-border) !important;
+  border-radius: var(--erp-radius, 12px) !important;
+  background: var(--erp-card-bg) !important;
+  box-shadow: var(--erp-shadow) !important;
+  overflow: visible !important;
+  animation: popup 0.25s ease;
+}
+
+.modal-header {
+  background: var(--erp-header-bg);
+  color: var(--erp-text);
+  border-bottom: 1px solid var(--erp-border);
+  padding: 14px 20px;
+}
+
+.modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--erp-text);
+}
+
+.modal-body {
+  padding: 20px !important;
+}
+
+.modal-footer {
+  border-top: 1px solid var(--erp-border);
+  padding: 14px 20px;
+  background: var(--erp-bg);
+}
+
+.btn-close {
+  filter: grayscale(1) invert(0.5);
+}
+
+@keyframes popup {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.input-group {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 0 !important;
+  border-radius: var(--erp-control-radius, 8px) !important;
+
+  .input-group-text {
+    border-top-left-radius: var(--erp-control-radius, 8px) !important;
+    border-bottom-left-radius: var(--erp-control-radius, 8px) !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-right: none !important;
+    background-color: var(--erp-bg, #F5F4FA);
+    color: var(--erp-primary, #30277C) !important; /* Dark Blue icon default */
+    border: 1px solid var(--erp-border, #C6C3F2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+
+    svg {
+      color: var(--erp-primary, #30277C) !important; /* Dark Blue icon default */
+    }
+  }
+
+  .form-control {
+    border-radius: 0 !important;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-right: 1px solid var(--erp-border, #C6C3F2) !important;
+    transition: all 0.2s ease;
+  }
+
+  /* For Subject and Body fields where form control is the last element */
+  .form-control:last-child {
+    border-top-right-radius: var(--erp-control-radius, 8px) !important;
+    border-bottom-right-radius: var(--erp-control-radius, 8px) !important;
+  }
+
+  /* Property Master Button (Vibrant Blue/Indigo) */
+  .erp-btn-primary {
+    border-radius: 0 !important;
+    border-right: none !important;
+  }
+
+  /* History Lookup Button (Lavender/Gray Border) */
+  .erp-btn-secondary {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-top-right-radius: var(--erp-control-radius, 8px) !important;
+    border-bottom-right-radius: var(--erp-control-radius, 8px) !important;
+  }
+
+  /* Conditional viewmode check */
+  .erp-btn-primary[hidden] + .erp-btn-secondary {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+  }
+
+  /* Interactive Hover Highlight: Hovers complete fields with their icons */
+  &:hover {
+    .input-group-text {
+      border-color: var(--erp-primary, #30277C) !important;
+      background-color: var(--erp-primary-soft, #EAE8FC) !important;
+    }
+    .form-control {
+      border-color: var(--erp-primary, #30277C) !important;
+    }
+    .btn {
+      border-color: var(--erp-primary, #30277C) !important;
+    }
+  }
+}
+
+/* Custom Attachment Choose File Selector Button styling */
+.form-control[type="file"] {
+  padding: 8px 12px !important;
+  border-radius: var(--erp-control-radius, 8px) !important;
+  border: 1px solid var(--erp-border, #C6C3F2) !important;
+  background-color: var(--erp-card-bg, #FCFBFE) !important;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: var(--erp-primary, #30277C) !important;
+    background-color: var(--erp-bg, #F5F4FA) !important;
+  }
+
+  &::file-selector-button {
+    background-color: var(--erp-primary-soft, #EAE8FC);
+    color: var(--erp-primary, #30277C);
+    border: 1px solid var(--erp-border, #C6C3F2);
+    border-radius: var(--erp-control-radius, 8px);
+    padding: 6px 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-right: 12px;
+  }
+
+  &::file-selector-button:hover {
+    background-color: var(--erp-primary-soft-hover, #DFDCFA);
+    color: var(--erp-primary-hover, #241D60);
+  }
+}
+
+.table-responsive {
+  border: 1px solid var(--erp-border, #e5e7eb);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}

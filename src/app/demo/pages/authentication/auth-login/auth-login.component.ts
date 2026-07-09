@@ -38,7 +38,7 @@ export class AuthLoginComponent {
     this.authService.login({ username, password }).subscribe({
       next: () => {
         this.isLoading = false;
-        this.router.navigate(['/property/setup']);
+        this.router.navigate(['/dashboard/default']);
       },
       error: (err) => {
         this.isLoading = false;

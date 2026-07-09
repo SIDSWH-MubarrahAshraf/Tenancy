@@ -1,113 +1,117 @@
-// angular import
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-
-// project import
-import tableData from 'src/fake-data/default-data.json';
-
-import { MonthlyBarChartComponent } from 'src/app/theme/shared/apexchart/monthly-bar-chart/monthly-bar-chart.component';
-import { IncomeOverviewChartComponent } from 'src/app/theme/shared/apexchart/income-overview-chart/income-overview-chart.component';
-import { AnalyticsChartComponent } from 'src/app/theme/shared/apexchart/analytics-chart/analytics-chart.component';
-import { SalesReportChartComponent } from 'src/app/theme/shared/apexchart/sales-report-chart/sales-report-chart.component';
-
-// icons
-import { IconService, IconDirective } from '@ant-design/icons-angular';
-import { FallOutline, GiftOutline, MessageOutline, RiseOutline, SettingOutline } from '@ant-design/icons-angular/icons';
-import { CardComponent } from 'src/app/theme/shared/components/card/card.component';
+import { DashboardService } from 'src/app/services/dashboard.service';
 
 @Component({
   selector: 'app-default',
+  standalone: true,
   imports: [
     CommonModule,
-    CardComponent,
-    IconDirective,
-    MonthlyBarChartComponent,
-    IncomeOverviewChartComponent,
-    AnalyticsChartComponent,
-    SalesReportChartComponent,
+    FormsModule,
     RouterLink
   ],
   templateUrl: './default.component.html',
   styleUrls: ['./default.component.scss']
 })
-export class DefaultComponent {
-  private iconService = inject(IconService);
+export class DefaultComponent implements OnInit {
+  private dashboardService = inject(DashboardService);
+  private cdr = inject(ChangeDetectorRef);
 
-  // constructor
-  constructor() {
-    this.iconService.addIcon(...[RiseOutline, FallOutline, SettingOutline, GiftOutline, MessageOutline]);
+  activeContracts = 0;
+  vacantUnits = 0;
+  chequesDueIn7Days = 0;
+  pendingFinalSettlements = 0;
+  chequesDue: any[] = [];
+  bouncedCheques: any[] = [];
+  expiringContracts: any[] = [];
+  isLoading = true;
+
+  userName = 'Admin';
+  searchChequeText = '';
+  filteredCheques: any[] = [];
+
+  ngOnInit(): void {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      try {
+        const u = JSON.parse(savedUser);
+        this.userName = u.userName || u.username || 'Admin';
+      } catch (e) {
+        this.userName = savedUser;
+      }
+    }
+    this.loadDashboardData();
   }
 
-  recentOrder = tableData;
+  loadDashboardData(): void {
+    this.isLoading = true;
+    
+    // Fetch summary
+    this.dashboardService.getSummary().subscribe({
+      next: (res) => {
+        let summaryData = res?.data;
+        if (typeof summaryData === 'string') {
+          try {
+            summaryData = JSON.parse(summaryData);
+          } catch (e) {
+            console.error('Failed to parse summary data', e);
+          }
+        }
+        if (summaryData) {
+          this.activeContracts = summaryData.activeContracts ?? 0;
+          this.vacantUnits = summaryData.vacantUnits ?? 0;
+          this.chequesDueIn7Days = summaryData.chequesDueIn7Days ?? 0;
+          this.pendingFinalSettlements = summaryData.pendingFinalSettlements ?? 0;
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Summary fetch error', err);
+        this.cdr.detectChanges();
+      }
+    });
 
-  AnalyticEcommerce = [
-    {
-      title: 'Total Page Views',
-      amount: '4,42,236',
-      background: 'bg-light-primary ',
-      border: 'border-primary',
-      icon: 'rise',
-      percentage: '59.3%',
-      color: 'text-primary',
-      number: '35,000'
-    },
-    {
-      title: 'Total Users',
-      amount: '78,250',
-      background: 'bg-light-primary ',
-      border: 'border-primary',
-      icon: 'rise',
-      percentage: '70.5%',
-      color: 'text-primary',
-      number: '8,900'
-    },
-    {
-      title: 'Total Order',
-      amount: '18,800',
-      background: 'bg-light-warning ',
-      border: 'border-warning',
-      icon: 'fall',
-      percentage: '27.4%',
-      color: 'text-warning',
-      number: '1,943'
-    },
-    {
-      title: 'Total Sales',
-      amount: '$35,078',
-      background: 'bg-light-warning ',
-      border: 'border-warning',
-      icon: 'fall',
-      percentage: '27.4%',
-      color: 'text-warning',
-      number: '$20,395'
-    }
-  ];
+    // Fetch alerts
+    this.dashboardService.getAlerts().subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        let alertsData = res?.data;
+        if (typeof alertsData === 'string') {
+          try {
+            alertsData = JSON.parse(alertsData);
+          } catch (e) {
+            console.error('Failed to parse alerts data', e);
+          }
+        }
+        if (alertsData) {
+          this.chequesDue = alertsData.chequesDue || [];
+          this.filteredCheques = [...this.chequesDue];
+          this.bouncedCheques = alertsData.bouncedCheques || [];
+          this.expiringContracts = alertsData.expiringContracts || [];
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('Alerts fetch error', err);
+        this.cdr.detectChanges();
+      }
+    });
+  }
 
-  transaction = [
-    {
-      background: 'text-success bg-light-success',
-      icon: 'gift',
-      title: 'Order #002434',
-      time: 'Today, 2:00 AM',
-      amount: '+ $1,430',
-      percentage: '78%'
-    },
-    {
-      background: 'text-primary bg-light-primary',
-      icon: 'message',
-      title: 'Order #984947',
-      time: '5 August, 1:45 PM',
-      amount: '- $302',
-      percentage: '8%'
-    },
-    {
-      background: 'text-danger bg-light-danger',
-      icon: 'setting',
-      title: 'Order #988784',
-      time: '7 hours ago',
-      amount: '- $682',
-      percentage: '16%'
+  filterCheques(): void {
+    const q = (this.searchChequeText || '').trim().toLowerCase();
+    if (!q) {
+      this.filteredCheques = [...this.chequesDue];
+    } else {
+      this.filteredCheques = this.chequesDue.filter(item => 
+        String(item.chequeNo || '').toLowerCase().includes(q) ||
+        String(item.bankName || '').toLowerCase().includes(q) ||
+        String(item.chequeStatus || '').toLowerCase().includes(q)
+      );
     }
-  ];
+    this.cdr.detectChanges();
+  }
 }

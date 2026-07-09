@@ -126,6 +126,25 @@
         </div>
       </div>
 
+      <!-- Custom Unit Status Dropdown -->
+      <div class="field">
+        <span>Unit Status <b>*</b></span>
+        <div style="position: relative; width: 100%;">
+          <button type="button" (click)="toggleUnitStatusDropdown()" style="width: 100%; height: 38px; padding: 0 11px; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 7px; background: #fbfaff; color: var(--erp-text, #2f3542); font-size: 0.86rem; text-align: left; display: flex; align-items: center; justify-content: space-between; cursor: pointer; margin: 0; outline: none; box-shadow: none;">
+            <span>{{ unit.status || 'Vacant' }}</span>
+            <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; margin-left: 8px;">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </button>
+          
+          <!-- Custom Dropdown Popup -->
+          <div *ngIf="showUnitStatusDropdown" class="search-popup-dropdown" style="position: absolute; top: 43px; left: 0; width: 100%; background: #ffffff; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 8px; box-shadow: 0 8px 24px rgba(142, 36, 170, 0.15); z-index: 1000; padding: 6px;">
+            <div class="dropdown-item-select" (click)="selectUnitStatus('Vacant')">Vacant</div>
+            <div class="dropdown-item-select" (click)="selectUnitStatus('Occupied')">Occupied</div>
+          </div>
+        </div>
+      </div>
+
       <label class="field">
         <span>Unit Size</span>
         <input type="text" [(ngModel)]="unit.unitSize" placeholder="1,200 Sq Ft">
@@ -189,6 +208,7 @@
                 <th>Floor</th>
                 <th>Type</th>
                 <th>Purpose</th>
+                <th>Status</th>
                 <th class="numeric">AC Charge</th>
                 <th class="numeric">Elec. Charge</th>
                 <th class="action-cell">Action</th>
@@ -203,6 +223,17 @@
                 <td>{{ row.floor || '-' }}</td>
                 <td><span class="type-tag" [class]="row.unitType?.toLowerCase()">{{ row.unitType || '-' }}</span></td>
                 <td>{{ row.unitPurpose || '-' }}</td>
+                <td>
+                  <span class="badge border px-2 py-1" style="font-size: 11px; font-weight: 700;"
+                    [class.bg-light-success]="row.status === 'Vacant' || !row.status"
+                    [class.text-success]="row.status === 'Vacant' || !row.status"
+                    [class.border-success]="row.status === 'Vacant' || !row.status"
+                    [class.bg-light-danger]="row.status === 'Occupied'"
+                    [class.text-danger]="row.status === 'Occupied'"
+                    [class.border-danger]="row.status === 'Occupied'">
+                    {{ row.status || 'Vacant' | uppercase }}
+                  </span>
+                </td>
                 <td class="numeric">{{ row.acCharge | number:'1.2-2' }}</td>
                 <td class="numeric">{{ row.electricityCharge | number:'1.2-2' }}</td>
                 <td class="action-cell">
@@ -222,7 +253,7 @@
                 </td>
               </tr>
               <tr *ngIf="filteredUnits.length === 0">
-                <td colspan="10" class="empty-cell">No units found. Enter a Property ID above to load units.</td>
+                <td colspan="11" class="empty-cell">No units found. Enter a Property ID above to load units.</td>
               </tr>
             </tbody>
           </table>

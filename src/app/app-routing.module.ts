@@ -107,6 +107,12 @@ const routes: Routes = [
       loadComponent: () =>
         import('./demo/pages/user-management/email-setup/email-setup.component')
           .then(c => c.EmailSetupComponent)
+    },
+    {
+      path: 'security-groups',
+      loadComponent: () =>
+        import('./demo/pages/user-management/security-group/security-group.component')
+          .then(c => c.SecurityGroupComponent)
     }
   ]
 },
@@ -140,8 +146,14 @@ const routes: Routes = [
                 .then(c => c.ReminderRunComponent)
           }
         ]
+      },
+      {
+        path: 'announcement',
+        loadComponent: () =>
+          import('./demo/pages/reminders/announcement/announcement.component')
+            .then(c => c.AnnouncementComponent)
       }
-   ]  
+    ]  
   },
   {
     path: '',

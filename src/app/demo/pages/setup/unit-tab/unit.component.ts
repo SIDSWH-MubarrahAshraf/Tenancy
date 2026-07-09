@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectorRef, NgZone, HostListener } from '@angular/core';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { FormsModule } from '@angular/forms';
 import { UnitService } from 'src/app/services/unit.service';
@@ -32,6 +32,7 @@ export class UnitComponent implements OnInit {
   // Custom dropdown states
   showUnitTypeDropdown = false;
   showUnitPurposeDropdown = false;
+  showUnitStatusDropdown = false;
 
   // Edit Mode / Save states
   isEditMode = false;
@@ -64,11 +65,19 @@ export class UnitComponent implements OnInit {
   toggleUnitTypeDropdown(): void {
     this.showUnitTypeDropdown = !this.showUnitTypeDropdown;
     this.showUnitPurposeDropdown = false;
+    this.showUnitStatusDropdown = false;
   }
 
   toggleUnitPurposeDropdown(): void {
     this.showUnitPurposeDropdown = !this.showUnitPurposeDropdown;
     this.showUnitTypeDropdown = false;
+    this.showUnitStatusDropdown = false;
+  }
+
+  toggleUnitStatusDropdown(): void {
+    this.showUnitStatusDropdown = !this.showUnitStatusDropdown;
+    this.showUnitTypeDropdown = false;
+    this.showUnitPurposeDropdown = false;
   }
 
   selectUnitType(type: string): void {
@@ -79,6 +88,22 @@ export class UnitComponent implements OnInit {
   selectUnitPurpose(purpose: string): void {
     this.unit.unitPurpose = purpose;
     this.showUnitPurposeDropdown = false;
+  }
+
+  selectUnitStatus(status: string): void {
+    this.unit.status = status;
+    this.showUnitStatusDropdown = false;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    // Dismiss all custom select dropdown menus if click is not inside form field
+    if (!target.closest('.field')) {
+      this.showUnitTypeDropdown = false;
+      this.showUnitPurposeDropdown = false;
+      this.showUnitStatusDropdown = false;
+    }
   }
 
   // 1. Triggered by the search button next to Property ID field
@@ -120,7 +145,8 @@ export class UnitComponent implements OnInit {
             defaultAccount: item.unitDefaultAmount || '',
             acCharge: item.unitAcCharge || 0,
             electricityCharge: item.unitElectricalCharge || 0,
-            propertyId: item.propertyId
+            propertyId: item.propertyId,
+            status: item.status || 'Vacant'
           }));
           this.filteredUnits = [...this.units];
           this.cdr.detectChanges();
@@ -187,7 +213,7 @@ export class UnitComponent implements OnInit {
       maintenanceDeposit: 0,
       annualRentMin: 0,
       annualRentMax: 0,
-      status: 'Vacant',
+      status: this.unit.status || 'Vacant',
       remarks: ''
     };
 
@@ -273,12 +299,14 @@ export class UnitComponent implements OnInit {
       dewaPrefix: row.dewaPrefix,
       defaultAccount: row.defaultAccount,
       acCharge: row.acCharge,
-      electricityCharge: row.electricityCharge
+      electricityCharge: row.electricityCharge,
+      status: row.status || 'Vacant'
     };
 
     // Close any open custom select dropdown menus
     this.showUnitTypeDropdown = false;
     this.showUnitPurposeDropdown = false;
+    this.showUnitStatusDropdown = false;
     this.cdr.detectChanges();
   }
 
@@ -327,7 +355,7 @@ export class UnitComponent implements OnInit {
       maintenanceDeposit: 0,
       annualRentMin: 0,
       annualRentMax: 0,
-      status: 'Vacant',
+      status: this.unit.status || 'Vacant',
       remarks: ''
     };
 
@@ -414,6 +442,7 @@ export class UnitComponent implements OnInit {
   private emptyUnitModel(): any {
     this.showUnitTypeDropdown = false;
     this.showUnitPurposeDropdown = false;
+    this.showUnitStatusDropdown = false;
     return {
       unitId: '',
       unitNo: '',
@@ -427,7 +456,8 @@ export class UnitComponent implements OnInit {
       dewaPrefix: '',
       defaultAccount: '',
       acCharge: 0,
-      electricityCharge: 0
+      electricityCharge: 0,
+      status: 'Vacant'
     };
   }
 }
