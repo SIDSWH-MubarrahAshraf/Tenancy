@@ -73,6 +73,31 @@ export class UsersComponent implements OnInit {
     private elementRef: ElementRef
   ) {}
 
+  private loadSweetAlert(): Promise<any> {
+    if ((window as any).Swal) {
+      return Promise.resolve((window as any).Swal);
+    }
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11';
+      script.onload = () => resolve((window as any).Swal);
+      document.body.appendChild(script);
+    });
+  }
+
+  showAlert(icon: string, title: string, text: string): void {
+    this.loadSweetAlert().then(Swal => {
+      Swal.fire({
+        icon: icon,
+        title: title,
+        text: text,
+        confirmButtonColor: 'var(--erp-primary, #30277C)'
+      });
+    }).catch(() => {
+      alert(`${title}: ${text}`);
+    });
+  }
+
   ngOnInit(): void {
     this.loadAllUsers();
   }
@@ -125,7 +150,7 @@ export class UsersComponent implements OnInit {
   // ============================================
   onSave(form: NgForm): void {
     if (form.invalid) {
-      alert('Please fill all required fields.');
+      this.showAlert('warning', 'Validation Error', 'Please fill all required fields.');
       return;
     }
 
@@ -202,6 +227,7 @@ export class UsersComponent implements OnInit {
               this.isEditMode = false;
               this.editingUserId = null;
               this.cdr.detectChanges();
+              this.showAlert('success', 'Updated Successfully', 'User details have been updated.');
 
               // Silent background reload
               this.loadAllUsers();
@@ -223,7 +249,7 @@ export class UsersComponent implements OnInit {
             this.statusMessage = '';
             this.debugError = 'Update API error: ' + (err.message || JSON.stringify(err));
             this.cdr.detectChanges();
-            alert(err.error?.message || err.message || 'Failed to update user.');
+            this.showAlert('error', 'Update Failed', err.error?.message || err.message || 'Failed to update user.');
           });
         }
       });
@@ -265,6 +291,7 @@ export class UsersComponent implements OnInit {
               this.resetForm();
               this.isSaving = false;
               this.cdr.detectChanges();
+              this.showAlert('success', 'Created Successfully', 'User has been created successfully.');
 
               // Silent background reload
               this.loadAllUsers();
@@ -285,7 +312,7 @@ export class UsersComponent implements OnInit {
             this.statusMessage = '';
             this.debugError = 'Create API error: ' + (err.message || JSON.stringify(err));
             this.cdr.detectChanges();
-            alert(err.error?.message || err.message || 'Failed to create user.');
+            this.showAlert('error', 'Create Failed', err.error?.message || err.message || 'Failed to create user.');
           });
         }
       });

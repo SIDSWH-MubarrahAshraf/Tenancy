@@ -116,7 +116,7 @@
   @if (showPermissionsPanel && selectedGroup) {
     <div class="erp-card full-width-card mt-4">
       <div class="card-header d-flex justify-content-between align-items-center"
-           style="background: var(--erp-primary); color: white; border-bottom: 1px solid var(--erp-primary); padding: 14px 20px;">
+           style="background: var(--erp-primary); color: white; border-bottom: 1px solid var(--erp-primary); padding: 14px 20px; border-top-left-radius: 11px !important; border-top-right-radius: 11px !important;">
         <h5 class="mb-0 fw-bold d-flex align-items-center gap-2 text-white">
           <svg viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.5;">
             <circle cx="12" cy="12" r="3" />
@@ -128,38 +128,14 @@
       </div>
       <div class="card-body">
         
-        <!-- Add Permission Row Controller -->
-        <div class="row mb-4 align-items-end">
-          <div class="col-md-4">
-            <label class="form-label required">Module Code</label>
-            <div class="input-group">
-              <input 
-                type="text" 
-                class="form-control" 
-                placeholder="Enter or select module..." 
-                [(ngModel)]="newModuleCode" 
-                list="moduleSuggestions" />
-              <datalist id="moduleSuggestions">
-                @for (m of availableModules; track m) {
-                  <option [value]="m"></option>
-                }
-              </datalist>
-              <button class="btn erp-btn-primary px-3" type="button" (click)="addNewPermissionRow()">
-                <svg viewBox="0 0 24 24" aria-hidden="true" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.5;">
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-              </button>
-            </div>
-          </div>
-          <div class="col-md-8 text-end">
-            <button class="btn erp-btn-secondary me-2" (click)="closePermissionsPanel()">
-              Cancel
-            </button>
-            <button class="btn erp-btn-success" (click)="savePermissionsMatrix()" [disabled]="isSaving">
-              Save Permissions Matrix
-            </button>
-          </div>
+        <!-- Actions Row -->
+        <div class="d-flex justify-content-end mb-4">
+          <button class="btn erp-btn-secondary me-2" (click)="closePermissionsPanel()">
+            Cancel
+          </button>
+          <button class="btn erp-btn-success" (click)="savePermissionsMatrix()" [disabled]="isSaving">
+            Save Permissions Matrix
+          </button>
         </div>
 
         <!-- Permissions Table Grid -->
@@ -174,7 +150,7 @@
                 <th style="width: 100px; text-align: center;">Delete</th>
                 <th style="width: 100px; text-align: center;">Print</th>
                 <th style="width: 100px; text-align: center;">Post</th>
-                <th style="width: 80px; text-align: center;">Remove</th>
+
               </tr>
             </thead>
             <tbody>
@@ -219,20 +195,12 @@
                       <input class="form-check-input check-action-blue" type="checkbox" [(ngModel)]="p.canPost">
                     </div>
                   </td>
-                  <!-- Delete row button -->
-                  <td style="text-align: center;">
-                    <button class="icon-action delete-btn" (click)="deletePermissionRow(i)" title="Delete Permission Row">
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <polyline points="3 6 5 6 21 6" />
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                      </svg>
-                    </button>
-                  </td>
+
                 </tr>
               }
               @if (permissionsList.length === 0) {
                 <tr>
-                  <td colspan="8" class="text-center py-4 text-muted">No module permissions configured yet. Click "+ Add Module" above to add one.</td>
+                  <td colspan="7" class="text-center py-4 text-muted">No module permissions configured yet.</td>
                 </tr>
               }
             </tbody>

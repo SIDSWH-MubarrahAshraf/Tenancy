@@ -61,6 +61,31 @@ export class UnitComponent implements OnInit {
     }
   }
 
+  private loadSweetAlert(): Promise<any> {
+    if ((window as any).Swal) {
+      return Promise.resolve((window as any).Swal);
+    }
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11';
+      script.onload = () => resolve((window as any).Swal);
+      document.body.appendChild(script);
+    });
+  }
+
+  showAlert(icon: string, title: string, text: string): void {
+    this.loadSweetAlert().then(Swal => {
+      Swal.fire({
+        icon: icon,
+        title: title,
+        text: text,
+        confirmButtonColor: 'var(--erp-primary, #30277C)'
+      });
+    }).catch(() => {
+      alert(`${title}: ${text}`);
+    });
+  }
+
   // Dropdown toggle methods
   toggleUnitTypeDropdown(): void {
     this.showUnitTypeDropdown = !this.showUnitTypeDropdown;
@@ -110,7 +135,7 @@ export class UnitComponent implements OnInit {
   onPropertySearch(): void {
     const propId = this.searchPropertyId?.trim();
     if (!propId) {
-      alert('Please enter a Property ID to search.');
+      this.showAlert('warning', 'Input Required', 'Please enter a Property ID to search.');
       return;
     }
     this.loadUnitsForProperty(propId);
@@ -155,7 +180,7 @@ export class UnitComponent implements OnInit {
       error: (err: any) => {
         this.ngZone.run(() => {
           console.error('Failed to load units:', err);
-          alert('Failed to load units for Property ID: ' + propId);
+          this.showAlert('error', 'Fetch Failed', 'Failed to load units for Property ID: ' + propId);
           this.units = [];
           this.filteredUnits = [];
           this.cdr.detectChanges();
@@ -168,12 +193,12 @@ export class UnitComponent implements OnInit {
   addUnit(): void {
     const propId = this.searchPropertyId?.trim();
     if (!propId) {
-      alert('Please select or fill a Property ID first.');
+      this.showAlert('warning', 'Input Required', 'Please select or fill a Property ID first.');
       return;
     }
 
     if (!this.unit.unitId) {
-      alert('Unit ID is required.');
+      this.showAlert('warning', 'Input Required', 'Unit ID is required.');
       return;
     }
 
@@ -232,6 +257,7 @@ export class UnitComponent implements OnInit {
               this.cdr.detectChanges();
             });
           }, 4000);
+          this.showAlert('success', 'Added Successfully', 'Unit has been added successfully.');
 
           // Use whatever the backend returns (e.g. generated id), falling back
           // to what we sent if a field wasn't echoed back.
@@ -271,7 +297,7 @@ export class UnitComponent implements OnInit {
       error: (err: any) => {
         this.ngZone.run(() => {
           console.error('Failed to create unit:', err);
-          alert(err.error?.message || err.message || 'Failed to create unit.');
+          this.showAlert('error', 'Add Failed', err.error?.message || err.message || 'Failed to create unit.');
           this.isSaving = false;
           this.statusMessage = '';
           this.cdr.detectChanges();
@@ -314,12 +340,12 @@ export class UnitComponent implements OnInit {
   saveChanges(): void {
     const propId = this.searchPropertyId?.trim();
     if (!propId) {
-      alert('Property ID is required.');
+      this.showAlert('warning', 'Input Required', 'Property ID is required.');
       return;
     }
 
     if (this.editingUnitId === null) {
-      alert('No unit selected for saving.');
+      this.showAlert('warning', 'Selection Required', 'No unit selected for saving.');
       return;
     }
 
@@ -370,12 +396,13 @@ export class UnitComponent implements OnInit {
           
           // Refresh the table automatically
           this.loadUnitsForProperty(propId);
+          this.showAlert('success', 'Updated Successfully', 'Unit details have been updated.');
         });
       },
       error: (err: any) => {
         this.ngZone.run(() => {
           console.error('Failed to update unit:', err);
-          alert(err.error?.message || 'Failed to update unit.');
+          this.showAlert('error', 'Update Failed', err.error?.message || 'Failed to update unit.');
           this.cdr.detectChanges();
         });
       }
@@ -414,10 +441,27 @@ export class UnitComponent implements OnInit {
       return;
     }
 
-    const confirmed = window.confirm(`Delete unit "${matchedUnit.unitId}"?`);
-    if (!confirmed) return;
+    this.loadSweetAlert().then(Swal => {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: `Do you really want to delete unit "${matchedUnit.unitId}"?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: 'var(--erp-danger, #C62828)',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true
+      }).then((result: any) => {
+        if (result.isConfirmed) {
+          this.executeDeleteUnit(matchedUnit.id, line);
+        }
+      });
+    });
+  }
 
-    this.unitService.delete(matchedUnit.id).subscribe({
+  executeDeleteUnit(id: number, line: number): void {
+    this.unitService.delete(id).subscribe({
       next: () => {
         this.ngZone.run(() => {
           // Optimistically remove from array for instant visual update
@@ -427,12 +471,13 @@ export class UnitComponent implements OnInit {
           
           // Refresh with database to be perfectly synced
           this.loadUnitsForProperty(this.searchPropertyId);
+          this.showAlert('success', 'Deleted Successfully', 'Unit has been deleted.');
         });
       },
       error: (err: any) => {
         this.ngZone.run(() => {
           console.error('Failed to delete unit:', err);
-          alert(err.error?.message || 'Failed to delete unit.');
+          this.showAlert('error', 'Delete Failed', err.error?.message || 'Failed to delete unit.');
           this.cdr.detectChanges();
         });
       }

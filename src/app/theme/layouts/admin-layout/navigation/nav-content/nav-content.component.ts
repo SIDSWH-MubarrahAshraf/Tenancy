@@ -32,7 +32,9 @@ import {
   SettingOutline,
   PlayCircleOutline,
   SoundOutline,
-  SafetyCertificateOutline
+  SafetyCertificateOutline,
+  CalendarOutline,
+  HistoryOutline
 } from '@ant-design/icons-angular/icons';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 
@@ -84,7 +86,9 @@ export class NavContentComponent implements OnInit {
         SettingOutline,
         PlayCircleOutline,
         SoundOutline,
-        SafetyCertificateOutline
+        SafetyCertificateOutline,
+        CalendarOutline,
+        HistoryOutline
       ]
     );
     this.navigations = NavigationItems;

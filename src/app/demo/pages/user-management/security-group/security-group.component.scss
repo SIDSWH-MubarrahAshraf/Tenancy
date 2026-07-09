@@ -12,6 +12,8 @@
   color: #ffffff !important;
   border-bottom: 1px solid var(--erp-primary, #30277C) !important;
   padding: 14px 20px;
+  border-top-left-radius: 11px !important;
+  border-top-right-radius: 11px !important;
 }
 
 .modal-title {
@@ -28,6 +30,8 @@
   border-top: 1px solid var(--erp-border);
   padding: 14px 20px;
   background: var(--erp-bg);
+  border-bottom-left-radius: 11px !important;
+  border-bottom-right-radius: 11px !important;
 }
 
 .btn-close-white {

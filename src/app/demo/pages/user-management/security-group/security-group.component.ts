@@ -47,7 +47,9 @@ export class SecurityGroupComponent implements OnInit {
     'SERVICES',
     'USERS',
     'REMINDERS',
-    'ANNOUNCEMENT'
+    'ANNOUNCEMENT',
+    'INVOICE-ENTRY',
+    'RECURRING-ENTRIES'
   ];
 
   ngOnInit(): void {
@@ -204,12 +206,12 @@ export class SecurityGroupComponent implements OnInit {
     this.selectedGroup = group;
     
     // Map current permissions of the group
-    // The API returns group permissions as security group permissions which embed the permission object
-    const permissions: Permission[] = [];
+    const permissionsMap = new Map<string, Permission>();
     if (group.permissions && group.permissions.length > 0) {
       group.permissions.forEach((gp: SecurityGroupPermission) => {
-        if (gp.permission) {
-          permissions.push({
+        if (gp.permission && gp.permission.moduleCode) {
+          const code = gp.permission.moduleCode.toUpperCase();
+          permissionsMap.set(code, {
             id: gp.permission.id,
             moduleCode: gp.permission.moduleCode,
             canAdd: gp.permission.canAdd === true,
@@ -222,6 +224,25 @@ export class SecurityGroupComponent implements OnInit {
         }
       });
     }
+
+    // Populate all availableModules by default
+    const permissions: Permission[] = [];
+    this.availableModules.forEach(mCode => {
+      const upperCode = mCode.toUpperCase();
+      if (permissionsMap.has(upperCode)) {
+        permissions.push(permissionsMap.get(upperCode)!);
+      } else {
+        permissions.push({
+          moduleCode: mCode,
+          canAdd: false,
+          canEdit: false,
+          canDelete: false,
+          canView: false,
+          canPrint: false,
+          canPost: false
+        });
+      }
+    });
     
     this.permissionsList = permissions;
     this.newModuleCode = '';

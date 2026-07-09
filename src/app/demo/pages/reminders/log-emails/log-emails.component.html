@@ -1,0 +1,267 @@
+<div class="row">
+  <div class="col-sm-12">
+    <div class="card" style="border: 1px solid var(--erp-border, #C6C3F2); border-radius: 12px; overflow: hidden; background: var(--erp-card-bg, #FCFBFE) !important; box-shadow: var(--erp-shadow);">
+      
+      <!-- HEADER / FILTER BAR -->
+      <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-3" style="background: var(--erp-header-bg, #E5E2F8) !important; border-bottom: 1px solid var(--erp-border, #C6C3F2) !important; padding: 16px 24px;">
+        <div>
+          <h4 class="mb-0 fw-bold" style="color: var(--erp-primary, #30277C);">System Email & Attachment Logs</h4>
+        </div>
+        
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+          <button class="btn btn-erp-navy btn-sm rounded-pill px-3 fw-bold" (click)="clearAllLogs()" [disabled]="emailLogs.length === 0">
+            <i class="bi bi-trash me-1"></i> Clear Logs
+          </button>
+        </div>
+      </div>
+
+      <div class="card-body p-4">
+        
+        <!-- SEARCH & FILTER ROW -->
+        <div class="row g-3 mb-4 align-items-end">
+          <div class="col-md-4">
+            <label class="form-label fw-bold text-uppercase" style="font-size: 11.5px; color: var(--erp-primary, #30277C); letter-spacing: 0.5px;">Search Subject / Recipient</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              placeholder="Search logs..." 
+              [(ngModel)]="searchText" 
+              (ngModelChange)="applyFilters()" 
+              style="border-color: var(--erp-border, #C6C3F2); border-radius: 8px; height: 38px; font-weight: 600;" />
+          </div>
+          
+          <div class="col-md-3">
+            <label class="form-label fw-bold text-uppercase" style="font-size: 11.5px; color: var(--erp-primary, #30277C); letter-spacing: 0.5px;">Email Type</label>
+            <div class="custom-dropdown-container">
+              <div 
+                class="custom-dropdown-trigger" 
+                [class.open]="showTypeDropdown"
+                (click)="toggleTypeDropdown($event)">
+                <span>{{ getTypeLabel() }}</span>
+                <span class="chevron-down"></span>
+              </div>
+              
+              <div class="custom-dropdown-menu" *ngIf="showTypeDropdown" [ngStyle]="typeDropdownStyle">
+                <div class="custom-dropdown-item" [class.active]="selectedType === 'ALL'" (click)="selectType('ALL', $event)">All Types</div>
+                <div class="custom-dropdown-item" [class.active]="selectedType === 'Renewal'" (click)="selectType('Renewal', $event)">Lease Renewal</div>
+                <div class="custom-dropdown-item" [class.active]="selectedType === 'Move-Out'" (click)="selectType('Move-Out', $event)">Tenant Move-Out</div>
+                <div class="custom-dropdown-item" [class.active]="selectedType === 'Announcement'" (click)="selectType('Announcement', $event)">Announcements</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-3">
+            <label class="form-label fw-bold text-uppercase" style="font-size: 11.5px; color: var(--erp-primary, #30277C); letter-spacing: 0.5px;">Status</label>
+            <div class="custom-dropdown-container">
+              <div 
+                class="custom-dropdown-trigger" 
+                [class.open]="showStatusDropdown"
+                (click)="toggleStatusDropdown($event)">
+                <span>{{ getStatusLabel() }}</span>
+                <span class="chevron-down"></span>
+              </div>
+              
+              <div class="custom-dropdown-menu" *ngIf="showStatusDropdown" [ngStyle]="statusDropdownStyle">
+                <div class="custom-dropdown-item" [class.active]="selectedStatus === 'ALL'" (click)="selectStatus('ALL', $event)">All Statuses</div>
+                <div class="custom-dropdown-item" [class.active]="selectedStatus === 'Sent'" (click)="selectStatus('Sent', $event)">Sent Successfully</div>
+                <div class="custom-dropdown-item" [class.active]="selectedStatus === 'Failed'" (click)="selectStatus('Failed', $event)">Failed</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-2">
+            <button class="btn btn-outline-erp-navy w-100" (click)="searchText = ''; selectedType = 'ALL'; selectedStatus = 'ALL'; applyFilters();" style="border-radius: 8px; height: 38px; font-weight: 600;">
+              <i class="bi bi-arrow-clockwise me-1"></i> Reset
+            </button>
+          </div>
+        </div>
+
+        <!-- TABS NAV -->
+        <div class="d-flex gap-2 mb-3 pb-2 border-bottom">
+          <button class="tab-button" [class.active]="activeTab === 'logs'" (click)="activeTab = 'logs'">
+            <i class="bi bi-envelope me-1"></i> Email Logs ({{ filteredLogs.length }})
+          </button>
+          <button class="tab-button" [class.active]="activeTab === 'attachments'" (click)="activeTab = 'attachments'">
+            <i class="bi bi-paperclip me-1"></i> Attachments Log ({{ allAttachments.length }})
+          </button>
+        </div>
+
+        <!-- ================= TAB 1: EMAIL LOGS ================= -->
+        <div *ngIf="activeTab === 'logs'">
+          <div class="table-responsive">
+            <table class="table erp-table align-middle">
+              <thead>
+                <tr>
+                  <th>CustId</th>
+                  <th>Cust Name</th>
+                  <th>UnitId</th>
+                  <th>To Email</th>
+                  <th>Subject</th>
+                  <th style="width: 100px;" class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of filteredLogs" style="cursor: pointer;" (click)="openLogDetails(item)">
+                  <td class="fw-bold" style="color: var(--erp-primary);">{{ item.custId || '-' }}</td>
+                  <td class="fw-semibold text-dark">{{ item.recipientName || '-' }}</td>
+                  <td><span class="badge bg-light-primary text-primary border border-primary-subtle">{{ item.unitId || '-' }}</span></td>
+                  <td class="fw-semibold text-secondary">{{ item.recipient }}</td>
+                  <td>
+                    <div class="fw-bold text-truncate" style="max-width: 320px;" [title]="item.subject">{{ item.subject }}</div>
+                    <div *ngIf="item.attachments.length > 0" class="text-muted" style="font-size: 11px;">
+                      <i class="bi bi-paperclip me-1"></i> {{ item.attachments.length }} attachment(s)
+                    </div>
+                  </td>
+                  <td class="text-center" (click)="$event.stopPropagation()">
+                    <div class="d-flex justify-content-center gap-1">
+                      <button class="btn btn-outline-erp-navy btn-xs border-0" (click)="openLogDetails(item)" title="View Details">
+                        <i class="bi bi-eye"></i>
+                      </button>
+                      <button class="btn btn-outline-danger btn-xs border-0" (click)="deleteLog(item.id, $event)" title="Delete Log">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="filteredLogs.length === 0">
+                  <td colspan="6" class="text-center py-5 text-muted">
+                    <i class="bi bi-envelope-open fs-1 mb-3 text-muted d-block"></i>
+                    <div>No email logs matched the current filters.</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ================= TAB 2: ATTACHMENTS LOG ================= -->
+        <div *ngIf="activeTab === 'attachments'">
+          <div class="table-responsive">
+            <table class="table erp-table align-middle">
+              <thead>
+                <tr>
+                  <th>Sent Date</th>
+                  <th>Attachment Filename</th>
+                  <th>File Size</th>
+                  <th>File Type</th>
+                  <th>Associated Email Subject</th>
+                  <th>Recipient</th>
+                  <th style="width: 120px;" class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let att of allAttachments">
+                  <td class="text-muted">{{ formatDate(att.sentDate) }}</td>
+                  <td>
+                    <div class="fw-bold" style="color: var(--erp-primary);">
+                      <i class="bi bi-file-earmark-pdf text-danger me-1" *ngIf="att.fileType === 'PDF'"></i>
+                      <i class="bi bi-file-earmark me-1" *ngIf="att.fileType !== 'PDF'"></i>
+                      {{ att.filename }}
+                    </div>
+                  </td>
+                  <td><span class="badge bg-light text-dark border">{{ att.fileSize }}</span></td>
+                  <td><span class="badge bg-dark text-white">{{ att.fileType }}</span></td>
+                  <td class="text-truncate" style="max-width: 250px;" [title]="att.emailSubject">{{ att.emailSubject }}</td>
+                  <td class="text-muted" style="font-size: 12.5px;">{{ att.recipient }}</td>
+                  <td class="text-center">
+                    <button class="btn btn-outline-erp-navy btn-sm rounded-pill" (click)="downloadMockAttachment(att)">
+                      <i class="bi bi-download me-1"></i> Download
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="allAttachments.length === 0">
+                  <td colspan="7" class="text-center py-5 text-muted">
+                    <i class="bi bi-file-earmark-excel fs-1 mb-3 text-muted d-block"></i>
+                    <div>No attachments found in the sent emails log.</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= EMAIL DETAILS DIALOG MODAL ================= -->
+<div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.55); z-index: 1050;" *ngIf="showDetailsModal">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content" style="border-radius: 12px; border: 1px solid var(--erp-border, #C6C3F2); overflow: hidden; box-shadow: var(--erp-shadow);">
+      
+      <div class="modal-header" style="background: var(--erp-header-bg, #E5E2F8) !important; padding: 16px 24px; border-bottom: 1px solid var(--erp-border, #C6C3F2) !important;">
+        <h5 class="modal-title fw-bold" style="color: var(--erp-primary, #30277C);">Outbound Email Record: {{ selectedLog?.id }}</h5>
+        <button type="button" class="btn-close" (click)="closeDetailsModal()"></button>
+      </div>
+      
+      <div class="modal-body p-4" style="background-color: #ffffff;">
+        <div class="row g-3 mb-4">
+          <div class="col-md-6">
+            <span class="text-muted d-block" style="font-size: 11px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Sender Address</span>
+            <span class="fw-bold" style="font-size: 13.5px; color: var(--erp-text);">{{ selectedLog?.sender }}</span>
+          </div>
+          <div class="col-md-6">
+            <span class="text-muted d-block" style="font-size: 11px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Recipient Name & Address</span>
+            <span class="fw-bold" style="font-size: 13.5px; color: var(--erp-text);">{{ selectedLog?.recipientName }} &lt;{{ selectedLog?.recipient }}&gt;</span>
+          </div>
+          <div class="col-md-6">
+            <span class="text-muted d-block" style="font-size: 11px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Date Sent</span>
+            <span class="fw-semibold" style="font-size: 13px; color: var(--erp-text);">{{ formatDate(selectedLog?.sentDate || '') }}</span>
+          </div>
+          <div class="col-md-3">
+            <span class="text-muted d-block" style="font-size: 11px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Communication Type</span>
+            <span class="badge mt-1" [ngClass]="{
+              'bg-light-primary text-primary': selectedLog?.type === 'Renewal',
+              'bg-light-warning text-warning': selectedLog?.type === 'Move-Out',
+              'bg-light-info text-info': selectedLog?.type === 'Announcement'
+            }">{{ selectedLog?.type }}</span>
+          </div>
+          <div class="col-md-3">
+            <span class="text-muted d-block" style="font-size: 11px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Delivery Status</span>
+            <span class="badge mt-1" [ngClass]="{
+              'bg-light-success text-success': selectedLog?.status === 'Sent',
+              'bg-light-danger text-danger': selectedLog?.status === 'Failed'
+            }">{{ selectedLog?.status }}</span>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label fw-bold text-uppercase" style="font-size: 11px; color: var(--erp-primary, #30277C); letter-spacing: 0.5px;">Email Subject</label>
+          <div class="p-3 border rounded fw-bold text-dark" style="background-color: var(--erp-bg, #F5F4FA); font-size: 14px;">
+            {{ selectedLog?.subject }}
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label fw-bold text-uppercase" style="font-size: 11px; color: var(--erp-primary, #30277C); letter-spacing: 0.5px;">Email Message Body</label>
+          <div class="p-4 border rounded text-dark" style="background-color: #ffffff; white-space: pre-wrap; font-family: monospace; font-size: 13px; line-height: 1.5; max-height: 250px; overflow-y: auto; border-color: var(--erp-border, #C6C3F2) !important;">
+            {{ selectedLog?.body }}
+          </div>
+        </div>
+
+        <div *ngIf="selectedLog?.attachments && selectedLog!.attachments.length > 0">
+          <label class="form-label fw-bold text-uppercase" style="font-size: 11px; color: var(--erp-primary, #30277C); letter-spacing: 0.5px;">Attachments ({{ selectedLog!.attachments.length }})</label>
+          <div class="d-flex flex-wrap gap-2 mt-1">
+            <div *ngFor="let att of selectedLog!.attachments" class="p-2 border rounded d-flex align-items-center justify-content-between gap-3 bg-light" style="font-size: 12.5px; min-width: 240px; border-color: var(--erp-border, #C6C3F2) !important;">
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-file-earmark-pdf text-danger" style="font-size: 18px;"></i>
+                <div>
+                  <div class="fw-bold">{{ att.filename }}</div>
+                  <div class="text-muted" style="font-size: 10.5px;">{{ att.fileSize }}</div>
+                </div>
+              </div>
+              <button class="btn btn-outline-erp-navy btn-xs" (click)="downloadMockAttachment(att)"><i class="bi bi-download"></i></button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer" style="background: var(--erp-bg, #F5F4FA); padding: 16px 24px; border-top: 1px solid var(--erp-border, #C6C3F2) !important;">
+        <button type="button" class="btn btn-erp-navy rounded-pill px-4" (click)="closeDetailsModal()">Close Details</button>
+      </div>
+
+    </div>
+  </div>
+</div>

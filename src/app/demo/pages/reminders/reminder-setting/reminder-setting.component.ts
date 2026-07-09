@@ -49,6 +49,31 @@ export class ReminderSettingComponent implements OnInit {
     private elementRef: ElementRef
   ) {}
 
+  private loadSweetAlert(): Promise<any> {
+    if ((window as any).Swal) {
+      return Promise.resolve((window as any).Swal);
+    }
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11';
+      script.onload = () => resolve((window as any).Swal);
+      document.body.appendChild(script);
+    });
+  }
+
+  showAlert(icon: string, title: string, text: string): void {
+    this.loadSweetAlert().then(Swal => {
+      Swal.fire({
+        icon: icon,
+        title: title,
+        text: text,
+        confirmButtonColor: 'var(--erp-primary, #30277C)'
+      });
+    }).catch(() => {
+      alert(`${title}: ${text}`);
+    });
+  }
+
   ngOnInit(): void {
     this.loadInitialData();
   }
@@ -200,15 +225,15 @@ export class ReminderSettingComponent implements OnInit {
     this.showReminderTypeDropdown = false;
     // Form Validations
     if (!this.selectedSetting.reminderType) {
-      alert('Reminder Type is required.');
+      this.showAlert('warning', 'Input Required', 'Reminder Type is required.');
       return;
     }
     if (this.selectedSetting.daysBefore === null || this.selectedSetting.daysBefore === undefined) {
-      alert('Days Before is required.');
+      this.showAlert('warning', 'Input Required', 'Days Before is required.');
       return;
     }
     if (!this.selectedSetting.templateCode) {
-      alert('Template selection is required.');
+      this.showAlert('warning', 'Input Required', 'Template selection is required.');
       return;
     }
 
@@ -245,6 +270,7 @@ export class ReminderSettingComponent implements OnInit {
 
             this.showModal = false;
             this.isSaving = false;
+            this.showAlert('success', 'Updated Successfully', 'Reminder setting details have been updated.');
             this.loadReminderSettings();
           });
         },
@@ -255,6 +281,7 @@ export class ReminderSettingComponent implements OnInit {
             this.isSaving = false;
             this.statusMessage = '';
             this.cdr.detectChanges();
+            this.showAlert('error', 'Update Failed', err.error?.message || 'Failed to update reminder setting.');
           });
         }
       });
@@ -272,6 +299,7 @@ export class ReminderSettingComponent implements OnInit {
 
             this.showModal = false;
             this.isSaving = false;
+            this.showAlert('success', 'Created Successfully', 'Reminder setting has been created successfully.');
             this.loadReminderSettings();
           });
         },
@@ -282,6 +310,7 @@ export class ReminderSettingComponent implements OnInit {
             this.isSaving = false;
             this.statusMessage = '';
             this.cdr.detectChanges();
+            this.showAlert('error', 'Create Failed', err.error?.message || 'Failed to create reminder setting.');
           });
         }
       });

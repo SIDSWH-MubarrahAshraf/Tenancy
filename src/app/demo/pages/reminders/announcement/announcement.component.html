@@ -31,6 +31,7 @@
               type="text" 
               class="form-control" 
               [(ngModel)]="selectedPropIds" 
+              (ngModelChange)="onPropertyIdChange($event)"
               [disabled]="isViewMode" 
               placeholder="e.g. PROP-001, PROP-002" />
             

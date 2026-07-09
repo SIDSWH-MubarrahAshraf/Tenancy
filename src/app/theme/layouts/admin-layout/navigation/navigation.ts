@@ -105,15 +105,6 @@ export const NavigationItems: NavigationItem[] = [
         icon: 'bell',
         children: [
           {
-            id: 'email-templates',
-            title: 'Email Templates',
-            type: 'item',
-            url: '/reminders/email-templates',
-            classes: 'nav-item',
-            icon: 'mail',
-            breadcrumbs: false
-          },
-          {
             id: 'reminder-settings',
             title: 'Reminder Settings',
             type: 'item',
@@ -129,6 +120,41 @@ export const NavigationItems: NavigationItem[] = [
             url: '/reminders/run',
             classes: 'nav-item',
             icon: 'play-circle',
+            breadcrumbs: false
+          },
+          {
+            id: 'month-expiry',
+            title: '3 Month Expiry',
+            type: 'item',
+            url: '/reminders/expiry',
+            classes: 'nav-item',
+            icon: 'calendar',
+            breadcrumbs: false
+          }
+        ]
+      },
+      {
+        id: 'email-management',
+        title: 'Email Management',
+        type: 'collapse',
+        icon: 'mail',
+        children: [
+          {
+            id: 'email-templates',
+            title: 'Email Templates',
+            type: 'item',
+            url: '/reminders/email-templates',
+            classes: 'nav-item',
+            icon: 'file-text',
+            breadcrumbs: false
+          },
+          {
+            id: 'log-emails',
+            title: 'Log Emails',
+            type: 'item',
+            url: '/reminders/log-emails',
+            classes: 'nav-item',
+            icon: 'history',
             breadcrumbs: false
           }
         ]

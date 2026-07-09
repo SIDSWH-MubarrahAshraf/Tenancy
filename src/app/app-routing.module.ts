@@ -144,6 +144,18 @@ const routes: Routes = [
             loadComponent: () =>
               import('./demo/pages/reminders/reminder-run/reminder-run.component')
                 .then(c => c.ReminderRunComponent)
+          },
+          {
+            path: 'expiry',
+            loadComponent: () =>
+              import('./demo/pages/reminders/month-expiry/month-expiry.component')
+                .then(c => c.MonthExpiryComponent)
+          },
+          {
+            path: 'log-emails',
+            loadComponent: () =>
+              import('./demo/pages/reminders/log-emails/log-emails.component')
+                .then(c => c.LogEmailsComponent)
           }
         ]
       },

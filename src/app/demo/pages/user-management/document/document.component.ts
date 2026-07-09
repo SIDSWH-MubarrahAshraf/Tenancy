@@ -67,6 +67,31 @@ export class DocumentNumberComponent implements OnInit {
     private ngZone: NgZone
   ) {}
 
+  private loadSweetAlert(): Promise<any> {
+    if ((window as any).Swal) {
+      return Promise.resolve((window as any).Swal);
+    }
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11';
+      script.onload = () => resolve((window as any).Swal);
+      document.body.appendChild(script);
+    });
+  }
+
+  showAlert(icon: string, title: string, text: string): void {
+    this.loadSweetAlert().then(Swal => {
+      Swal.fire({
+        icon: icon,
+        title: title,
+        text: text,
+        confirmButtonColor: 'var(--erp-primary, #30277C)'
+      });
+    }).catch(() => {
+      alert(`${title}: ${text}`);
+    });
+  }
+
   ngOnInit(): void {
     this.loadAllModules();
   }
@@ -157,17 +182,17 @@ export class DocumentNumberComponent implements OnInit {
   // ==========================================
   saveModule(): void {
     if (this.isModalEditMode && !this.selectedModule.id) {
-      alert('Cannot save: Invalid Document ID.');
+      this.showAlert('error', 'Invalid Document', 'Cannot save: Invalid Document ID.');
       return;
     }
 
     if (!this.selectedModule.moduleName.trim()) {
-      alert('Module Name is required.');
+      this.showAlert('warning', 'Input Required', 'Module Name is required.');
       return;
     }
 
     if (!this.selectedModule.documentType.trim()) {
-      alert('Document Type is required.');
+      this.showAlert('warning', 'Input Required', 'Document Type is required.');
       return;
     }
 
@@ -212,6 +237,7 @@ export class DocumentNumberComponent implements OnInit {
             this.showEditModal = false;
             this.isSaving = false;
             this.cdr.detectChanges();
+            this.showAlert('success', 'Updated Successfully', 'Document details have been updated.');
 
             // Silently trigger background reload to keep state in sync
             this.loadAllModules();
@@ -220,7 +246,7 @@ export class DocumentNumberComponent implements OnInit {
         error: (err) => {
           this.ngZone.run(() => {
             console.error('Failed to update document number:', err);
-            alert(err.error?.message || err.message || 'Failed to update document setup.');
+            this.showAlert('error', 'Update Failed', err.error?.message || err.message || 'Failed to update document setup.');
             this.isSaving = false;
             this.statusMessage = '';
             this.cdr.detectChanges();
@@ -258,6 +284,7 @@ export class DocumentNumberComponent implements OnInit {
             this.showEditModal = false;
             this.isSaving = false;
             this.cdr.detectChanges();
+            this.showAlert('success', 'Created Successfully', 'Document has been created successfully.');
 
             // Silently trigger background reload to keep state in sync
             this.loadAllModules();
@@ -266,7 +293,7 @@ export class DocumentNumberComponent implements OnInit {
         error: (err) => {
           this.ngZone.run(() => {
             console.error('Failed to create document number:', err);
-            alert(err.error?.message || err.message || 'Failed to create document setup.');
+            this.showAlert('error', 'Create Failed', err.error?.message || err.message || 'Failed to create document setup.');
             this.isSaving = false;
             this.statusMessage = '';
             this.cdr.detectChanges();

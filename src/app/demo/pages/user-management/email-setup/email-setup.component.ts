@@ -48,6 +48,31 @@ export class EmailSetupComponent implements OnInit {
     private ngZone: NgZone
   ) {}
 
+  private loadSweetAlert(): Promise<any> {
+    if ((window as any).Swal) {
+      return Promise.resolve((window as any).Swal);
+    }
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11';
+      script.onload = () => resolve((window as any).Swal);
+      document.body.appendChild(script);
+    });
+  }
+
+  showAlert(icon: string, title: string, text: string): void {
+    this.loadSweetAlert().then(Swal => {
+      Swal.fire({
+        icon: icon,
+        title: title,
+        text: text,
+        confirmButtonColor: 'var(--erp-primary, #30277C)'
+      });
+    }).catch(() => {
+      alert(`${title}: ${text}`);
+    });
+  }
+
   ngOnInit(): void {
     this.loadEmailSettings();
   }
@@ -108,7 +133,7 @@ export class EmailSetupComponent implements OnInit {
   // ==========================================
   saveEmailSetup(form: NgForm): void {
     if (form.invalid) {
-      alert('Please fill all required fields.');
+      this.showAlert('warning', 'Validation Error', 'Please fill all required fields.');
       return;
     }
 
@@ -146,6 +171,7 @@ export class EmailSetupComponent implements OnInit {
           this.isSaving = false;
           this.isReadOnly = true; // Lock fields after successful create
           this.cdr.detectChanges();
+          this.showAlert('success', 'Created Successfully', 'Email configuration has been created successfully.');
           
           // Silently sync settings from database
           this.loadEmailSettings();
@@ -154,7 +180,7 @@ export class EmailSetupComponent implements OnInit {
       error: (err) => {
         this.ngZone.run(() => {
           console.error('Failed to save email settings:', err);
-          alert(err.error?.message || err.message || 'Failed to save email configuration.');
+          this.showAlert('error', 'Create Failed', err.error?.message || err.message || 'Failed to save email configuration.');
           this.isSaving = false;
           this.statusMessage = '';
           this.cdr.detectChanges();
@@ -168,7 +194,7 @@ export class EmailSetupComponent implements OnInit {
   // ==========================================
   updateEmailSetup(): void {
     if (!this.email.id) {
-      alert('No email settings found to update. Fill the inputs and click Add first.');
+      this.showAlert('warning', 'Selection Required', 'No email settings found to update. Fill the inputs and click Add first.');
       return;
     }
 
@@ -203,6 +229,7 @@ export class EmailSetupComponent implements OnInit {
           this.isSaving = false;
           this.isReadOnly = true; // Lock fields after successful update
           this.cdr.detectChanges();
+          this.showAlert('success', 'Updated Successfully', 'Email configuration has been updated.');
 
           // Silently sync settings from database
           this.loadEmailSettings();
@@ -211,7 +238,7 @@ export class EmailSetupComponent implements OnInit {
       error: (err) => {
         this.ngZone.run(() => {
           console.error('Failed to update email settings:', err);
-          alert(err.error?.message || err.message || 'Failed to update email configuration.');
+          this.showAlert('error', 'Update Failed', err.error?.message || err.message || 'Failed to update email configuration.');
           this.isSaving = false;
           this.statusMessage = '';
           this.cdr.detectChanges();
@@ -225,7 +252,7 @@ export class EmailSetupComponent implements OnInit {
   // ==========================================
   sendTestEmail(): void {
     if (!this.email.testEmail?.trim()) {
-      alert('Please enter a Test Email Address.');
+      this.showAlert('warning', 'Input Required', 'Please enter a Test Email Address.');
       return;
     }
 
@@ -254,13 +281,13 @@ export class EmailSetupComponent implements OnInit {
 
           this.isTesting = false;
           this.cdr.detectChanges();
-          alert('Test email sent successfully! Check your inbox.');
+          this.showAlert('success', 'Test Email Sent', 'Test connection succeeded! Please check your inbox.');
         });
       },
       error: (err) => {
         this.ngZone.run(() => {
           console.error('Failed to send test email:', err);
-          alert(err.error?.message || err.message || 'Test connection failed. Verify host, port, credentials, and SSL settings.');
+          this.showAlert('error', 'Test Failed', err.error?.message || err.message || 'Test connection failed. Verify host, port, credentials, and SSL settings.');
           this.isTesting = false;
           this.statusMessage = '';
           this.cdr.detectChanges();

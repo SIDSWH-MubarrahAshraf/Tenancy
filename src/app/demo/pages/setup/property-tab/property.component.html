@@ -15,8 +15,9 @@
               <input type="text" [ngModel]="propertyId" (ngModelChange)="onPropertyIdChange($event)" placeholder="Enter Property Code" style="border: none !important; background: transparent; height: 100%; flex-grow: 1; padding: 0 11px; font-size: 0.86rem; color: var(--erp-text, #2f3542); outline: none; margin: 0; box-shadow: none;">
               
               <!-- Search Button -->
-              <button type="button" (click)="toggleSearchPopup()" title="Search Property" style="width: 38px; height: 100%; background: var(--erp-primary, #8E24AA); border: none !important; color: #ffffff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; transition: opacity 0.2s; margin: 0; border-radius: 0;">
-                <svg viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.5;">
+              <button type="button" (click)="searchProperty()" [disabled]="loadingProperties" title="Search Property" style="width: 38px; height: 100%; background: var(--erp-primary, #8E24AA); border: none !important; color: #ffffff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; transition: opacity 0.2s; margin: 0; border-radius: 0;">
+                <span *ngIf="loadingProperties" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="color: #ffffff; width: 14px; height: 14px; border-width: 0.15em; margin: 0;"></span>
+                <svg *ngIf="!loadingProperties" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.5;">
                   <circle cx="11" cy="11" r="7" />
                   <path d="m16.5 16.5 4 4" />
                 </svg>
@@ -29,20 +30,6 @@
                   <path d="M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
                 </svg>
               </button>
-            </div>
-
-            <!-- Search Results Dropdown/Popup -->
-            <div *ngIf="showSearchPopup" class="search-popup-dropdown" style="position: absolute; top: 43px; left: 0; width: 100%; background: #ffffff; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 8px; box-shadow: 0 8px 24px rgba(142, 36, 170, 0.15); z-index: 1000; max-height: 250px; overflow-y: auto; padding: 8px;">
-              <div *ngIf="loadingProperties" class="d-flex align-items-center justify-content-center py-4" style="color: var(--erp-primary); gap: 10px; font-weight: 600; font-size: 13px;">
-                <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="color: var(--erp-primary); width: 1.2rem; height: 1.2rem; border-width: 0.2em; margin: 0;"></div>
-                <span>Loading Properties...</span>
-              </div>
-              <div *ngIf="!loadingProperties && dbProperties.length === 0" class="text-center py-3 text-muted" style="font-size: 13px;">
-                No properties found.
-              </div>
-              <div *ngFor="let prop of dbProperties" class="dropdown-item-select" (click)="selectPropertyFromDb(prop)">
-                {{ prop.propertyId }}
-              </div>
             </div>
           </div>
         </div>
@@ -214,26 +201,6 @@
     </div>
   </footer>
 
-  <!-- Custom Delete Confirmation Modal -->
-  <div *ngIf="showDeleteConfirmModal" class="custom-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 2000;">
-    <div class="custom-modal-content" style="background: #ffffff; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 12px; box-shadow: 0 10px 30px rgba(142, 36, 170, 0.2); padding: 24px; max-width: 400px; width: 90%; text-align: center;">
-      <div class="modal-icon" style="color: var(--erp-danger, #C62828); margin-bottom: 16px;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 48px; height: 48px; margin: 0 auto;">
-          <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-        </svg>
-      </div>
-      <h3 style="margin-top: 0; font-size: 1.15rem; font-weight: 800; color: var(--erp-text, #2f3542); margin-bottom: 12px;">Delete Property</h3>
-      <p style="font-size: 0.9rem; color: var(--erp-muted, #6b7280); margin-bottom: 24px;">Do you really want to delete it?</p>
-      <div style="display: flex; gap: 12px; justify-content: center;">
-        <button type="button" (click)="cancelDelete()" style="padding: 8px 18px; font-size: 0.86rem; border-radius: 7px; border: 1px solid var(--erp-border, #CFA5EA); background: #ffffff; color: var(--erp-text, #2f3542); font-weight: 700; cursor: pointer; transition: background 0.2s;">
-          No
-        </button>
-        <button type="button" (click)="confirmDelete()" style="padding: 8px 18px; font-size: 0.86rem; border-radius: 7px; border: none; background: var(--erp-danger, #C62828); color: #ffffff; font-weight: 700; cursor: pointer; transition: opacity 0.2s;">
-          Yes
-        </button>
-      </div>
-    </div>
-  </div>
 </div>
 
 

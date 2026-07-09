@@ -43,6 +43,31 @@ export class EmailTemplateComponent implements OnInit {
     private ngZone: NgZone
   ) {}
 
+  private loadSweetAlert(): Promise<any> {
+    if ((window as any).Swal) {
+      return Promise.resolve((window as any).Swal);
+    }
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11';
+      script.onload = () => resolve((window as any).Swal);
+      document.body.appendChild(script);
+    });
+  }
+
+  showAlert(icon: string, title: string, text: string): void {
+    this.loadSweetAlert().then(Swal => {
+      Swal.fire({
+        icon: icon,
+        title: title,
+        text: text,
+        confirmButtonColor: 'var(--erp-primary, #30277C)'
+      });
+    }).catch(() => {
+      alert(`${title}: ${text}`);
+    });
+  }
+
   ngOnInit(): void {
     this.loadAllTemplates();
   }
@@ -122,19 +147,19 @@ export class EmailTemplateComponent implements OnInit {
   saveTemplate(): void {
     // Form Validations
     if (!this.selectedTemplate.templateCode.trim()) {
-      alert('Template Code is required.');
+      this.showAlert('warning', 'Input Required', 'Template Code is required.');
       return;
     }
     if (!this.selectedTemplate.templateName.trim()) {
-      alert('Template Name is required.');
+      this.showAlert('warning', 'Input Required', 'Template Name is required.');
       return;
     }
     if (!this.selectedTemplate.subject.trim()) {
-      alert('Subject is required.');
+      this.showAlert('warning', 'Input Required', 'Subject is required.');
       return;
     }
     if (!this.selectedTemplate.bodyHtml.trim()) {
-      alert('Body HTML is required.');
+      this.showAlert('warning', 'Input Required', 'Body HTML is required.');
       return;
     }
 
@@ -172,6 +197,7 @@ export class EmailTemplateComponent implements OnInit {
 
             this.showModal = false;
             this.isSaving = false;
+            this.showAlert('success', 'Updated Successfully', 'Email template details have been updated.');
             this.loadAllTemplates();
           });
         },
@@ -182,6 +208,7 @@ export class EmailTemplateComponent implements OnInit {
             this.isSaving = false;
             this.statusMessage = '';
             this.cdr.detectChanges();
+            this.showAlert('error', 'Update Failed', err.error?.message || 'Failed to update email template.');
           });
         }
       });
@@ -199,6 +226,7 @@ export class EmailTemplateComponent implements OnInit {
 
             this.showModal = false;
             this.isSaving = false;
+            this.showAlert('success', 'Created Successfully', 'Email template has been created successfully.');
             this.loadAllTemplates();
           });
         },
@@ -209,6 +237,7 @@ export class EmailTemplateComponent implements OnInit {
             this.isSaving = false;
             this.statusMessage = '';
             this.cdr.detectChanges();
+            this.showAlert('error', 'Create Failed', err.error?.message || 'Failed to create email template.');
           });
         }
       });

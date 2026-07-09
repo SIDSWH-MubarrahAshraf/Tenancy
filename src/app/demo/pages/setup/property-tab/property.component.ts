@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectorRef, NgZone } from '@angular/core';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { FormsModule } from '@angular/forms';
 import { PropertyService } from 'src/app/services/property.service';
@@ -16,7 +16,9 @@ export class PropertyComponent {
   @Output() propertyIdChange = new EventEmitter<string>();
 
   constructor(
-    private propertyService: PropertyService
+    private propertyService: PropertyService,
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone
   ) { }
   
   propertyKey: number = 0;
@@ -59,50 +61,72 @@ export class PropertyComponent {
     this.showCountryDropdown = false;
   }
 
-  cancelDelete(): void {
-    this.showDeleteConfirmModal = false;
-  }
-
-  confirmDelete(): void {
-    this.showDeleteConfirmModal = false;
-    this.propertyService.deleteProperty(this.propertyKey).subscribe({
-      next: (response) => {
-        this.clearPropertyForm();
-      },
-      error: (err) => {
-        console.error('Failed to delete property:', err);
-        alert('Failed to delete property: ' + (err.error?.message || err.message));
-      }
+  private loadSweetAlert(): Promise<any> {
+    if ((window as any).Swal) {
+      return Promise.resolve((window as any).Swal);
+    }
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11';
+      script.onload = () => resolve((window as any).Swal);
+      document.body.appendChild(script);
     });
   }
 
-  toggleSearchPopup(): void {
-    this.showSearchPopup = !this.showSearchPopup;
-    if (this.showSearchPopup) {
-      this.showTypeDropdown = false;
-      this.showCountryDropdown = false;
-      this.loadDbProperties();
-    }
+  showAlert(icon: string, title: string, text: string): void {
+    this.loadSweetAlert().then(Swal => {
+      Swal.fire({
+        icon: icon,
+        title: title,
+        text: text,
+        confirmButtonColor: 'var(--erp-primary, #30277C)'
+      });
+    }).catch(() => {
+      alert(`${title}: ${text}`);
+    });
   }
 
-  loadDbProperties(): void {
+  searchProperty(): void {
+    if (!this.propertyId || !this.propertyId.trim()) {
+      this.showAlert('warning', 'Input Required', 'Please enter a Property ID to search.');
+      return;
+    }
+
+    const searchId = this.propertyId.trim().toLowerCase();
     this.loadingProperties = true;
+    this.cdr.detectChanges();
+
     this.propertyService.getProperties().subscribe({
       next: (response) => {
-        this.loadingProperties = false;
-        console.log('Database properties response:', response);
-        if (response && response.data) {
-          this.dbProperties = response.data;
-        } else if (Array.isArray(response)) {
-          this.dbProperties = response;
-        } else {
-          this.dbProperties = [];
-        }
+        this.ngZone.run(() => {
+          this.loadingProperties = false;
+          let list: any[] = [];
+          if (response && response.data) {
+            list = response.data;
+          } else if (Array.isArray(response)) {
+            list = response;
+          } else if (response) {
+            list = [response];
+          }
+
+          // Search for the exact match by propertyId (case-insensitive)
+          const match = list.find(p => String(p.propertyId || '').trim().toLowerCase() === searchId);
+
+          if (match) {
+            this.selectPropertyFromDb(match);
+          } else {
+            this.showAlert('error', 'Not Found', `Property ID "${this.propertyId}" was not found in the database.`);
+          }
+          this.cdr.detectChanges();
+        });
       },
       error: (err) => {
-        this.loadingProperties = false;
-        console.error('Failed to load database properties', err);
-        alert('Failed to load properties list from database.');
+        this.ngZone.run(() => {
+          this.loadingProperties = false;
+          console.error('Failed to search property:', err);
+          this.showAlert('error', 'Search Error', 'Failed to retrieve property data. Please try again.');
+          this.cdr.detectChanges();
+        });
       }
     });
   }
@@ -124,6 +148,7 @@ export class PropertyComponent {
     this.inactiveChange.emit(this.inactive);
     this.propertyIdChange.emit(this.propertyId);
     this.remarks = prop.remarks || '';
+    this.cdr.detectChanges();
 
     // Load attachments if any
     if (prop.attachments && Array.isArray(prop.attachments)) {
@@ -193,12 +218,12 @@ export class PropertyComponent {
 
   saveProperty(): void {
     if (!this.propertyId || !this.propertyId.trim()) {
-      alert('Property ID is required.');
+      this.showAlert('warning', 'Input Required', 'Property ID is required.');
       return;
     }
 
     if (!this.propertyName || !this.propertyName.trim()) {
-      alert('Property Name is required.');
+      this.showAlert('warning', 'Input Required', 'Property Name is required.');
       return;
     }
 
@@ -211,31 +236,32 @@ export class PropertyComponent {
           this.propertyIdChange.emit(this.propertyId);
           this.statusMessage = 'Property saved successfully.';
           setTimeout(() => this.statusMessage = '', 4000);
+          this.showAlert('success', 'Created Successfully', 'Property has been created successfully.');
         } else {
-          alert(response?.message || 'Failed to save property.');
+          this.showAlert('error', 'Save Failed', response?.message || 'Failed to save property.');
         }
       },
       error: (error) => {
         console.error('Detailed error saving property:', error);
         const errorMsg = error.error?.message || error.message || 'Internal Server Error';
-        alert(`Error saving property: ${errorMsg}`);
+        this.showAlert('error', 'Save Error', errorMsg);
       }
     });
   }
 
   saveChanges(): void {
     if (!this.propertyKey) {
-      alert('No property is currently loaded to update. Please select a property first.');
+      this.showAlert('warning', 'Selection Required', 'No property is currently loaded to update. Please select a property first.');
       return;
     }
 
     if (!this.propertyId || !this.propertyId.trim()) {
-      alert('Property ID is required.');
+      this.showAlert('warning', 'Input Required', 'Property ID is required.');
       return;
     }
 
     if (!this.propertyName || !this.propertyName.trim()) {
-      alert('Property Name is required.');
+      this.showAlert('warning', 'Input Required', 'Property Name is required.');
       return;
     }
 
@@ -247,24 +273,55 @@ export class PropertyComponent {
           this.propertyIdChange.emit(this.propertyId);
           this.statusMessage = 'Changes saved successfully.';
           setTimeout(() => this.statusMessage = '', 4000);
+          this.showAlert('success', 'Updated Successfully', 'Property details have been updated.');
         } else {
-          alert(response?.message || 'Failed to save changes.');
+          this.showAlert('error', 'Update Failed', response?.message || 'Failed to save changes.');
         }
       },
       error: (error) => {
         console.error('Detailed error updating property:', error);
         const errorMsg = error.error?.message || error.message || 'Internal Server Error';
-        alert(`Error saving changes: ${errorMsg}`);
+        this.showAlert('error', 'Update Error', errorMsg);
       }
     });
   }
 
   deleteProperty(): void {
     if (!this.propertyKey) {
-      alert('No property is currently loaded or saved to delete.');
+      this.showAlert('warning', 'Selection Required', 'No property is currently loaded or saved to delete.');
       return;
     }
-    this.showDeleteConfirmModal = true;
+
+    this.loadSweetAlert().then(Swal => {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: `Do you really want to delete property "${this.propertyId}"?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: 'var(--erp-danger, #C62828)',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true
+      }).then((result: any) => {
+        if (result.isConfirmed) {
+          this.executeDelete();
+        }
+      });
+    });
+  }
+
+  executeDelete(): void {
+    this.propertyService.deleteProperty(this.propertyKey).subscribe({
+      next: (response) => {
+        this.clearPropertyForm();
+        this.showAlert('success', 'Deleted Successfully', 'Property has been deleted.');
+      },
+      error: (err) => {
+        console.error('Failed to delete property:', err);
+        this.showAlert('error', 'Delete Failed', err.error?.message || err.message || 'Failed to delete property.');
+      }
+    });
   }
 
   clearPropertyForm(): void {

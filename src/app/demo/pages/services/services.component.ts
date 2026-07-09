@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, HostListener, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -44,8 +44,34 @@ export class ServicesComponent implements OnInit {
   constructor(
     private router: Router,
     private serviceTypeService: ServiceTypeService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone
   ) {}
+
+  private loadSweetAlert(): Promise<any> {
+    if ((window as any).Swal) {
+      return Promise.resolve((window as any).Swal);
+    }
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11';
+      script.onload = () => resolve((window as any).Swal);
+      document.body.appendChild(script);
+    });
+  }
+
+  showAlert(icon: string, title: string, text: string): void {
+    this.loadSweetAlert().then(Swal => {
+      Swal.fire({
+        icon: icon,
+        title: title,
+        text: text,
+        confirmButtonColor: 'var(--erp-primary, #30277C)'
+      });
+    }).catch(() => {
+      alert(`${title}: ${text}`);
+    });
+  }
 
   // ── State ─────────────────────────────────────────────────────────────────
   selectedServiceId: number | null = null;
@@ -108,48 +134,42 @@ export class ServicesComponent implements OnInit {
     };
   }
 
-  // ── Search & Selection Dropdown Popup ─────────────────────────────────────
-  toggleSearchPopup(): void {
-    this.showSearchPopup = !this.showSearchPopup;
-    if (this.showSearchPopup) {
-      this.loadDbServices();
-    }
-  }
-
-  loadDbServices(): void {
+  searchService(): void {
     const searchText = this.model.serviceType ? this.model.serviceType.trim().toLowerCase() : '';
     if (!searchText) {
-      this.dbServices = [];
-      this.showSearchPopup = false;
-      this.showToast('Please enter a Service Type to search.', 'danger');
+      this.showAlert('warning', 'Input Required', 'Please enter a Service Type to search.');
       return;
     }
 
     this.loadingServices = true;
+    this.cdr.detectChanges();
+
     this.serviceTypeService.getAll().subscribe({
       next: (response) => {
-        this.loadingServices = false;
-        const allServices = response?.data || response || [];
-        
-        // Filter to ONLY show the service type that exactly matches what was entered
-        this.dbServices = allServices.filter((svc: any) => 
-          svc.serviceTypeCode?.trim().toLowerCase() === searchText
-        );
+        this.ngZone.run(() => {
+          this.loadingServices = false;
+          const allServices = response?.data || response || [];
+          
+          // Find exact match case-insensitive
+          const match = allServices.find((svc: any) => 
+            String(svc.serviceTypeCode || '').trim().toLowerCase() === searchText
+          );
 
-        if (this.dbServices.length === 1) {
-          // If exactly one match is found, auto-populate all fields and close popup
-          this.selectServiceFromDb(this.dbServices[0]);
-          this.showToast('Service details loaded.', 'success');
-        } else {
-          // Otherwise display dropdown search results
-          this.showSearchPopup = true;
-        }
+          if (match) {
+            this.selectServiceFromDb(match);
+          } else {
+            this.showAlert('error', 'Not Found', `Service Type "${this.model.serviceType}" was not found in the database.`);
+          }
+          this.cdr.detectChanges();
+        });
       },
       error: (err) => {
-        this.loadingServices = false;
-        this.showSearchPopup = false;
-        console.error('Failed to load services:', err);
-        this.showToast('Failed to load services list.', 'danger');
+        this.ngZone.run(() => {
+          this.loadingServices = false;
+          console.error('Failed to search services:', err);
+          this.showAlert('error', 'Search Failed', 'Failed to retrieve service type data. Please try again.');
+          this.cdr.detectChanges();
+        });
       }
     });
   }
@@ -159,6 +179,7 @@ export class ServicesComponent implements OnInit {
     this.selectedServiceId = svc.id;
     this.model = this.toUiModel(svc);
     this.isActive = this.model.isActive;
+    this.cdr.detectChanges();
   }
 
   // ── Service Mode change ───────────────────────────────────────────────────
@@ -192,9 +213,6 @@ export class ServicesComponent implements OnInit {
     this.showToast(`${type === 'revenue' ? 'Revenue' : 'Recurring'} account lookup opened.`, 'success');
   }
 
-  onSearch(): void {
-    this.toggleSearchPopup();
-  }
 
   // ── CRUD ──────────────────────────────────────────────────────────────────
   
@@ -202,7 +220,7 @@ export class ServicesComponent implements OnInit {
   saveNewService(form: NgForm): void {
     if (form.invalid) {
       form.control.markAllAsTouched();
-      this.showToast('Please fill all required fields.', 'danger');
+      this.showAlert('warning', 'Validation Error', 'Please fill all required fields.');
       return;
     }
 
@@ -211,12 +229,12 @@ export class ServicesComponent implements OnInit {
 
     this.serviceTypeService.create(payload).subscribe({
       next: () => {
-        this.showToast('Record created successfully.', 'success');
         this.clearForm(); // Refresh/clear all fields automatically
+        this.showAlert('success', 'Created Successfully', 'Service has been created successfully.');
       },
       error: (err) => {
         console.error('Failed to create service type:', err);
-        this.showToast(err.error?.message || 'Failed to create record.', 'danger');
+        this.showAlert('error', 'Create Failed', err.error?.message || 'Failed to create record.');
       }
     });
   }
@@ -224,13 +242,13 @@ export class ServicesComponent implements OnInit {
   // PUT: Save changes to an existing loaded service type
   saveChanges(form: NgForm): void {
     if (!this.selectedServiceId) {
-      this.showToast('Please select a service using search first.', 'danger');
+      this.showAlert('warning', 'Selection Required', 'Please select a service using search first.');
       return;
     }
 
     if (form.invalid) {
       form.control.markAllAsTouched();
-      this.showToast('Please fill all required fields.', 'danger');
+      this.showAlert('warning', 'Validation Error', 'Please fill all required fields.');
       return;
     }
 
@@ -239,17 +257,17 @@ export class ServicesComponent implements OnInit {
 
     this.serviceTypeService.update(this.selectedServiceId, payload).subscribe({
       next: (response) => {
-        this.showToast('Changes saved successfully.', 'success');
         if (response && response.data) {
           this.model = this.toUiModel(response.data);
           this.isActive = this.model.isActive;
         } else {
           this.refreshLoadedService();
         }
+        this.showAlert('success', 'Updated Successfully', 'Service details have been updated.');
       },
       error: (err) => {
         console.error('Failed to update service type:', err);
-        this.showToast(err.error?.message || 'Failed to save changes.', 'danger');
+        this.showAlert('error', 'Update Failed', err.error?.message || 'Failed to save changes.');
       }
     });
   }
@@ -270,19 +288,34 @@ export class ServicesComponent implements OnInit {
   onDelete(): void {
     if (!this.selectedServiceId) return;
 
-    const confirmed = window.confirm(
-      `Delete service type "${this.model.serviceType}"? This action cannot be undone.`
-    );
-    if (!confirmed) return;
+    this.loadSweetAlert().then(Swal => {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: `Do you really want to delete service type "${this.model.serviceType}"? This action cannot be undone.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: 'var(--erp-danger, #C62828)',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true
+      }).then((result: any) => {
+        if (result.isConfirmed) {
+          this.executeDelete();
+        }
+      });
+    });
+  }
 
-    this.serviceTypeService.delete(this.selectedServiceId).subscribe({
+  executeDelete(): void {
+    this.serviceTypeService.delete(this.selectedServiceId!).subscribe({
       next: () => {
-        this.showToast('Record deleted successfully.', 'success');
         this.clearForm(); // Clears details and resets form controls
+        this.showAlert('success', 'Deleted Successfully', 'Service record has been deleted.');
       },
       error: (err) => {
         console.error('Failed to delete service type:', err);
-        this.showToast(err.error?.message || 'Failed to delete record.', 'danger');
+        this.showAlert('error', 'Delete Failed', err.error?.message || 'Failed to delete record.');
       }
     });
   }

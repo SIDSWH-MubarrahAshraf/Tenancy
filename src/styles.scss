@@ -1123,3 +1123,105 @@ i {
   background-color: var(--erp-primary) !important;
   background: var(--erp-primary) !important;
 }
+
+/* Overrides for Status Dropdown Selects in Month Expiry */
+select.status-select.form-select,
+select.status-select {
+  border: 1px solid var(--erp-border, #C6C3F2) !important;
+  border-radius: 8px !important;
+  background-color: #ffffff !important; /* Force background to be white */
+  color: var(--erp-text, #2f3542) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease-in-out !important;
+  cursor: pointer !important;
+  height: 36px !important;
+  padding: 0 10px !important;
+  outline: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+select.status-select.form-select:hover,
+select.status-select:hover {
+  border-color: var(--erp-sidebar-bg, #1B1647) !important;
+  background-color: var(--erp-sidebar-bg, #1B1647) !important; /* Dark sidebar colour hover */
+  color: #ffffff !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+select.status-select.form-select:focus,
+select.status-select:focus {
+  border-color: var(--erp-sidebar-bg, #1B1647) !important;
+  background-color: #ffffff !important;
+  color: var(--erp-text, #2f3542) !important;
+  box-shadow: 0 0 0 3px rgba(27, 22, 71, 0.15) !important;
+  transform: none !important;
+}
+
+/* SweetAlert2 Button and Dialog Customizations to Match Application UI */
+.swal2-popup.swal2-modal {
+  border: 1px solid var(--erp-border, #C6C3F2) !important;
+  border-radius: 12px !important; /* Rounded corners */
+  background: var(--erp-card-bg, #FCFBFE) !important;
+  box-shadow: 0 10px 30px rgba(48, 39, 124, 0.15) !important;
+  font-family: inherit !important;
+}
+
+.swal2-title {
+  color: var(--erp-text, #2f3542) !important;
+  font-weight: 700 !important;
+  font-size: 1.25rem !important;
+}
+
+.swal2-html-container {
+  color: var(--erp-muted, #6b7280) !important;
+  font-size: 0.95rem !important;
+}
+
+/* OK / Confirm button styling - capsule shape and matched to primary theme */
+.swal2-confirm.swal2-styled {
+  background-color: var(--erp-primary, #30277C) !important;
+  color: #ffffff !important;
+  border-radius: 20px !important; /* Rounded capsule button style */
+  padding: 10px 24px !important;
+  font-weight: 700 !important;
+  font-size: 13.5px !important;
+  transition: all 0.2s ease-in-out !important;
+  box-shadow: none !important;
+  border: none !important;
+  outline: none !important;
+}
+
+.swal2-confirm.swal2-styled:hover {
+  background-color: var(--erp-sidebar-bg, #1B1647) !important;
+  background: var(--erp-sidebar-bg, #1B1647) !important;
+  filter: brightness(0.95) !important;
+}
+
+.swal2-confirm.swal2-styled:focus {
+  box-shadow: 0 0 0 3px rgba(48, 39, 124, 0.2) !important;
+}
+
+/* Cancel button styling - capsule shape */
+.swal2-cancel.swal2-styled {
+  background-color: #6c757d !important;
+  color: #ffffff !important;
+  border-radius: 20px !important; /* Rounded capsule button style */
+  padding: 10px 24px !important;
+  font-weight: 700 !important;
+  font-size: 13.5px !important;
+  transition: all 0.2s ease-in-out !important;
+  box-shadow: none !important;
+  border: none !important;
+  outline: none !important;
+}
+
+.swal2-cancel.swal2-styled:hover {
+  filter: brightness(0.9) !important;
+}
+
+.swal2-cancel.swal2-styled:focus {
+  box-shadow: 0 0 0 3px rgba(108, 117, 125, 0.2) !important;
+}
