@@ -2,6 +2,8 @@ import { Component, Input, OnInit, ChangeDetectorRef, NgZone, HostListener } fro
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { FormsModule } from '@angular/forms';
 import { UnitService } from 'src/app/services/unit.service';
+import { PropertyService } from 'src/app/services/property.service';
+import { ServiceTypeService } from 'src/app/services/service-type.service';
 
 @Component({
   selector: 'app-unit',
@@ -33,6 +35,9 @@ export class UnitComponent implements OnInit {
   showUnitTypeDropdown = false;
   showUnitPurposeDropdown = false;
   showUnitStatusDropdown = false;
+  showUnitViewDropdown = false;
+  showTaxAuthorityDropdown = false;
+  showServiceTypeDropdown = false;
 
   // Edit Mode / Save states
   isEditMode = false;
@@ -46,9 +51,12 @@ export class UnitComponent implements OnInit {
   unit: any = this.emptyUnitModel();
   units: any[] = [];
   filteredUnits: any[] = [];
+  serviceTypes: any[] = [];
 
   constructor(
     private unitService: UnitService,
+    private propertyService: PropertyService,
+    private serviceTypeService: ServiceTypeService,
     private cdr: ChangeDetectorRef,
     private ngZone: NgZone
   ) {}
@@ -59,6 +67,25 @@ export class UnitComponent implements OnInit {
       this.searchPropertyId = this.propertyId;
       this.loadUnitsForProperty(this.propertyId);
     }
+    this.loadServiceTypes();
+  }
+
+  loadServiceTypes(): void {
+    this.serviceTypeService.getAll().subscribe({
+      next: (response) => {
+        let list: any[] = [];
+        if (response && response.data) {
+          list = response.data;
+        } else if (Array.isArray(response)) {
+          list = response;
+        }
+        this.serviceTypes = list;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Failed to load service types:', err);
+      }
+    });
   }
 
   private loadSweetAlert(): Promise<any> {
@@ -91,18 +118,54 @@ export class UnitComponent implements OnInit {
     this.showUnitTypeDropdown = !this.showUnitTypeDropdown;
     this.showUnitPurposeDropdown = false;
     this.showUnitStatusDropdown = false;
+    this.showUnitViewDropdown = false;
+    this.showTaxAuthorityDropdown = false;
+    this.showServiceTypeDropdown = false;
   }
 
   toggleUnitPurposeDropdown(): void {
     this.showUnitPurposeDropdown = !this.showUnitPurposeDropdown;
     this.showUnitTypeDropdown = false;
     this.showUnitStatusDropdown = false;
+    this.showUnitViewDropdown = false;
+    this.showTaxAuthorityDropdown = false;
+    this.showServiceTypeDropdown = false;
   }
 
   toggleUnitStatusDropdown(): void {
     this.showUnitStatusDropdown = !this.showUnitStatusDropdown;
     this.showUnitTypeDropdown = false;
     this.showUnitPurposeDropdown = false;
+    this.showUnitViewDropdown = false;
+    this.showTaxAuthorityDropdown = false;
+    this.showServiceTypeDropdown = false;
+  }
+
+  toggleUnitViewDropdown(): void {
+    this.showUnitViewDropdown = !this.showUnitViewDropdown;
+    this.showUnitTypeDropdown = false;
+    this.showUnitPurposeDropdown = false;
+    this.showUnitStatusDropdown = false;
+    this.showTaxAuthorityDropdown = false;
+    this.showServiceTypeDropdown = false;
+  }
+
+  toggleTaxAuthorityDropdown(): void {
+    this.showTaxAuthorityDropdown = !this.showTaxAuthorityDropdown;
+    this.showUnitTypeDropdown = false;
+    this.showUnitPurposeDropdown = false;
+    this.showUnitStatusDropdown = false;
+    this.showUnitViewDropdown = false;
+    this.showServiceTypeDropdown = false;
+  }
+
+  toggleServiceTypeDropdown(): void {
+    this.showServiceTypeDropdown = !this.showServiceTypeDropdown;
+    this.showUnitTypeDropdown = false;
+    this.showUnitPurposeDropdown = false;
+    this.showUnitStatusDropdown = false;
+    this.showUnitViewDropdown = false;
+    this.showTaxAuthorityDropdown = false;
   }
 
   selectUnitType(type: string): void {
@@ -120,6 +183,93 @@ export class UnitComponent implements OnInit {
     this.showUnitStatusDropdown = false;
   }
 
+  selectUnitView(view: string): void {
+    this.unit.unitView = view;
+    this.showUnitViewDropdown = false;
+  }
+
+  selectTaxAuthority(option: string): void {
+    this.unit.taxAuthority = option;
+    this.showTaxAuthorityDropdown = false;
+  }
+
+  selectServiceType(serviceType: string): void {
+    this.unit.serviceType = serviceType;
+    this.showServiceTypeDropdown = false;
+  }
+
+  // Property Search Popup Methods
+  showPropertySearchPopup = false;
+  searchPropertyQuery = '';
+  loadingProperties = false;
+  properties: any[] = [];
+  filteredProperties: any[] = [];
+
+  openPropertySearchModal(): void {
+    this.showPropertySearchPopup = true;
+    this.loadingProperties = true;
+    this.properties = [];
+    this.filteredProperties = [];
+
+    this.propertyService.getProperties().subscribe({
+      next: (response) => {
+        let list: any[] = [];
+        if (response && response.data) {
+          list = response.data; 
+        } else if (Array.isArray(response)) {
+          list = response;
+        }
+        this.properties = list;
+        this.filterProperties();
+        this.loadingProperties = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Failed to load properties for search popup:', err);
+        this.loadingProperties = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  filterProperties(): void {
+    const q = (this.searchPropertyQuery || '').trim().toLowerCase();
+    if (!q) {
+      this.filteredProperties = [...this.properties];
+    } else {
+      this.filteredProperties = this.properties.filter(p =>
+        String(p.propertyId || '').toLowerCase().includes(q) ||
+        String(p.propertyName || '').toLowerCase().includes(q) ||
+        String(p.propertyType || '').toLowerCase().includes(q) ||
+        String(p.propertyCity || '').toLowerCase().includes(q)
+      );
+    }
+  }
+
+  selectProperty(p: any): void {
+    this.searchPropertyId = p.propertyId || '';
+    this.showPropertySearchPopup = false;
+    this.loadUnitsForProperty(this.searchPropertyId);
+  }
+
+  // Unit Search Popup Methods
+  showUnitSearchPopup = false;
+
+  openUnitSearchModal(): void {
+    if (!this.searchPropertyId || !this.searchPropertyId.trim()) {
+      this.showAlert('warning', 'Selection Required', 'Please select a Property ID first.');
+      return;
+    }
+    this.showUnitSearchPopup = true;
+    this.searchText = '';
+    this.loadUnitsForProperty(this.searchPropertyId);
+  }
+
+  selectUnitFromPopup(row: any): void {
+    this.editUnit(row);
+    this.showUnitSearchPopup = false;
+  }
+
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
@@ -128,6 +278,9 @@ export class UnitComponent implements OnInit {
       this.showUnitTypeDropdown = false;
       this.showUnitPurposeDropdown = false;
       this.showUnitStatusDropdown = false;
+      this.showUnitViewDropdown = false;
+      this.showTaxAuthorityDropdown = false;
+      this.showServiceTypeDropdown = false;
     }
   }
 
@@ -189,6 +342,38 @@ export class UnitComponent implements OnInit {
     });
   }
 
+  // Check if a property is active before performing modifications
+  checkPropertyActive(propId: string, callback: () => void): void {
+    this.propertyService.getProperties().subscribe({
+      next: (response) => {
+        let list: any[] = [];
+        if (response && response.data) {
+          list = response.data;
+        } else if (Array.isArray(response)) {
+          list = response;
+        } else if (response) {
+          list = [response];
+        }
+
+        const match = list.find(p => String(p.propertyId || '').trim().toLowerCase() === propId.toLowerCase());
+        
+        if (match && match.inactive) {
+          this.isSaving = false;
+          this.statusMessage = '';
+          this.showAlert('error', 'Validation Failed', `Cannot save unit. The property "${match.propertyName || propId}" is inactive.`);
+          this.cdr.detectChanges();
+          return;
+        }
+
+        callback();
+      },
+      error: (err) => {
+        console.warn('Property status validation failed, letting it pass', err);
+        callback();
+      }
+    });
+  }
+
   // 3. Add a new unit to the currently selected property
   addUnit(): void {
     const propId = this.searchPropertyId?.trim();
@@ -204,6 +389,16 @@ export class UnitComponent implements OnInit {
 
     if (this.isSaving) return;
 
+    this.isSaving = true;
+    this.statusMessage = 'Validating property status...';
+    this.cdr.detectChanges();
+
+    this.checkPropertyActive(propId, () => {
+      this.proceedToAddUnit(propId);
+    });
+  }
+
+  proceedToAddUnit(propId: string): void {
     // Clean and parse unitSize (e.g. "1,200 Sq Ft" -> 1200)
     let sizeNum = 0;
     if (this.unit.unitSize) {
@@ -219,30 +414,34 @@ export class UnitComponent implements OnInit {
       block: this.unit.block || '',
       floor: this.unit.floor || '',
       unitType: this.unit.unitType || '',
-      taxAuthority: this.unit.taxAuthority || '',
+      taxAuthority: this.unit.taxAuthority || 'No',
       unitPurpose: this.unit.unitPurpose || '',
-      unitDescription: this.unit.description || '',
+      unitDescription: '',
       unitSize: sizeNum,
-      unitDewaPremiseNo: this.unit.dewaPrefix || '',
-      unitDefaultAmount: parseFloat(this.unit.defaultAccount) || 0,
+      unitDewaPremiseNo: '',
+      unitDefaultAmount: 0,
       unitAcCharge: parseFloat(this.unit.acCharge) || 0,
       unitElectricalCharge: parseFloat(this.unit.electricityCharge) || 0,
       otherServiceCharge: 0,
       others: '',
-      deposit: 0,
-      targetRent: 0,
-      actualRent: 0,
-      proposedAmount: 0,
-      unitView: '',
-      parkingNumber: '',
+      deposit: parseFloat(this.unit.securityDeposit) || 0,
+      targetRent: parseFloat(this.unit.proposedRent) || 0,
+      actualRent: parseFloat(this.unit.actualRent) || 0,
+      proposedAmount: parseFloat(this.unit.proposedRent) || 0,
+      unitView: this.unit.unitView || '',
+      parkingNumber: this.unit.parking || '',
       maintenanceDeposit: 0,
       annualRentMin: 0,
       annualRentMax: 0,
       status: this.unit.status || 'Vacant',
-      remarks: ''
+      remarks: '',
+      customerId: this.unit.customerId || '',
+      customerName: this.unit.customerName || '',
+      fromPeriod: this.unit.fromPeriod || '',
+      toPeriod: this.unit.toPeriod || '',
+      serviceType: this.unit.serviceType || ''
     };
 
-    this.isSaving = true;
     this.statusMessage = 'Adding unit...';
     this.cdr.detectChanges();
 
@@ -318,21 +517,31 @@ export class UnitComponent implements OnInit {
       block: row.block,
       floor: row.floor,
       unitType: row.unitType,
-      taxAuthority: row.taxAuthority,
+      taxAuthority: row.taxAuthority || 'No',
       unitPurpose: row.unitPurpose,
-      description: row.description,
       unitSize: row.unitSize,
-      dewaPrefix: row.dewaPrefix,
-      defaultAccount: row.defaultAccount,
-      acCharge: row.acCharge,
-      electricityCharge: row.electricityCharge,
-      status: row.status || 'Vacant'
+      parking: row.parking || row.parkingNumber || '',
+      unitView: row.unitView || '',
+      status: row.status || 'Vacant',
+      acCharge: row.acCharge || row.unitAcCharge || 0,
+      electricityCharge: row.electricityCharge || row.unitElectricalCharge || 0,
+      customerId: row.customerId || '',
+      customerName: row.customerName || '',
+      fromPeriod: row.fromPeriod || '',
+      toPeriod: row.toPeriod || '',
+      serviceType: row.serviceType || '',
+      actualRent: row.actualRent || 0,
+      proposedRent: row.proposedRent || row.targetRent || row.proposedAmount || 0,
+      securityDeposit: row.securityDeposit || row.deposit || 0
     };
 
     // Close any open custom select dropdown menus
     this.showUnitTypeDropdown = false;
     this.showUnitPurposeDropdown = false;
     this.showUnitStatusDropdown = false;
+    this.showUnitViewDropdown = false;
+    this.showTaxAuthorityDropdown = false;
+    this.showServiceTypeDropdown = false;
     this.cdr.detectChanges();
   }
 
@@ -349,63 +558,70 @@ export class UnitComponent implements OnInit {
       return;
     }
 
-    let sizeNum = 0;
-    if (this.unit.unitSize) {
-      const cleaned = String(this.unit.unitSize).replace(/[^0-9]/g, '');
-      sizeNum = parseInt(cleaned, 10) || 0;
-    }
-
-    const payload = {
-      unitId: this.unit.unitId,
-      propertyId: propId,
-      unitNo: this.unit.unitNo || '',
-      block: this.unit.block || '',
-      floor: this.unit.floor || '',
-      unitType: this.unit.unitType || '',
-      taxAuthority: this.unit.taxAuthority || '',
-      unitPurpose: this.unit.unitPurpose || '',
-      unitDescription: this.unit.description || '',
-      unitSize: sizeNum,
-      unitDewaPremiseNo: this.unit.dewaPrefix || '',
-      unitDefaultAmount: parseFloat(this.unit.defaultAccount) || 0,
-      unitAcCharge: parseFloat(this.unit.acCharge) || 0,
-      unitElectricalCharge: parseFloat(this.unit.electricityCharge) || 0,
-      otherServiceCharge: 0,
-      others: '',
-      deposit: 0,
-      targetRent: 0,
-      actualRent: 0,
-      proposedAmount: 0,
-      unitView: '',
-      parkingNumber: '',
-      maintenanceDeposit: 0,
-      annualRentMin: 0,
-      annualRentMax: 0,
-      status: this.unit.status || 'Vacant',
-      remarks: ''
-    };
-
-    this.unitService.update(this.editingUnitId, payload).subscribe({
-      next: (response: any) => {
-        this.ngZone.run(() => {
-          // Reset states and clear form
-          this.isEditMode = false;
-          this.editingUnitId = null;
-          this.unit = this.emptyUnitModel();
-          this.cdr.detectChanges();
-          
-          // Refresh the table automatically
-          this.loadUnitsForProperty(propId);
-          this.showAlert('success', 'Updated Successfully', 'Unit details have been updated.');
-        });
-      },
-      error: (err: any) => {
-        this.ngZone.run(() => {
-          console.error('Failed to update unit:', err);
-          this.showAlert('error', 'Update Failed', err.error?.message || 'Failed to update unit.');
-          this.cdr.detectChanges();
-        });
+    this.checkPropertyActive(propId, () => {
+      let sizeNum = 0;
+      if (this.unit.unitSize) {
+        const cleaned = String(this.unit.unitSize).replace(/[^0-9]/g, '');
+        sizeNum = parseInt(cleaned, 10) || 0;
       }
+
+      const payload = {
+        unitId: this.unit.unitId,
+        propertyId: propId,
+        unitNo: this.unit.unitNo || '',
+        block: this.unit.block || '',
+        floor: this.unit.floor || '',
+        unitType: this.unit.unitType || '',
+        taxAuthority: this.unit.taxAuthority || 'No',
+        unitPurpose: this.unit.unitPurpose || '',
+        unitDescription: '',
+        unitSize: sizeNum,
+        unitDewaPremiseNo: '',
+        unitDefaultAmount: 0,
+        unitAcCharge: parseFloat(this.unit.acCharge) || 0,
+        unitElectricalCharge: parseFloat(this.unit.electricityCharge) || 0,
+        otherServiceCharge: 0,
+        others: '',
+        deposit: parseFloat(this.unit.securityDeposit) || 0,
+        targetRent: parseFloat(this.unit.proposedRent) || 0,
+        actualRent: parseFloat(this.unit.actualRent) || 0,
+        proposedAmount: parseFloat(this.unit.proposedRent) || 0,
+        unitView: this.unit.unitView || '',
+        parkingNumber: this.unit.parking || '',
+        maintenanceDeposit: 0,
+        annualRentMin: 0,
+        annualRentMax: 0,
+        status: this.unit.status || 'Vacant',
+        remarks: '',
+        customerId: this.unit.customerId || '',
+        customerName: this.unit.customerName || '',
+        fromPeriod: this.unit.fromPeriod || '',
+        toPeriod: this.unit.toPeriod || '',
+        serviceType: this.unit.serviceType || ''
+      };
+
+      this.unitService.update(this.editingUnitId!, payload).subscribe({
+        next: (response: any) => {
+          this.ngZone.run(() => {
+            // Reset states and clear form
+            this.isEditMode = false;
+            this.editingUnitId = null;
+            this.unit = this.emptyUnitModel();
+            this.cdr.detectChanges();
+            
+            // Refresh the table automatically
+            this.loadUnitsForProperty(propId);
+            this.showAlert('success', 'Updated Successfully', 'Unit details have been updated.');
+          });
+        },
+        error: (err: any) => {
+          this.ngZone.run(() => {
+            console.error('Failed to update unit:', err);
+            this.showAlert('error', 'Update Failed', err.error?.message || err.message || 'Failed to update unit.');
+            this.cdr.detectChanges();
+          });
+        }
+      });
     });
   }
 
@@ -488,21 +704,31 @@ export class UnitComponent implements OnInit {
     this.showUnitTypeDropdown = false;
     this.showUnitPurposeDropdown = false;
     this.showUnitStatusDropdown = false;
+    this.showUnitViewDropdown = false;
+    this.showTaxAuthorityDropdown = false;
+    this.showServiceTypeDropdown = false;
     return {
       unitId: '',
       unitNo: '',
       block: '',
       floor: '',
       unitType: '',
-      taxAuthority: '',
+      taxAuthority: 'No',
       unitPurpose: '',
-      description: '',
       unitSize: '',
-      dewaPrefix: '',
-      defaultAccount: '',
+      parking: '',
+      unitView: '',
+      status: 'Vacant',
       acCharge: 0,
       electricityCharge: 0,
-      status: 'Vacant'
+      customerId: '',
+      customerName: '',
+      fromPeriod: '',
+      toPeriod: '',
+      serviceType: '',
+      actualRent: 0,
+      proposedRent: 0,
+      securityDeposit: 0
     };
   }
 }

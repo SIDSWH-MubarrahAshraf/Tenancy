@@ -5,6 +5,7 @@ import { RouterModule, Routes } from '@angular/router';
 // Project import
 import { AdminLayout } from './theme/layouts/admin-layout/admin-layout.component';
 import { GuestLayoutComponent } from './theme/layouts/guest-layout/guest-layout.component';
+import { authGuard } from './guards/auth.guard';
 
 // Invoice Entry import
 
@@ -12,6 +13,8 @@ const routes: Routes = [
   {
     path: '',
     component: AdminLayout,
+    canActivate: [authGuard],
+    canActivateChild: [authGuard],
     children: [
       {
         path: '',
@@ -41,10 +44,21 @@ const routes: Routes = [
 
 
       {
-        path: 'property/setup',
+        path: 'property/details',
         loadComponent: () =>
-          import('./demo/pages/setup/setup.component').then((m) => m.SetupComponent),
-        data: { title: 'Property Setup' }
+          import('./demo/pages/setup/property-tab/property.component').then((m) => m.PropertyComponent),
+        data: { title: 'Property Details' }
+      },
+      {
+        path: 'property/unit-details',
+        loadComponent: () =>
+          import('./demo/pages/setup/unit-tab/unit.component').then((m) => m.UnitComponent),
+        data: { title: 'Unit Details' }
+      },
+      {
+        path: 'property/setup',
+        redirectTo: 'property/details',
+        pathMatch: 'full'
       },
       {
         path: 'services',

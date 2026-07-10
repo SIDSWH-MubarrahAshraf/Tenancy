@@ -1,7 +1,7 @@
 // Angular import
 import { Component, output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, Router } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { ThemeService } from 'src/app/services/theme.service';
 
@@ -20,7 +20,7 @@ import {
 
 @Component({
   selector: 'app-navigation',
-  imports: [SharedModule, NavContentComponent, CommonModule, RouterLink],
+  imports: [SharedModule, NavContentComponent, CommonModule, RouterModule],
   templateUrl: './navigation.component.html',
   styleUrls: ['./navigation.component.scss']
 })

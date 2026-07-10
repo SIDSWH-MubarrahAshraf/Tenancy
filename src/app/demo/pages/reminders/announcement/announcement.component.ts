@@ -28,7 +28,7 @@ export class AnnouncementComponent implements OnInit {
   recipients: any[] = [];
 
   // Modals & States
-  showPropertyMasterModal = false;
+  showPropertySearchModal = false;
   showHistoryModal = false;
   isLoadingProperties = false;
   isLoadingHistory = false;
@@ -69,23 +69,24 @@ export class AnnouncementComponent implements OnInit {
     }
   }
 
-  // Modal Open: Property Master lookup
-  openPropertyMaster(): void {
-    this.showPropertyMasterModal = true;
+  // Modal Open: Property Search lookup
+  openPropertySearch(): void {
+    if (this.isViewMode) return;
+    this.showPropertySearchModal = true;
     this.isLoadingProperties = true;
     this.properties = [];
     this.filteredProperties = [];
 
-    const url = `${this.baseUrl}/PropertyManagement/GetPropertyMasters`;
-    this.http.post<any[]>(url, { COPERATION: 1 }).subscribe({
-      next: (data) => {
-        this.properties = data || [];
+    const url = `${environment.apiUrl}/ty/properties`;
+    this.http.get<any>(url).subscribe({
+      next: (res) => {
+        this.properties = Array.isArray(res) ? res : (res?.data || []);
         this.filterProperties();
         this.isLoadingProperties = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Failed to load property masters', err);
+        console.error('Failed to load properties', err);
         this.isLoadingProperties = false;
         this.cdr.detectChanges();
       }
@@ -99,42 +100,39 @@ export class AnnouncementComponent implements OnInit {
       this.filteredProperties = [...this.properties];
     } else {
       this.filteredProperties = this.properties.filter(p =>
-        String(p.propid || '').toLowerCase().includes(q) ||
-        String(p.buildname || '').toLowerCase().includes(q) ||
-        String(p.landname || '').toLowerCase().includes(q)
+        String(p.propertyId || '').toLowerCase().includes(q) ||
+        String(p.propertyName || '').toLowerCase().includes(q) ||
+        String(p.propertyType || '').toLowerCase().includes(q) ||
+        String(p.propertyCity || '').toLowerCase().includes(q)
       );
     }
   }
 
-  // Select Property ID from modal list (append comma separated)
-  selectProperty(propid: string): void {
-    const current = (this.selectedPropIds || '').trim();
-    if (current) {
-      // Split and check for duplicates
-      const ids = current.split(',').map(x => x.trim()).filter(Boolean);
-      if (!ids.includes(propid)) {
-        ids.push(propid);
-      }
-      this.selectedPropIds = ids.join(', ');
-    } else {
-      this.selectedPropIds = propid;
-    }
-    this.showPropertyMasterModal = false;
+  // Select Property ID from modal list and load history
+  selectProperty(propertyId: string): void {
+    this.selectedPropIds = propertyId;
+    this.showPropertySearchModal = false;
     this.onPropertyIdChange(this.selectedPropIds);
+
+    // Auto load and open history for this property ID only
+    this.openHistoryForProperty(propertyId);
   }
 
-  // Modal Open: Announcement History lookup
-  openHistory(): void {
+  // Fetch and show history for a specific Property ID
+  openHistoryForProperty(propertyId: string): void {
     this.showHistoryModal = true;
     this.isLoadingHistory = true;
     this.historyAnnouncements = [];
     this.filteredHistory = [];
 
     const url = `${this.baseUrl}/Reminders/GetBuildingAnnoucment`;
-    this.http.post<any[]>(url, { COPERATION: 1 }).subscribe({
+    this.http.post<any[]>(url, { COPERATION: 1 }).subscribe({ 
       next: (data) => {
-        this.historyAnnouncements = data || [];
-        this.filterHistory();
+        const allHistory = data || [];
+        this.historyAnnouncements = allHistory.filter(h =>
+          String(h.pid || '').trim().toLowerCase() === propertyId.trim().toLowerCase()
+        );
+        this.filteredHistory = [...this.historyAnnouncements];
         this.isLoadingHistory = false;
         this.cdr.detectChanges();
       },

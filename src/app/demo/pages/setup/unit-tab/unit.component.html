@@ -7,9 +7,255 @@
           {{ statusMessage }}
         </span>
       </div>
-      <div class="d-flex gap-2">
+    </div>
+
+    <div class="card-body">
+      <div class="unit-form-grid">
+        <!-- Row 1: Property ID, Unit ID, Unit No, Block -->
+        <div class="field">
+          <span>Property ID <b>*</b></span>
+          <div class="input-attached">
+            <input 
+              type="text" 
+              [ngModel]="searchPropertyId" 
+              readonly
+              style="background: #f1ecf6; cursor: default;"
+              placeholder="Click to search Property ID..." 
+            >
+            <button 
+              type="button" 
+              class="attached-btn"
+              (click)="openPropertySearchModal()" 
+              title="Search Property ID"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="11" cy="11" r="7" />
+                <path d="m16.5 16.5 4 4" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="field">
+          <span>Unit ID <b>*</b></span>
+          <div class="input-attached">
+            <input 
+              type="text" 
+              [(ngModel)]="unit.unitId" 
+              placeholder="Enter or search Unit ID..." 
+            >
+            <!-- Search Button -->
+            <button 
+              type="button" 
+              class="attached-btn"
+              (click)="openUnitSearchModal()" 
+              title="Search Units"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="11" cy="11" r="7" />
+                <path d="m16.5 16.5 4 4" />
+              </svg>
+            </button>
+            <!-- Refresh (Clear) Button -->
+            <button 
+              type="button" 
+              class="attached-btn"
+              (click)="cancelEdit()" 
+              title="Clear Unit Form"
+              style="background: #e3a008 !important;"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <label class="field">
+          <span>Unit No</span>
+          <input type="text" [(ngModel)]="unit.unitNo" placeholder="101">
+        </label>
+
+        <label class="field">
+          <span>Block</span>
+          <input type="text" [(ngModel)]="unit.block" placeholder="A">
+        </label>
+
+        <!-- Row 2: Floor, Unit Type, Unit Purpose, Unit Size -->
+        <label class="field">
+          <span>Floor</span>
+          <input type="text" [(ngModel)]="unit.floor" placeholder="1st Floor">
+        </label>
+
+        <!-- Custom Unit Type Dropdown -->
+        <div class="field">
+          <span>Unit Type</span>
+          <div style="position: relative; width: 100%;">
+            <button type="button" (click)="toggleUnitTypeDropdown()" style="width: 100%; height: 38px; padding: 0 11px; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 7px; background: #fbfaff; color: var(--erp-text, #2f3542); font-size: 0.86rem; text-align: left; display: flex; align-items: center; justify-content: space-between; cursor: pointer; margin: 0; outline: none; box-shadow: none;">
+              <span [style.color]="unit.unitType ? 'var(--erp-text, #2f3542)' : '#a4b0be'">{{ unit.unitType || 'Select Type' }}</span>
+              <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; margin-left: 8px;">
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+            
+            <!-- Custom Dropdown Popup -->
+            <div *ngIf="showUnitTypeDropdown" class="search-popup-dropdown" style="position: absolute; top: 43px; left: 0; width: 100%; background: #ffffff; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 8px; box-shadow: 0 8px 24px rgba(142, 36, 170, 0.15); z-index: 1000; padding: 6px;">
+              <div class="dropdown-item-select" (click)="selectUnitType('Apartment')">Apartment</div>
+              <div class="dropdown-item-select" (click)="selectUnitType('Villa')">Villa</div>
+              <div class="dropdown-item-select" (click)="selectUnitType('Office')">Office</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Custom Unit Purpose Dropdown -->
+        <div class="field">
+          <span>Unit Purpose</span>
+          <div style="position: relative; width: 100%;">
+            <button type="button" (click)="toggleUnitPurposeDropdown()" style="width: 100%; height: 38px; padding: 0 11px; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 7px; background: #fbfaff; color: var(--erp-text, #2f3542); font-size: 0.86rem; text-align: left; display: flex; align-items: center; justify-content: space-between; cursor: pointer; margin: 0; outline: none; box-shadow: none;">
+              <span [style.color]="unit.unitPurpose ? 'var(--erp-text, #2f3542)' : '#a4b0be'">{{ unit.unitPurpose || 'Select Purpose' }}</span>
+              <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; margin-left: 8px;">
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+            
+            <!-- Custom Dropdown Popup -->
+            <div *ngIf="showUnitPurposeDropdown" class="search-popup-dropdown" style="position: absolute; top: 43px; left: 0; width: 100%; background: #ffffff; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 8px; box-shadow: 0 8px 24px rgba(142, 36, 170, 0.15); z-index: 1000; padding: 6px;">
+              <div class="dropdown-item-select" (click)="selectUnitPurpose('Residential')">Residential</div>
+              <div class="dropdown-item-select" (click)="selectUnitPurpose('Commercial')">Commercial</div>
+            </div>
+          </div>
+        </div>
+
+        <label class="field">
+          <span>Unit Size</span>
+          <input type="text" [(ngModel)]="unit.unitSize" placeholder="1,200 Sq Ft">
+        </label>
+
+        <!-- Row 3: Unit View, Parking, Unit Status, Tax Authority -->
+        <!-- Custom Unit View Dropdown -->
+        <div class="field">
+          <span>Unit View</span>
+          <div style="position: relative; width: 100%;">
+            <button type="button" (click)="toggleUnitViewDropdown()" style="width: 100%; height: 38px; padding: 0 11px; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 7px; background: #fbfaff; color: var(--erp-text, #2f3542); font-size: 0.86rem; text-align: left; display: flex; align-items: center; justify-content: space-between; cursor: pointer; margin: 0; outline: none; box-shadow: none;">
+              <span [style.color]="unit.unitView ? 'var(--erp-text, #2f3542)' : '#a4b0be'">{{ unit.unitView || 'Select View' }}</span>
+              <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; margin-left: 8px;">
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+            
+            <!-- Custom Dropdown Popup -->
+            <div *ngIf="showUnitViewDropdown" class="search-popup-dropdown" style="position: absolute; top: 43px; left: 0; width: 100%; background: #ffffff; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 8px; box-shadow: 0 8px 24px rgba(142, 36, 170, 0.15); z-index: 1000; padding: 6px;">
+              <div class="dropdown-item-select" (click)="selectUnitView('Sea View')">Sea View</div>
+              <div class="dropdown-item-select" (click)="selectUnitView('City View')">City View</div>
+              <div class="dropdown-item-select" (click)="selectUnitView('Garden View')">Garden View</div>
+              <div class="dropdown-item-select" (click)="selectUnitView('Pool View')">Pool View</div>
+            </div>
+          </div>
+        </div>
+
+        <label class="field">
+          <span>Parking</span>
+          <input type="text" [(ngModel)]="unit.parking" placeholder="Parking Number">
+        </label>
+
+        <label class="field">
+          <span>Unit Status</span>
+          <input 
+            type="text" 
+            [ngModel]="unit.status || 'Vacant'" 
+            readonly 
+            [style.color]="(unit.status === 'Occupied') ? '#C62828' : '#2E7D32'"
+            style="background: #f1ecf6; cursor: default; font-weight: 700; border: 1px solid var(--erp-border, #CFA5EA) !important;"
+            placeholder="Vacant"
+          >
+        </label>
+
+        <!-- Custom Tax Authority Dropdown -->
+        <div class="field">
+          <span>Tax Authority</span>
+          <div style="position: relative; width: 100%;">
+            <button type="button" (click)="toggleTaxAuthorityDropdown()" style="width: 100%; height: 38px; padding: 0 11px; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 7px; background: #fbfaff; color: var(--erp-text, #2f3542); font-size: 0.86rem; text-align: left; display: flex; align-items: center; justify-content: space-between; cursor: pointer; margin: 0; outline: none; box-shadow: none;">
+              <span [style.color]="unit.taxAuthority ? 'var(--erp-text, #2f3542)' : '#a4b0be'">{{ unit.taxAuthority || 'No' }}</span>
+              <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; margin-left: 8px;">
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+            
+            <!-- Custom Dropdown Popup -->
+            <div *ngIf="showTaxAuthorityDropdown" class="search-popup-dropdown" style="position: absolute; top: 43px; left: 0; width: 100%; background: #ffffff; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 8px; box-shadow: 0 8px 24px rgba(142, 36, 170, 0.15); z-index: 1000; padding: 6px;">
+              <div class="dropdown-item-select" (click)="selectTaxAuthority('Yes')">Yes</div>
+              <div class="dropdown-item-select" (click)="selectTaxAuthority('No')">No</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 4: Customer ID, Customer Name, From Period, To Period -->
+        <label class="field">
+          <span>Customer ID</span>
+          <input type="text" [(ngModel)]="unit.customerId" placeholder="Customer ID">
+        </label>
+
+        <label class="field">
+          <span>Customer Name</span>
+          <input type="text" [(ngModel)]="unit.customerName" placeholder="Customer Name">
+        </label>
+
+        <label class="field">
+          <span>From Period</span>
+          <input type="date" [(ngModel)]="unit.fromPeriod">
+        </label>
+
+        <label class="field">
+          <span>To Period</span>
+          <input type="date" [(ngModel)]="unit.toPeriod">
+        </label>
+
+        <!-- Custom Service Type Dropdown -->
+        <div class="field">
+          <span>Service Type</span>
+          <div style="position: relative; width: 100%;">
+            <button type="button" (click)="toggleServiceTypeDropdown()" style="width: 100%; height: 38px; padding: 0 11px; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 7px; background: #fbfaff; color: var(--erp-text, #2f3542); font-size: 0.86rem; text-align: left; display: flex; align-items: center; justify-content: space-between; cursor: pointer; margin: 0; outline: none; box-shadow: none;">
+              <span [style.color]="unit.serviceType ? 'var(--erp-text, #2f3542)' : '#a4b0be'">{{ unit.serviceType || 'Select Service Type' }}</span>
+              <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; margin-left: 8px;">
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+            
+            <!-- Custom Dropdown Popup -->
+            <div *ngIf="showServiceTypeDropdown" class="search-popup-dropdown" style="position: absolute; top: 43px; left: 0; width: 100%; background: #ffffff; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 8px; box-shadow: 0 8px 24px rgba(142, 36, 170, 0.15); z-index: 1000; padding: 6px; max-height: 200px; overflow-y: auto;">
+              @for (st of serviceTypes; track st.id) {
+                <div class="dropdown-item-select" (click)="selectServiceType(st.description || st.serviceTypeCode)">
+                  {{ st.description || st.serviceTypeCode }}
+                </div>
+              }
+              @if (serviceTypes.length === 0) {
+                <div class="dropdown-item-select text-muted" style="pointer-events: none;">No service types available</div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <label class="field">
+          <span>Actual Rent</span>
+          <input type="number" [(ngModel)]="unit.actualRent" placeholder="0.00">
+        </label>
+
+        <label class="field">
+          <span>Proposed Rent</span>
+          <input type="number" [(ngModel)]="unit.proposedRent" placeholder="0.00">
+        </label>
+
+        <label class="field">
+          <span>Security Deposit</span>
+          <input type="number" [(ngModel)]="unit.securityDeposit" placeholder="0.00">
+        </label>
+      </div>
+
+      <!-- Action buttons in card footer -->
+      <footer class="unit-actions d-flex justify-content-end gap-2 mt-4 pt-3 border-top" style="border-top: 1px solid var(--erp-border, #CFA5EA) !important; display: flex; justify-content: flex-end; gap: 8px;">
         <!-- Add Unit button shown in default mode -->
-        <button *ngIf="!isEditMode" type="button" class="btn erp-btn-success py-1 px-3 d-flex align-items-center gap-2" (click)="addUnit()" style="height: 34px; font-size: 13px;">
+        <button *ngIf="!isEditMode" type="button" class="action-btn primary py-2 px-4 d-flex align-items-center gap-2" (click)="addUnit()" style="height: 38px;">
           <svg viewBox="0 0 24 24" aria-hidden="true" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5;">
             <path d="M12 5v14M5 12h14" />
           </svg>
@@ -17,7 +263,7 @@
         </button>
 
         <!-- Save Changes button shown in Edit Mode -->
-        <button *ngIf="isEditMode" type="button" class="btn btn-primary py-1 px-3 d-flex align-items-center gap-2" (click)="saveChanges()" style="height: 34px; font-size: 13px; background: var(--erp-primary); border: none;">
+        <button *ngIf="isEditMode" type="button" class="action-btn success py-2 px-4 d-flex align-items-center gap-2" (click)="saveChanges()" style="height: 38px; background: #2E7D32; border-color: #2E7D32; color: #ffffff;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;">
             <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
             <polyline points="17 21 17 13 7 13 7 21" />
@@ -27,238 +273,160 @@
         </button>
 
         <!-- Cancel button shown in Edit Mode -->
-        <button *ngIf="isEditMode" type="button" class="btn btn-secondary py-1 px-3 d-flex align-items-center gap-2" (click)="cancelEdit()" style="height: 34px; font-size: 13px; background: #6c757d; border: none; color: #fff;">
+        <button *ngIf="isEditMode" type="button" class="action-btn danger py-2 px-4 d-flex align-items-center gap-2" (click)="cancelEdit()" style="height: 38px; background: #d32f2f; border-color: #d32f2f; color: #fff;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;">
             <line x1="18" y1="6" x2="6" y2="18" />
             <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
           Cancel
         </button>
-      </div>
-    </div>
-
-    <div class="unit-form-grid">
-      <!-- 1. Property ID with attached Search button -->
-      <div class="field">
-        <span>Property ID <b>*</b></span>
-        <div class="input-attached">
-          <input 
-            type="text" 
-            [(ngModel)]="searchPropertyId" 
-            placeholder="e.g. PROP-001" 
-          >
-          <button 
-            type="button" 
-            class="attached-btn"
-            (click)="onPropertySearch()" 
-            title="Search Units for Property"
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="11" cy="11" r="7" />
-              <path d="m16.5 16.5 4 4" />
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      <!-- 2. Unit ID -->
-      <label class="field">
-        <span>Unit ID <b>*</b></span>
-        <input type="text" [(ngModel)]="unit.unitId" placeholder="UNIT-101">
-      </label>
-
-      <label class="field">
-        <span>Unit No</span>
-        <input type="text" [(ngModel)]="unit.unitNo" placeholder="101">
-      </label>
-
-      <label class="field">
-        <span>Block</span>
-        <input type="text" [(ngModel)]="unit.block" placeholder="A">
-      </label>
-
-      <label class="field">
-        <span>Floor</span>
-        <input type="text" [(ngModel)]="unit.floor" placeholder="1st Floor">
-      </label>
-
-      <!-- Custom Unit Type Dropdown -->
-      <div class="field">
-        <span>Unit Type</span>
-        <div style="position: relative; width: 100%;">
-          <button type="button" (click)="toggleUnitTypeDropdown()" style="width: 100%; height: 38px; padding: 0 11px; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 7px; background: #fbfaff; color: var(--erp-text, #2f3542); font-size: 0.86rem; text-align: left; display: flex; align-items: center; justify-content: space-between; cursor: pointer; margin: 0; outline: none; box-shadow: none;">
-            <span>{{ unit.unitType || 'Select Type' }}</span>
-            <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; margin-left: 8px;">
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </button>
-          
-          <!-- Custom Dropdown Popup -->
-          <div *ngIf="showUnitTypeDropdown" class="search-popup-dropdown" style="position: absolute; top: 43px; left: 0; width: 100%; background: #ffffff; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 8px; box-shadow: 0 8px 24px rgba(142, 36, 170, 0.15); z-index: 1000; padding: 6px;">
-            <div class="dropdown-item-select" (click)="selectUnitType('Apartment')">Apartment</div>
-            <div class="dropdown-item-select" (click)="selectUnitType('Villa')">Villa</div>
-            <div class="dropdown-item-select" (click)="selectUnitType('Office')">Office</div>
-          </div>
-        </div>
-      </div>
-
-      <label class="field">
-        <span>Tax Authority</span>
-        <input type="text" [(ngModel)]="unit.taxAuthority" placeholder="Tax Authority">
-      </label>
-
-      <!-- Custom Unit Purpose Dropdown -->
-      <div class="field">
-        <span>Unit Purpose</span>
-        <div style="position: relative; width: 100%;">
-          <button type="button" (click)="toggleUnitPurposeDropdown()" style="width: 100%; height: 38px; padding: 0 11px; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 7px; background: #fbfaff; color: var(--erp-text, #2f3542); font-size: 0.86rem; text-align: left; display: flex; align-items: center; justify-content: space-between; cursor: pointer; margin: 0; outline: none; box-shadow: none;">
-            <span>{{ unit.unitPurpose || 'Select Purpose' }}</span>
-            <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; margin-left: 8px;">
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </button>
-          
-          <!-- Custom Dropdown Popup -->
-          <div *ngIf="showUnitPurposeDropdown" class="search-popup-dropdown" style="position: absolute; top: 43px; left: 0; width: 100%; background: #ffffff; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 8px; box-shadow: 0 8px 24px rgba(142, 36, 170, 0.15); z-index: 1000; padding: 6px;">
-            <div class="dropdown-item-select" (click)="selectUnitPurpose('Residential')">Residential</div>
-            <div class="dropdown-item-select" (click)="selectUnitPurpose('Commercial')">Commercial</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Custom Unit Status Dropdown -->
-      <div class="field">
-        <span>Unit Status <b>*</b></span>
-        <div style="position: relative; width: 100%;">
-          <button type="button" (click)="toggleUnitStatusDropdown()" style="width: 100%; height: 38px; padding: 0 11px; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 7px; background: #fbfaff; color: var(--erp-text, #2f3542); font-size: 0.86rem; text-align: left; display: flex; align-items: center; justify-content: space-between; cursor: pointer; margin: 0; outline: none; box-shadow: none;">
-            <span>{{ unit.status || 'Vacant' }}</span>
-            <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; margin-left: 8px;">
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </button>
-          
-          <!-- Custom Dropdown Popup -->
-          <div *ngIf="showUnitStatusDropdown" class="search-popup-dropdown" style="position: absolute; top: 43px; left: 0; width: 100%; background: #ffffff; border: 1px solid var(--erp-border, #CFA5EA); border-radius: 8px; box-shadow: 0 8px 24px rgba(142, 36, 170, 0.15); z-index: 1000; padding: 6px;">
-            <div class="dropdown-item-select" (click)="selectUnitStatus('Vacant')">Vacant</div>
-            <div class="dropdown-item-select" (click)="selectUnitStatus('Occupied')">Occupied</div>
-          </div>
-        </div>
-      </div>
-
-      <label class="field">
-        <span>Unit Size</span>
-        <input type="text" [(ngModel)]="unit.unitSize" placeholder="1,200 Sq Ft">
-      </label>
-
-      <label class="field">
-        <span>DEWA Prefix</span>
-        <input type="text" [(ngModel)]="unit.dewaPrefix" placeholder="Prefix">
-      </label>
-
-      <label class="field">
-        <span>Default Account</span>
-        <input type="text" [(ngModel)]="unit.defaultAccount" placeholder="Default Account">
-      </label>
-
-      <label class="field">
-        <span>AC Charge</span>
-        <input type="number" [(ngModel)]="unit.acCharge" placeholder="0.00">
-      </label>
-
-      <label class="field">
-        <span>Electricity Charge</span>
-        <input type="number" [(ngModel)]="unit.electricityCharge" placeholder="0.00">
-      </label>
-
-      <label class="field">
-        <span>Unit Description</span>
-        <input type="text" [(ngModel)]="unit.description" placeholder="Enter Unit Description">
-      </label>
-    </div>
-  </section>
-
-  <section class="unit-card unit-list-card">
-    <div class="card-header">
-      <h2>Units List</h2>
-      <label class="search-box">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="11" cy="11" r="7" />
-          <path d="m16.5 16.5 4 4" />
-        </svg>
-        <input
-          type="text"
-          placeholder="Search unit by ID or number..."
-          [(ngModel)]="searchText"
-          (input)="filterUnits()"
-        >
-      </label>
-    </div>
-
-    <!-- Space on all 4 sides wrapper containing the nested table card -->
-    <div class="px-4 pb-4 pt-4">
-      <div class="table-card border rounded shadow-sm bg-white overflow-hidden">
-        <div class="table-responsive">
-          <table class="unit-table">
-            <thead>
-              <tr>
-                <th>#Sr</th>
-                <th>Unit ID</th>
-                <th>Unit No</th>
-                <th>Block</th>
-                <th>Floor</th>
-                <th>Type</th>
-                <th>Purpose</th>
-                <th>Status</th>
-                <th class="numeric">AC Charge</th>
-                <th class="numeric">Elec. Charge</th>
-                <th class="action-cell">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let row of filteredUnits">
-                <td>{{ row.line }}</td>
-                <td><span class="unit-badge">{{ row.unitId }}</span></td>
-                <td>{{ row.unitNo }}</td>
-                <td>{{ row.block || '-' }}</td>
-                <td>{{ row.floor || '-' }}</td>
-                <td><span class="type-tag" [class]="row.unitType?.toLowerCase()">{{ row.unitType || '-' }}</span></td>
-                <td>{{ row.unitPurpose || '-' }}</td>
-                <td>
-                  <span class="badge border px-2 py-1" style="font-size: 11px; font-weight: 700;"
-                    [class.bg-light-success]="row.status === 'Vacant' || !row.status"
-                    [class.text-success]="row.status === 'Vacant' || !row.status"
-                    [class.border-success]="row.status === 'Vacant' || !row.status"
-                    [class.bg-light-danger]="row.status === 'Occupied'"
-                    [class.text-danger]="row.status === 'Occupied'"
-                    [class.border-danger]="row.status === 'Occupied'">
-                    {{ row.status || 'Vacant' | uppercase }}
-                  </span>
-                </td>
-                <td class="numeric">{{ row.acCharge | number:'1.2-2' }}</td>
-                <td class="numeric">{{ row.electricityCharge | number:'1.2-2' }}</td>
-                <td class="action-cell">
-                  <div class="d-flex gap-2 justify-content-end">
-                    <button type="button" class="icon-action edit-btn" (click)="editUnit(row)" title="Edit Unit">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
-                        <path d="M12 20h9" />
-                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-                      </svg>
-                    </button>
-                    <button type="button" class="icon-action delete-btn" (click)="deleteUnit(row.line)" title="Delete Unit">
-                      <svg viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.5;">
-                        <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6" />
-                      </svg>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr *ngIf="filteredUnits.length === 0">
-                <td colspan="11" class="empty-cell">No units found. Enter a Property ID above to load units.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+      </footer>
     </div>
   </section>
 </div>
+
+<!-- ================= MODAL: PROPERTY SEARCH ================= -->
+@if (showPropertySearchPopup) {
+  <div class="modal fade show" tabindex="-1" style="display:block; background:rgba(0,0,0,.45); z-index: 1050;">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content" style="border-radius: 12px; overflow: hidden; border: 1px solid var(--erp-border, #CFA5EA);">
+        <div class="modal-header" style="background: var(--erp-primary, #30277C) !important; color: #ffffff !important; border-bottom: none; display: flex; align-items: center; justify-content: space-between; padding: 16px 20px;">
+          <h5 class="modal-title" style="color: #ffffff !important; font-weight: 700; font-size: 1.05rem; margin: 0;">Search Property</h5>
+          <button type="button" class="btn-close" (click)="showPropertySearchPopup = false" style="background: transparent; border: none; font-size: 1.4rem; line-height: 1; color: #ffffff; cursor: pointer; padding: 0; filter: brightness(0) invert(1); opacity: 0.85;">&times;</button>
+        </div>
+
+        <div class="modal-body" style="max-height: 480px; overflow-y: auto; padding: 20px;">
+          <div class="mb-3">
+            <label class="form-label" style="font-weight: 700; font-size: 0.8rem; text-transform: uppercase; color: var(--erp-muted);">Search Properties</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              placeholder="Search by ID, Name, Type or City..." 
+              [(ngModel)]="searchPropertyQuery" 
+              (input)="filterProperties()"
+              style="border-radius: 8px; border: 1px solid var(--erp-border, #CFA5EA); font-size: 0.86rem; height: 38px;">
+          </div>
+
+          @if (loadingProperties) {
+            <div class="text-center py-4">
+              <div class="spinner-border text-primary" role="status"></div>
+              <div class="mt-2 fw-semibold text-secondary">Loading properties database...</div>
+            </div>
+          } @else {
+            <div class="table-responsive" style="border: 1px solid var(--erp-border, #CFA5EA); border-radius: 8px; overflow: hidden;">
+              <table class="table erp-table table-hover align-middle mb-0 w-100">
+                <thead>
+                  <tr style="background: #f8f9fa; border-bottom: 1px solid #dee2e6;">
+                    <th style="padding: 10px 12px; text-align: left; font-size: 11px; text-transform: uppercase; font-weight: 700; color: #495057; width: 25%;">Property ID</th>
+                    <th style="padding: 10px 12px; text-align: left; font-size: 11px; text-transform: uppercase; font-weight: 700; color: #495057; width: 35%;">Property Name</th>
+                    <th style="padding: 10px 12px; text-align: left; font-size: 11px; text-transform: uppercase; font-weight: 700; color: #495057; width: 20%;">Type</th>
+                    <th style="padding: 10px 12px; text-align: left; font-size: 11px; text-transform: uppercase; font-weight: 700; color: #495057; width: 20%;">City</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (p of filteredProperties; track p.id) {
+                    <tr style="cursor:pointer; border-bottom: 1px solid #eee; transition: background 0.15s;" onmouseover="this.style.background='#fbfaff'" onmouseout="this.style.background='transparent'" (click)="selectProperty(p)">
+                      <td style="padding: 10px 12px; text-align: left;"><span class="badge bg-light-primary text-primary border border-primary-subtle">{{ p.propertyId }}</span></td>
+                      <td style="padding: 10px 12px; text-align: left; color: var(--erp-primary);" class="fw-bold">{{ p.propertyName }}</td>
+                      <td style="padding: 10px 12px; text-align: left;">{{ p.propertyType }}</td>
+                      <td style="padding: 10px 12px; text-align: left;">{{ p.propertyCity }}</td>
+                    </tr>
+                  }
+                  @if (filteredProperties.length === 0) {
+                    <tr>
+                      <td colspan="4" class="text-center py-4 text-muted" style="font-size: 12px;">No property matches found.</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+        <div class="modal-footer" style="padding: 12px 20px; border-top: 1px solid var(--erp-border, #C6C3F2); display: flex; justify-content: flex-end; background: #fafafa;">
+          <button type="button" class="action-btn secondary" (click)="showPropertySearchPopup = false" style="padding: 6px 16px; font-size: 12px;">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ================= MODAL: UNIT SEARCH ================= -->
+@if (showUnitSearchPopup) {
+  <div class="modal fade show" tabindex="-1" style="display:block; background:rgba(0,0,0,.45); z-index: 1050;">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+      <div class="modal-content" style="border-radius: 12px; overflow: hidden; border: 1px solid var(--erp-border, #CFA5EA);">
+        <div class="modal-header" style="background: var(--erp-primary, #30277C) !important; color: #ffffff !important; border-bottom: none; display: flex; align-items: center; justify-content: space-between; padding: 16px 20px;">
+          <h5 class="modal-title" style="color: #ffffff !important; font-weight: 700; font-size: 1.05rem; margin: 0;">Units List - Property ID: {{ searchPropertyId }}</h5>
+          <button type="button" class="btn-close" (click)="showUnitSearchPopup = false" style="background: transparent; border: none; font-size: 1.4rem; line-height: 1; color: #ffffff; cursor: pointer; padding: 0; filter: brightness(0) invert(1); opacity: 0.85;">&times;</button>
+        </div>
+
+        <div class="modal-body" style="max-height: 520px; overflow-y: auto; padding: 20px;">
+          <div class="mb-3 d-flex align-items-center justify-content-between">
+            <div style="width: 320px;">
+              <input 
+                type="text" 
+                class="form-control" 
+                placeholder="Search unit by ID or number..." 
+                [(ngModel)]="searchText" 
+                (input)="filterUnits()"
+                style="border-radius: 8px; border: 1px solid var(--erp-border, #CFA5EA); font-size: 0.86rem; height: 38px;">
+            </div>
+          </div>
+
+          <div class="table-responsive" style="border: 1px solid var(--erp-border, #CFA5EA); border-radius: 8px; overflow: hidden;">
+            <table class="table erp-table table-hover align-middle mb-0 w-100">
+              <thead>
+                <tr style="background: #f8f9fa; border-bottom: 1px solid #dee2e6;">
+                  <th style="padding: 10px 12px; text-align: left; font-size: 11px; text-transform: uppercase; font-weight: 700; color: #495057;">#Sr</th>
+                  <th style="padding: 10px 12px; text-align: left; font-size: 11px; text-transform: uppercase; font-weight: 700; color: #495057;">Unit ID</th>
+                  <th style="padding: 10px 12px; text-align: left; font-size: 11px; text-transform: uppercase; font-weight: 700; color: #495057;">Unit No</th>
+                  <th style="padding: 10px 12px; text-align: left; font-size: 11px; text-transform: uppercase; font-weight: 700; color: #495057;">Block</th>
+                  <th style="padding: 10px 12px; text-align: left; font-size: 11px; text-transform: uppercase; font-weight: 700; color: #495057;">Floor</th>
+                  <th style="padding: 10px 12px; text-align: left; font-size: 11px; text-transform: uppercase; font-weight: 700; color: #495057;">Type</th>
+                  <th style="padding: 10px 12px; text-align: left; font-size: 11px; text-transform: uppercase; font-weight: 700; color: #495057;">Purpose</th>
+                  <th style="padding: 10px 12px; text-align: left; font-size: 11px; text-transform: uppercase; font-weight: 700; color: #495057;">Status</th>
+                  <th style="padding: 10px 12px; text-align: right; font-size: 11px; text-transform: uppercase; font-weight: 700; color: #495057;">AC Charge</th>
+                  <th style="padding: 10px 12px; text-align: right; font-size: 11px; text-transform: uppercase; font-weight: 700; color: #495057;">Elec. Charge</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (row of filteredUnits; track row.id) {
+                  <tr style="cursor:pointer; border-bottom: 1px solid #eee; transition: background 0.15s;" onmouseover="this.style.background='#fbfaff'" onmouseout="this.style.background='transparent'" (click)="selectUnitFromPopup(row)">
+                    <td style="padding: 10px 12px; text-align: left;">{{ row.line }}</td>
+                    <td style="padding: 10px 12px; text-align: left;"><span class="badge bg-light-primary text-primary border border-primary-subtle">{{ row.unitId }}</span></td>
+                    <td style="padding: 10px 12px; text-align: left;" class="fw-bold">{{ row.unitNo }}</td>
+                    <td style="padding: 10px 12px; text-align: left;">{{ row.block || '-' }}</td>
+                    <td style="padding: 10px 12px; text-align: left;">{{ row.floor || '-' }}</td>
+                    <td style="padding: 10px 12px; text-align: left;"><span class="badge bg-light-secondary text-secondary border border-secondary-subtle">{{ row.unitType || '-' }}</span></td>
+                    <td style="padding: 10px 12px; text-align: left;">{{ row.unitPurpose || '-' }}</td>
+                    <td style="padding: 10px 12px; text-align: left;">
+                      <span class="badge border px-2 py-1" style="font-size: 11px; font-weight: 700;"
+                        [class.bg-light-success]="row.status === 'Vacant' || !row.status"
+                        [class.text-success]="row.status === 'Vacant' || !row.status"
+                        [class.border-success]="row.status === 'Vacant' || !row.status"
+                        [class.bg-light-danger]="row.status === 'Occupied'"
+                        [class.text-danger]="row.status === 'Occupied'"
+                        [class.border-danger]="row.status === 'Occupied'">
+                        {{ row.status || 'Vacant' | uppercase }}
+                      </span>
+                    </td>
+                    <td style="padding: 10px 12px; text-align: right;">{{ row.acCharge | number:'1.2-2' }}</td>
+                    <td style="padding: 10px 12px; text-align: right;">{{ row.electricityCharge | number:'1.2-2' }}</td>
+                  </tr>
+                }
+                @if (filteredUnits.length === 0) {
+                  <tr>
+                    <td colspan="10" class="text-center py-4 text-muted" style="font-size: 12px;">No units found for this property ID.</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer" style="padding: 12px 20px; border-top: 1px solid var(--erp-border, #C6C3F2); display: flex; justify-content: flex-end; background: #fafafa;">
+          <button type="button" class="action-btn secondary" (click)="showUnitSearchPopup = false" style="padding: 6px 16px; font-size: 12px;">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+}

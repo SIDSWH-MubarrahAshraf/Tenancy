@@ -690,3 +690,108 @@ input:checked + .slider:before {
     box-shadow: 0 4px 8px rgba(0,0,0,0.05);
   }
 }
+
+/* ==========================================================
+   USER SEARCH POPUP MODAL STYLES
+   ========================================================== */
+.erp-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(27, 22, 71, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  animation: fadeInModal 0.25s ease-out;
+}
+
+.erp-modal-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 12px 36px rgba(27, 22, 71, 0.15);
+  border: 1px solid var(--erp-border, #E4E7EB);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.erp-modal-header {
+  padding: 16px 24px;
+  background: var(--erp-primary, #30277C);
+  border-bottom: 1px solid var(--erp-primary, #30277C);
+  
+  h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.3px;
+  }
+}
+
+.btn-close-modal {
+  background: none;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  
+  &:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+}
+
+.erp-modal-body {
+  padding: 24px;
+  overflow-y: auto;
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUpModal {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* ==========================================================
+   CUSTOM COLORED ATTACHED BUTTONS
+   ========================================================== */
+.input-attached .attached-btn.btn-search-attached {
+  background: var(--erp-primary, #30277C) !important;
+  border-left: 1px solid var(--erp-primary, #30277C) !important;
+  
+  svg {
+    stroke: #ffffff !important;
+  }
+  
+  &:hover {
+    background: #241D5C !important;
+    border-left-color: #241D5C !important;
+  }
+}
+
+.input-attached .attached-btn.btn-reset-attached {
+  background: #E5A93C !important;
+  border-left: 1px solid #E5A93C !important;
+  
+  svg {
+    stroke: #ffffff !important;
+  }
+  
+  &:hover {
+    background: #C78D24 !important;
+    border-left-color: #C78D24 !important;
+  }
+}

@@ -25,10 +25,9 @@ export class UsersComponent implements OnInit {
     firstName: '',
     lastName: '',
     contactNumber: '',
-    branch: '',
     email: '',
     gender: 'Male',
-    city: '',
+    city: 'Dubai',
     country: 'UAE',
     status: 'Active',
     securityGroup: '',
@@ -46,22 +45,16 @@ export class UsersComponent implements OnInit {
   debugError = ''; // Diagnostic visual helper
   showSecurityGroupDropdown = false;
   showGenderDropdown = false;
-  showBranchDropdown = false;
+  showCityDropdown = false;
   showThemeDropdown = false;
   securityGroups: string[] = ['Admin', 'Warehouse', 'Office', 'Branch'];
   genders: string[] = ['Male', 'Female', 'Custom'];
   themes: string[] = ['Purple', 'Green', 'Blue', 'Orange'];
+  cities: string[] = ['Abu Dhabi', 'Dubai', 'Sharjah', 'Ajman', 'Umm Al Quwain', 'Ras Al Khaimah', 'Fujairah'];
 
   // ============================================
   // DROPDOWNS
   // ============================================
-  branches: string[] = [
-    'Head Office',
-    'Lahore',
-    'Karachi',
-    'Islamabad',
-    'Faisalabad'
-  ];
 
   // ============================================
   // CONSTRUCTOR
@@ -173,7 +166,7 @@ export class UsersComponent implements OnInit {
     const extendedPayload = {
       ...payload,
       contactNumber: this.user.contactNumber || null,
-      branch: this.user.branch || null,
+      branch: null,
       gender: this.user.gender || null,
       country: this.user.country || 'UAE',
       city: this.user.city || null,
@@ -186,137 +179,169 @@ export class UsersComponent implements OnInit {
     this.cdr.detectChanges();
 
     if (this.isEditMode && this.editingUserId !== null) {
-      this.userService.update(this.editingUserId, extendedPayload as any).subscribe({
+      // Validate user status in the database first
+      this.userService.getById(this.editingUserId).subscribe({
         next: (response: any) => {
-          this.ngZone.run(() => {
-            try {
-              console.log('Update user success response:', response);
-              this.statusMessage = 'Changes saved successfully.';
-              setTimeout(() => {
-                this.ngZone.run(() => {
-                  this.statusMessage = '';
-                  this.cdr.detectChanges();
-                });
-              }, 4000);
-
-              // Optimistic local update
-              this.usersList = this.usersList.map(u => {
-                if (u.id === this.editingUserId) {
-                  return {
-                    ...u,
-                    userName: this.user.userId,
-                    fullName: `${this.user.firstName} ${this.user.lastName}`.trim(),
-                    email: this.user.email,
-                    contactNumber: this.user.contactNumber,
-                    branch: this.user.branch,
-                    gender: this.user.gender,
-                    city: this.user.city,
-                    country: this.user.country,
-                    isActive: this.user.status === 'Active',
-                    firstName: this.user.firstName,
-                    lastName: this.user.lastName,
-                    selectedTheme: this.user.selectedTheme
-                  };
-                }
-                return u;
-              });
-              this.filteredUsers = [...this.usersList];
-
-              this.resetForm();
-              this.isSaving = false;
-              this.isEditMode = false;
-              this.editingUserId = null;
-              this.cdr.detectChanges();
-              this.showAlert('success', 'Updated Successfully', 'User details have been updated.');
-
-              // Silent background reload
-              this.loadAllUsers();
-            } catch (ex: any) {
-              console.error('Exception inside user update callback:', ex);
-              this.debugError = 'Update callback error: ' + ex.message;
-              this.isSaving = false;
-              this.isEditMode = false;
-              this.editingUserId = null;
-              this.statusMessage = 'Error mapping update.';
-              this.cdr.detectChanges();
-            }
-          });
-        },
-        error: (err: any) => {
-          this.ngZone.run(() => {
-            console.error('Failed to update user:', err);
+          const dbUser = response?.data || response;
+          if (dbUser && dbUser.isActive === false) {
             this.isSaving = false;
             this.statusMessage = '';
-            this.debugError = 'Update API error: ' + (err.message || JSON.stringify(err));
+            this.showAlert('error', 'Validation Failed', `Cannot modify user. The user "${dbUser.userName || this.user.userId}" is inactive.`);
+            
+            // Revert state
+            this.resetForm();
+            this.isEditMode = false;
+            this.editingUserId = null;
+            this.loadAllUsers();
             this.cdr.detectChanges();
-            this.showAlert('error', 'Update Failed', err.error?.message || err.message || 'Failed to update user.');
-          });
+            return;
+          }
+
+          this.proceedToUpdateUser(extendedPayload);
+        },
+        error: (err) => {
+          console.warn('User status validation failed, proceeding with update', err);
+          this.proceedToUpdateUser(extendedPayload);
         }
       });
     } else {
-      this.userService.create(extendedPayload as any).subscribe({
-        next: (response: any) => {
-          this.ngZone.run(() => {
-            try {
-              console.log('Create user success response:', response);
-              // Set success message exactly as requested
-              this.statusMessage = 'User Added Successfully';
-              setTimeout(() => {
-                this.ngZone.run(() => {
-                  this.statusMessage = '';
-                  this.cdr.detectChanges();
-                });
-              }, 4000);
-
-              // Optimistic local append
-              const createdUser = response?.data || response;
-              const newRow = {
-                id: createdUser?.id || Date.now(),
-                userName: this.user.userId,
-                fullName: `${this.user.firstName} ${this.user.lastName}`.trim(),
-                email: this.user.email,
-                contactNumber: this.user.contactNumber,
-                branch: this.user.branch,
-                gender: this.user.gender,
-                city: this.user.city,
-                country: this.user.country,
-                isActive: this.user.status === 'Active',
-                firstName: this.user.firstName,
-                lastName: this.user.lastName,
-                selectedTheme: this.user.selectedTheme
-              };
-              this.usersList = [...this.usersList, newRow];
-              this.filteredUsers = [...this.usersList];
-
-              this.resetForm();
-              this.isSaving = false;
-              this.cdr.detectChanges();
-              this.showAlert('success', 'Created Successfully', 'User has been created successfully.');
-
-              // Silent background reload
-              this.loadAllUsers();
-            } catch (ex: any) {
-              console.error('Exception inside user create callback:', ex);
-              this.debugError = 'Create callback error: ' + ex.message;
-              this.isSaving = false;
-              this.resetForm();
-              this.statusMessage = 'Error mapping new user.';
-              this.cdr.detectChanges();
-            }
-          });
-        },
-        error: (err: any) => {
-          this.ngZone.run(() => {
-            console.error('Failed to create user:', err);
-            this.isSaving = false;
-            this.statusMessage = '';
-            this.debugError = 'Create API error: ' + (err.message || JSON.stringify(err));
-            this.cdr.detectChanges();
-            this.showAlert('error', 'Create Failed', err.error?.message || err.message || 'Failed to create user.');
-          });
-        }
-      });
+      this.proceedToAddUser(extendedPayload);
     }
+  }
+
+  private proceedToUpdateUser(extendedPayload: any): void {
+    this.userService.update(this.editingUserId!, extendedPayload as any).subscribe({
+      next: (response: any) => {
+        this.ngZone.run(() => {
+          try {
+            console.log('Update user success response:', response);
+            this.statusMessage = 'Changes saved successfully.';
+            setTimeout(() => {
+              this.ngZone.run(() => {
+                this.statusMessage = '';
+                this.cdr.detectChanges();
+              });
+            }, 4000);
+
+            // Optimistic local update
+            this.usersList = this.usersList.map(u => {
+              if (u.id === this.editingUserId) {
+                return {
+                  ...u,
+                  userName: this.user.userId,
+                  fullName: `${this.user.firstName} ${this.user.lastName}`.trim(),
+                  email: this.user.email,
+                  contactNumber: this.user.contactNumber,
+                  branch: '',
+                  gender: this.user.gender,
+                  city: this.user.city,
+                  country: this.user.country,
+                  isActive: this.user.status === 'Active',
+                  firstName: this.user.firstName,
+                  lastName: this.user.lastName,
+                  selectedTheme: this.user.selectedTheme
+                };
+              }
+              return u;
+            });
+            this.filteredUsers = [...this.usersList];
+
+            this.resetForm();
+            this.isSaving = false;
+            this.isEditMode = false;
+            this.editingUserId = null;
+            this.cdr.detectChanges();
+            this.showAlert('success', 'Updated Successfully', 'User details have been updated.');
+
+            // Silent background reload
+            this.loadAllUsers();
+          } catch (ex: any) {
+            console.error('Exception inside user update callback:', ex);
+            this.debugError = 'Update callback error: ' + ex.message;
+            this.isSaving = false;
+            this.isEditMode = false;
+            this.editingUserId = null;
+            this.statusMessage = 'Error mapping update.';
+            this.cdr.detectChanges();
+          }
+        });
+      },
+      error: (err: any) => {
+        this.ngZone.run(() => {
+          console.error('Failed to update user:', err);
+          this.isSaving = false;
+          this.statusMessage = '';
+          this.debugError = 'Update API error: ' + (err.message || JSON.stringify(err));
+          this.cdr.detectChanges();
+          this.showAlert('error', 'Update Failed', err.error?.message || err.message || 'Failed to update user.');
+        });
+      }
+    });
+  }
+
+  private proceedToAddUser(extendedPayload: any): void {
+    this.userService.create(extendedPayload as any).subscribe({
+      next: (response: any) => {
+        this.ngZone.run(() => {
+          try {
+            console.log('Create user success response:', response);
+            // Set success message exactly as requested
+            this.statusMessage = 'User Added Successfully';
+            setTimeout(() => {
+              this.ngZone.run(() => {
+                this.statusMessage = '';
+                this.cdr.detectChanges();
+              });
+            }, 4000);
+
+            // Optimistic local append
+            const createdUser = response?.data || response;
+            const newRow = {
+              id: createdUser?.id || Date.now(),
+              userName: this.user.userId,
+              fullName: `${this.user.firstName} ${this.user.lastName}`.trim(),
+              email: this.user.email,
+              contactNumber: this.user.contactNumber,
+              branch: '',
+              gender: this.user.gender,
+              city: this.user.city,
+              country: this.user.country,
+              isActive: this.user.status === 'Active',
+              firstName: this.user.firstName,
+              lastName: this.user.lastName,
+              selectedTheme: this.user.selectedTheme
+            };
+            this.usersList = [...this.usersList, newRow];
+            this.filteredUsers = [...this.usersList];
+
+            this.resetForm();
+            this.isSaving = false;
+            this.cdr.detectChanges();
+            this.showAlert('success', 'Created Successfully', 'User has been created successfully.');
+
+            // Silent background reload
+            this.loadAllUsers();
+          } catch (ex: any) {
+            console.error('Exception inside user create callback:', ex);
+            this.debugError = 'Create callback error: ' + ex.message;
+            this.isSaving = false;
+            this.resetForm();
+            this.statusMessage = 'Error mapping new user.';
+            this.cdr.detectChanges();
+          }
+        });
+      },
+      error: (err: any) => {
+        this.ngZone.run(() => {
+          console.error('Failed to create user:', err);
+          this.isSaving = false;
+          this.statusMessage = '';
+          this.debugError = 'Create API error: ' + (err.message || JSON.stringify(err));
+          this.cdr.detectChanges();
+          this.showAlert('error', 'Create Failed', err.error?.message || err.message || 'Failed to create user.');
+        });
+      }
+    });
   }
 
   // ============================================
@@ -327,7 +352,7 @@ export class UsersComponent implements OnInit {
     this.editingUserId = row.id;
     this.showSecurityGroupDropdown = false;
     this.showGenderDropdown = false;
-    this.showBranchDropdown = false;
+    this.showCityDropdown = false;
     this.showThemeDropdown = false;
 
     this.user = {
@@ -336,10 +361,9 @@ export class UsersComponent implements OnInit {
       firstName: row.firstName || '',
       lastName: row.lastName || '',
       contactNumber: row.contactNumber || '',
-      branch: row.branch || '',
       email: row.email || '',
       gender: row.gender || 'Male',
-      city: row.city || '',
+      city: row.city || 'Dubai',
       country: row.country || 'UAE',
       status: row.isActive ? 'Active' : 'Inactive',
       securityGroup: row.securityGroup || '',
@@ -383,7 +407,7 @@ export class UsersComponent implements OnInit {
     this.editingUserId = null;
     this.showSecurityGroupDropdown = false;
     this.showGenderDropdown = false;
-    this.showBranchDropdown = false;
+    this.showCityDropdown = false;
     this.showThemeDropdown = false;
     this.user = {
       userId: '',
@@ -391,10 +415,9 @@ export class UsersComponent implements OnInit {
       firstName: '',
       lastName: '',
       contactNumber: '',
-      branch: '',
       email: '',
       gender: 'Male',
-      city: '',
+      city: 'Dubai',
       country: 'UAE',
       status: 'Active',
       securityGroup: '',
@@ -410,7 +433,7 @@ export class UsersComponent implements OnInit {
     if (this.isSaving) return;
     this.showSecurityGroupDropdown = !this.showSecurityGroupDropdown;
     this.showGenderDropdown = false;
-    this.showBranchDropdown = false;
+    this.showCityDropdown = false;
     this.showThemeDropdown = false;
     this.cdr.detectChanges();
   }
@@ -425,7 +448,7 @@ export class UsersComponent implements OnInit {
     if (this.isSaving) return;
     this.showGenderDropdown = !this.showGenderDropdown;
     this.showSecurityGroupDropdown = false;
-    this.showBranchDropdown = false;
+    this.showCityDropdown = false;
     this.showThemeDropdown = false;
     this.cdr.detectChanges();
   }
@@ -436,18 +459,18 @@ export class UsersComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  toggleBranchDropdown(): void {
+  toggleCityDropdown(): void {
     if (this.isSaving) return;
-    this.showBranchDropdown = !this.showBranchDropdown;
+    this.showCityDropdown = !this.showCityDropdown;
     this.showSecurityGroupDropdown = false;
     this.showGenderDropdown = false;
     this.showThemeDropdown = false;
     this.cdr.detectChanges();
   }
 
-  selectBranch(branch: string): void {
-    this.user.branch = branch;
-    this.showBranchDropdown = false;
+  selectCity(city: string): void {
+    this.user.city = city;
+    this.showCityDropdown = false;
     this.cdr.detectChanges();
   }
 
@@ -456,7 +479,7 @@ export class UsersComponent implements OnInit {
     this.showThemeDropdown = !this.showThemeDropdown;
     this.showSecurityGroupDropdown = false;
     this.showGenderDropdown = false;
-    this.showBranchDropdown = false;
+    this.showCityDropdown = false;
     this.cdr.detectChanges();
   }
 
@@ -486,9 +509,47 @@ export class UsersComponent implements OnInit {
     if (!target.closest('.custom-dropdown-btn') && !target.closest('.custom-dropdown-popup')) {
       this.showSecurityGroupDropdown = false;
       this.showGenderDropdown = false;
-      this.showBranchDropdown = false;
+      this.showCityDropdown = false;
       this.showThemeDropdown = false;
       this.cdr.detectChanges();
     }
+  }
+
+  // ============================================
+  // USER SEARCH MODAL POPUP HELPERS
+  // ============================================
+  showSearchPopup = false;
+  searchPopupQuery = '';
+  filteredPopupUsers: any[] = [];
+
+  openSearchPopup(): void {
+    this.showSearchPopup = true;
+    this.searchPopupQuery = '';
+    this.filteredPopupUsers = [...this.usersList];
+    this.cdr.detectChanges();
+  }
+
+  closeSearchPopup(): void {
+    this.showSearchPopup = false;
+    this.cdr.detectChanges();
+  }
+
+  filterPopupUsers(): void {
+    const q = (this.searchPopupQuery || '').trim().toLowerCase();
+    if (!q) {
+      this.filteredPopupUsers = [...this.usersList];
+    } else {
+      this.filteredPopupUsers = this.usersList.filter(u =>
+        String(u.userName || '').toLowerCase().includes(q) ||
+        String(u.fullName || '').toLowerCase().includes(q)
+      );
+    }
+    this.cdr.detectChanges();
+  }
+
+  selectUserFromPopup(row: any): void {
+    this.editUser(row);
+    this.showSearchPopup = false;
+    this.cdr.detectChanges();
   }
 }

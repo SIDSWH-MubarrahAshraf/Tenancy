@@ -91,14 +91,13 @@
               [disabled]="isReadOnly || isSaving || isTesting">
           </div>
           <div class="col-lg-5">
-            <label class="form-label required">From Name (Display Name)</label>
+            <label class="form-label">CC Email</label>
             <input
               type="text"
               class="form-control"
               name="emailCcAddress"
               [(ngModel)]="email.emailCcAddress"
-              placeholder="e.g. System Admin"
-              required
+              placeholder="e.g. cc@company.com, info@company.com"
               [disabled]="isReadOnly || isSaving || isTesting">
           </div>
           <div class="col-lg-2">

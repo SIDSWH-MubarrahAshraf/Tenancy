@@ -1,7 +1,8 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectorRef, NgZone } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectorRef, NgZone, OnInit } from '@angular/core';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { FormsModule } from '@angular/forms';
 import { PropertyService } from 'src/app/services/property.service';
+
 @Component({
   selector: 'app-property',
   standalone: true,
@@ -9,7 +10,7 @@ import { PropertyService } from 'src/app/services/property.service';
   templateUrl: './property.component.html',
   styleUrls: ['./property.component.scss']
 })
-export class PropertyComponent {
+export class PropertyComponent implements OnInit {
   @Input() inactive = false;
   @Output() inactiveChange = new EventEmitter<boolean>();
   @Input() propertyId = '';
@@ -20,19 +21,69 @@ export class PropertyComponent {
     private cdr: ChangeDetectorRef,
     private ngZone: NgZone
   ) { }
-  
+
+  ngOnInit(): void {
+    if (!this.propertyCountry) {
+      this.propertyCountry = 'UAE';
+    }
+    if (!this.propertyId) {
+      this.generateNewPropertyId();
+    }
+  }
+
+  generateNewPropertyId(): void {
+    this.propertyService.getProperties().subscribe({
+      next: (response) => {
+        let list: any[] = [];
+        if (response && response.data) {
+          list = response.data;
+        } else if (Array.isArray(response)) {
+          list = response;
+        }
+        
+        let maxNum = 0;
+        list.forEach(p => {
+          const match = String(p.propertyId || '').match(/PROP-(\d+)/i);
+          if (match) {
+            const num = parseInt(match[1], 10);
+            if (num > maxNum) {
+              maxNum = num;
+            }
+          }
+        });
+        
+        const nextNum = maxNum + 1;
+        const paddedNum = String(nextNum).padStart(3, '0');
+        this.propertyId = `PROP-${paddedNum}`;
+        this.propertyIdChange.emit(this.propertyId);
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        const rand = Math.floor(100 + Math.random() * 900);
+        this.propertyId = `PROP-${rand}`;
+        this.propertyIdChange.emit(this.propertyId);
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
   propertyKey: number = 0;
 
   // Custom dropdown states
   showTypeDropdown = false;
   showCountryDropdown = false;
+  showCityDropdown = false;
   showDeleteConfirmModal = false;
   statusMessage = '';
 
   // Search popup attributes
   showSearchPopup = false;
+  showPropertySearchPopup = false;
+  searchQuery = '';
   loadingProperties = false;
   dbProperties: any[] = [];
+  allProperties: any[] = [];
+  filteredProperties: any[] = [];
 
   onPropertyIdChange(val: string): void {
     this.propertyId = val;
@@ -42,23 +93,37 @@ export class PropertyComponent {
   toggleTypeDropdown(): void {
     this.showTypeDropdown = !this.showTypeDropdown;
     this.showCountryDropdown = false;
+    this.showCityDropdown = false;
     this.showSearchPopup = false;
   }
 
   toggleCountryDropdown(): void {
     this.showCountryDropdown = !this.showCountryDropdown;
     this.showTypeDropdown = false;
+    this.showCityDropdown = false;
     this.showSearchPopup = false;
   }
 
-  selectPropertyType(val: string): void {
-    this.propertyType = val;
+  toggleCityDropdown(): void {
+    this.showCityDropdown = !this.showCityDropdown;
+    this.showTypeDropdown = false;
+    this.showCountryDropdown = false;
+    this.showSearchPopup = false;
+  }
+
+  selectPropertyType(type: string): void {
+    this.propertyType = type;
     this.showTypeDropdown = false;
   }
 
-  selectPropertyCountry(val: string): void {
-    this.propertyCountry = val;
+  selectPropertyCountry(country: string): void {
+    this.propertyCountry = country;
     this.showCountryDropdown = false;
+  }
+
+  selectPropertyCity(city: string): void {
+    this.propertyCity = city;
+    this.showCityDropdown = false;
   }
 
   private loadSweetAlert(): Promise<any> {
@@ -109,7 +174,6 @@ export class PropertyComponent {
             list = [response];
           }
 
-          // Search for the exact match by propertyId (case-insensitive)
           const match = list.find(p => String(p.propertyId || '').trim().toLowerCase() === searchId);
 
           if (match) {
@@ -131,6 +195,53 @@ export class PropertyComponent {
     });
   }
 
+  openSearchModal(): void {
+    this.showPropertySearchPopup = true;
+    this.loadingProperties = true;
+    this.allProperties = [];
+    this.filteredProperties = [];
+    this.searchQuery = '';
+
+    this.propertyService.getProperties().subscribe({
+      next: (response) => {
+        let list: any[] = [];
+        if (response && response.data) {
+          list = response.data;
+        } else if (Array.isArray(response)) {
+          list = response;
+        }
+        this.allProperties = list;
+        this.filterProperties();
+        this.loadingProperties = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Failed to load properties for search popup:', err);
+        this.loadingProperties = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  filterProperties(): void {
+    const q = (this.searchQuery || '').trim().toLowerCase();
+    if (!q) {
+      this.filteredProperties = [...this.allProperties];
+    } else {
+      this.filteredProperties = this.allProperties.filter(p =>
+        String(p.propertyId || '').toLowerCase().includes(q) ||
+        String(p.propertyName || '').toLowerCase().includes(q) ||
+        String(p.propertyType || '').toLowerCase().includes(q) ||
+        String(p.propertyCity || '').toLowerCase().includes(q)
+      );
+    }
+  }
+
+  selectProperty(p: any): void {
+    this.selectPropertyFromDb(p);
+    this.showPropertySearchPopup = false;
+  }
+
   selectPropertyFromDb(prop: any): void {
     this.showSearchPopup = false;
     this.propertyKey = prop.id || 0;
@@ -138,7 +249,7 @@ export class PropertyComponent {
     this.propertyName = prop.propertyName || '';
     this.propertyArea = prop.propertyArea || '';
     this.propertyMakani = prop.propertyMakani || '';
-    this.propertyCountry = prop.propertyCountry || '';
+    this.propertyCountry = prop.propertyCountry || 'UAE';
     this.propertyCity = prop.propertyCity || '';
     this.propertyType = prop.propertyType || '';
     this.plotNo = prop.plotNo || '';
@@ -331,7 +442,7 @@ export class PropertyComponent {
     this.propertyName = '';
     this.propertyArea = '';
     this.propertyMakani = '';
-    this.propertyCountry = '';
+    this.propertyCountry = 'UAE';
     this.propertyCity = '';
     this.propertyType = '';
     this.plotNo = '';
@@ -344,6 +455,9 @@ export class PropertyComponent {
     // Clear uploaded documents as well
     this.selectedFile = null;
     this.documents = [];
+
+    // Automatically generate next Property ID
+    this.generateNewPropertyId();
   }
 
   // =========================

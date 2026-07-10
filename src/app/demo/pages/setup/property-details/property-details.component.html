@@ -1,0 +1,28 @@
+<div class="setup-shell">
+  <header class="setup-header">
+    <div class="title-group">
+      <div class="title-icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3 21h18M5 21V8l7-4 7 4v13M9 21v-6h6v6M9 10h.01M12 10h.01M15 10h.01" />
+        </svg>
+      </div>
+      <div>
+        <h1>Property Details</h1>
+      </div>
+    </div>
+
+    <div class="header-controls">
+      <div class="status-toggle-wrapper">
+        <span class="toggle-text" [class.is-inactive]="!isActive">{{ isActive ? 'Active' : 'Inactive' }}</span>
+        <label class="switch" for="masterActiveSwitch">
+          <input type="checkbox" id="masterActiveSwitch" [(ngModel)]="isActive">
+          <span class="slider round"></span>
+        </label>
+      </div>
+    </div>
+  </header>
+
+  <div class="setup-content-card">
+    <app-property [inactive]="!isActive" (inactiveChange)="isActive = !$event" [(propertyId)]="propertyId"></app-property>
+  </div>
+</div>

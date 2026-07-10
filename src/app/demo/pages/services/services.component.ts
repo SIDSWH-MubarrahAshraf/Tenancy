@@ -78,6 +78,8 @@ export class ServicesComponent implements OnInit {
   showSearchPopup = false;
   loadingServices = false;
   dbServices: any[] = [];
+  searchQuery = '';
+  filteredServices: any[] = [];
   showServiceModeDropdown = false;
   serviceModes = [
     { value: 'rent', label: 'Rent' },
@@ -110,7 +112,7 @@ export class ServicesComponent implements OnInit {
       description: uiModel.description,
       revenueAccount: uiModel.revenueAccountCode,
       revenueAccountName: uiModel.revenueAccountName,
-      recurringEntry: uiModel.recurringEntry,
+      recurringEntry: uiModel.serviceMode === 'rent',
       recurringAccount: uiModel.recurringAccountCode,
       recurringAccountName: uiModel.recurringAccountName,
       serviceMode: uiModel.serviceMode,
@@ -182,13 +184,63 @@ export class ServicesComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
+  openSearchPopup(): void {
+    this.showSearchPopup = true;
+    this.loadingServices = true;
+    this.dbServices = [];
+    this.filteredServices = [];
+    this.searchQuery = '';
+    this.cdr.detectChanges();
+
+    this.serviceTypeService.getAll().subscribe({
+      next: (response) => {
+        let list: any[] = [];
+        if (response && response.data) {
+          list = response.data;
+        } else if (Array.isArray(response)) {
+          list = response;
+        }
+        this.dbServices = list;
+        this.filterServices();
+        this.loadingServices = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Failed to load services for search popup:', err);
+        this.loadingServices = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  filterServices(): void {
+    const q = (this.searchQuery || '').trim().toLowerCase();
+    if (!q) {
+      this.filteredServices = [...this.dbServices];
+    } else {
+      this.filteredServices = this.dbServices.filter(s =>
+        String(s.serviceTypeCode || '').toLowerCase().includes(q) ||
+        String(s.description || '').toLowerCase().includes(q) ||
+        String(s.serviceMode || '').toLowerCase().includes(q)
+      );
+    }
+  }
+
+  selectService(svc: any): void {
+    this.selectServiceFromDb(svc);
+    this.showSearchPopup = false;
+  }
+
   // ── Service Mode change ───────────────────────────────────────────────────
   onServiceModeChange(): void {
-    if (!this.showRecurringSection) {
-      this.model.recurringEntry = false;
+    if (this.model.serviceMode !== 'rent') {
+      this.model.revenueAccountCode = '';
+      this.model.revenueAccountName = '';
       this.model.recurringAccountCode = '';
       this.model.recurringAccountName = '';
-      this.model.recurringFrequency = '';
+      this.model.recurringEntry = false;
+    } else {
+      this.model.recurringEntry = true;
     }
   }
 
@@ -252,10 +304,33 @@ export class ServicesComponent implements OnInit {
       return;
     }
 
+    // Verify service is active in the database before allowing updates
+    this.serviceTypeService.getById(this.selectedServiceId).subscribe({
+      next: (response) => {
+        const data = response?.data || response;
+        if (data && !data.active) {
+          this.showAlert('error', 'Validation Failed', `Cannot modify service. The service "${data.serviceTypeCode || this.model.serviceType}" is inactive.`);
+          // Revert local view state to match database record
+          this.model = this.toUiModel(data);
+          this.isActive = this.model.isActive;
+          this.cdr.detectChanges();
+          return;
+        }
+
+        this.proceedToSaveChanges(form);
+      },
+      error: (err) => {
+        console.warn('Service status verification failed, proceeding to save', err);
+        this.proceedToSaveChanges(form);
+      }
+    });
+  }
+
+  private proceedToSaveChanges(form: NgForm): void {
     this.model.isActive = this.isActive;
     const payload = this.toApiModel(this.model);
 
-    this.serviceTypeService.update(this.selectedServiceId, payload).subscribe({
+    this.serviceTypeService.update(this.selectedServiceId!, payload).subscribe({
       next: (response) => {
         if (response && response.data) {
           this.model = this.toUiModel(response.data);

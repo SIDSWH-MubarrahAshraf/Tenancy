@@ -37,22 +37,48 @@ export const NavigationItems: NavigationItem[] = [
         breadcrumbs: false
       },
       {
-        id: 'property-setup',
-        title: 'Property Setup',
-        type: 'item',
-        classes: 'nav-item',
-        url: '/property/setup',
-        icon: 'home',
-        breadcrumbs: false
-      },
-      {
-        id: 'services',
-        title: 'Services',
-        type: 'item',
-        classes: 'nav-item',
-        url: '/services',
-        icon: 'tool',
-        breadcrumbs: false
+        id: 'setup',
+        title: 'Setup',
+        type: 'collapse',
+        icon: 'setting',
+        children: [
+          {
+            id: 'property-details',
+            title: 'Property Details',
+            type: 'item',
+            classes: 'nav-item',
+            url: '/property/details',
+            icon: 'home',
+            breadcrumbs: false
+          },
+          {
+            id: 'unit-details',
+            title: 'Unit Details',
+            type: 'item',
+            classes: 'nav-item',
+            url: '/property/unit-details',
+            icon: 'file-text',
+            breadcrumbs: false
+          },
+          {
+            id: 'services',
+            title: 'Services',
+            type: 'item',
+            classes: 'nav-item',
+            url: '/services',
+            icon: 'tool',
+            breadcrumbs: false
+          },
+          {
+            id: 'email-templates',
+            title: 'Email Templates',
+            type: 'item',
+            url: '/reminders/email-templates',
+            classes: 'nav-item',
+            icon: 'file-text',
+            breadcrumbs: false
+          }
+        ]
       },
       {
         id: 'user-management',
@@ -139,15 +165,6 @@ export const NavigationItems: NavigationItem[] = [
         type: 'collapse',
         icon: 'mail',
         children: [
-          {
-            id: 'email-templates',
-            title: 'Email Templates',
-            type: 'item',
-            url: '/reminders/email-templates',
-            classes: 'nav-item',
-            icon: 'file-text',
-            breadcrumbs: false
-          },
           {
             id: 'log-emails',
             title: 'Log Emails',

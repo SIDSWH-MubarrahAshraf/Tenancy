@@ -7,6 +7,9 @@ $muted: var(--erp-muted, #6b7280);
 $line: var(--erp-border, #CFA5EA);
 
 .property-tab {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 14px;
   color: $ink;
 }
 
@@ -335,4 +338,83 @@ h2 {
     background-color: var(--erp-primary, #8E24AA) !important;
     color: #ffffff !important;
   }
+}
+
+/* Modern Toggle Switch */
+.header-controls {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.status-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.toggle-text {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--erp-success);
+  &.is-inactive {
+    color: var(--erp-danger);
+  }
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  margin: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--erp-danger);
+  transition: .3s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .3s;
+}
+
+input:checked + .slider {
+  background-color: var(--erp-success);
+}
+
+input:not(:checked) + .slider {
+  background-color: var(--erp-danger);
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+.slider.round {
+  border-radius: 24px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
 }

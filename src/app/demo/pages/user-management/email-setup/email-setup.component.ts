@@ -137,6 +137,18 @@ export class EmailSetupComponent implements OnInit {
       return;
     }
 
+    if (this.email.emailCcAddress) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const emails = this.email.emailCcAddress.split(/[\s,;]+/);
+      for (const emailStr of emails) {
+        const trimmed = emailStr.trim();
+        if (trimmed && !emailRegex.test(trimmed)) {
+          this.showAlert('error', 'Validation Error', `Invalid email format in CC Email: "${trimmed}".`);
+          return;
+        }
+      }
+    }
+
     if (this.isSaving) return;
 
     const payload: EmailSettings = {
@@ -145,7 +157,7 @@ export class EmailSetupComponent implements OnInit {
       smtpUser: this.email.emailUser.trim(),
       smtpPasswordEncrypted: this.email.emailPassword,
       fromEmail: this.email.emailFromAddress.trim(),
-      fromName: this.email.emailCcAddress.trim(),
+      fromName: (this.email.emailCcAddress || '').trim(),
       enableSsl: this.email.enableSsl,
       isActive: true
     };
@@ -198,6 +210,18 @@ export class EmailSetupComponent implements OnInit {
       return;
     }
 
+    if (this.email.emailCcAddress) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const emails = this.email.emailCcAddress.split(/[\s,;]+/);
+      for (const emailStr of emails) {
+        const trimmed = emailStr.trim();
+        if (trimmed && !emailRegex.test(trimmed)) {
+          this.showAlert('error', 'Validation Error', `Invalid email format in CC Email: "${trimmed}".`);
+          return;
+        }
+      }
+    }
+
     if (this.isSaving) return;
 
     const payload: EmailSettings = {
@@ -206,7 +230,7 @@ export class EmailSetupComponent implements OnInit {
       smtpUser: this.email.emailUser.trim(),
       smtpPasswordEncrypted: this.email.emailPassword,
       fromEmail: this.email.emailFromAddress.trim(),
-      fromName: this.email.emailCcAddress.trim(),
+      fromName: (this.email.emailCcAddress || '').trim(),
       enableSsl: this.email.enableSsl,
       isActive: true
     };

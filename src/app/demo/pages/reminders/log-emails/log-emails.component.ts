@@ -142,7 +142,8 @@ export class LogEmailsComponent implements OnInit {
         item.recipient.toLowerCase().includes(q) ||
         item.recipientName.toLowerCase().includes(q) ||
         item.sender.toLowerCase().includes(q) ||
-        item.id.toLowerCase().includes(q)
+        item.id.toLowerCase().includes(q) ||
+        (item.custId && item.custId.toLowerCase().includes(q))
       );
     }
 
@@ -179,6 +180,127 @@ export class LogEmailsComponent implements OnInit {
     // Sort descending by date
     list.sort((a, b) => new Date(b.sentDate).getTime() - new Date(a.sentDate).getTime());
     return list;
+  }
+
+  retryEmail(log: EmailLog, event: MouseEvent): void {
+    event.stopPropagation();
+    
+    (window as any).Swal.fire({
+      title: 'Resending Email',
+      text: `Resending failed email "${log.subject}" to ${log.recipient}...`,
+      icon: 'info',
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        (window as any).Swal.showLoading();
+        setTimeout(() => {
+          const isSuccess = Math.random() > 0.25; // 75% chance of success
+          
+          if (isSuccess) {
+            this.emailLogs = this.emailLogs.map(item => {
+              if (item.id === log.id) {
+                return {
+                  ...item,
+                  status: 'Sent',
+                  sentDate: new Date().toISOString()
+                };
+              }
+              return item;
+            });
+            localStorage.setItem('email_logs', JSON.stringify(this.emailLogs));
+            this.applyFilters();
+            
+            if (this.selectedLog && this.selectedLog.id === log.id) {
+              this.selectedLog.status = 'Sent';
+              this.selectedLog.sentDate = new Date().toISOString();
+            }
+
+            (window as any).Swal.close();
+            (window as any).Swal.fire({
+              icon: 'success',
+              title: 'Resent Successfully',
+              text: `Email has been sent successfully to ${log.recipient}.`,
+              timer: 2500,
+              showConfirmButton: false
+            });
+          } else {
+            (window as any).Swal.close();
+            (window as any).Swal.fire({
+              icon: 'error',
+              title: 'Sending Failed',
+              text: `Could not send email to ${log.recipient}. Connection timed out.`,
+              confirmButtonText: 'OK',
+              confirmButtonColor: '#C62828'
+            });
+          }
+        }, 1500);
+      }
+    });
+  }
+
+  hasFailedEmails(): boolean {
+    return this.emailLogs.some(log => log.status === 'Failed');
+  }
+
+  retryAllFailed(): void {
+    const failedLogs = this.emailLogs.filter(log => log.status === 'Failed');
+    if (failedLogs.length === 0) return;
+
+    (window as any).Swal.fire({
+      title: 'Bulk Resending Failed Emails',
+      text: `Processing resend for ${failedLogs.length} failed email(s)...`,
+      icon: 'info',
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        (window as any).Swal.showLoading();
+        setTimeout(() => {
+          let successCount = 0;
+          let failCount = 0;
+          
+          this.emailLogs = this.emailLogs.map(item => {
+            if (item.status === 'Failed') {
+              const isSuccess = Math.random() > 0.25; // 75% success rate
+              if (isSuccess) {
+                successCount++;
+                return {
+                  ...item,
+                  status: 'Sent',
+                  sentDate: new Date().toISOString()
+                };
+              } else {
+                failCount++;
+                return item;
+              }
+            }
+            return item;
+          });
+          
+          localStorage.setItem('email_logs', JSON.stringify(this.emailLogs));
+          this.applyFilters();
+          
+          (window as any).Swal.close();
+          
+          if (failCount === 0) {
+            (window as any).Swal.fire({
+              icon: 'success',
+              title: 'Bulk Resend Successful',
+              text: `All ${successCount} failed emails have been successfully resent!`,
+              confirmButtonText: 'Great',
+              confirmButtonColor: 'var(--erp-primary, #30277C)'
+            });
+          } else {
+            (window as any).Swal.fire({
+              icon: 'warning',
+              title: 'Bulk Resend Completed',
+              text: `Out of ${failedLogs.length} emails: ${successCount} were successfully sent, and ${failCount} failed again.`,
+              confirmButtonText: 'OK',
+              confirmButtonColor: 'var(--erp-primary, #30277C)'
+            });
+          }
+        }, 2000);
+      }
+    });
   }
 
   openLogDetails(log: EmailLog): void {
