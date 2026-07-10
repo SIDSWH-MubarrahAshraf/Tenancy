@@ -1,0 +1,204 @@
+<div class="container-fluid p-0">
+
+  <!-- CARD HEADER -->
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white border-bottom py-3">
+      <h4 class="mb-0 text-dark fw-bold">Recurring Entries</h4>
+    </div>
+
+    <div class="card-body p-4">
+      <div class="row g-4">
+
+        <!-- PERIOD SELECTION -->
+        <div class="col-lg-12">
+          <div class="card border border-light-subtle h-100">
+            <div class="card-header bg-white py-3">
+              <h6 class="mb-0 fw-semibold text-secondary d-flex align-items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-event section-icon me-2" viewBox="0 0 16 16">
+                  <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"/>
+                  <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                </svg>
+                Period Selection
+              </h6>
+            </div>
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">Month</label>
+                  <select class="form-select bg-white" [(ngModel)]="selectedMonth">
+                    <option *ngFor="let m of months" [value]="m.value">{{ m.label }}</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">Year</label>
+                  <select class="form-select bg-white" [(ngModel)]="selectedYear">
+                    <option *ngFor="let yr of years" [value]="yr">{{ yr }}</option>
+                  </select>
+                </div>
+                <div class="col-12 mt-4">
+                  <button class="btn btn-primary btn-save-action w-100" type="button" (click)="loadEntries()">
+                    Load Entries
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+       
+
+      </div>
+    </div>
+  </div>
+
+  <!-- TOOLBAR & DATA GRID CARD -->
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-4">
+
+      <!-- TOOLBAR SECTION -->
+      <div class="row g-3 align-items-center mb-4 border-bottom pb-4">
+
+        <!-- Search Input -->
+        <div class="col-md-6 col-lg-4">
+          <div class="input-group">
+            <input
+              type="text"
+              class="form-control bg-white"
+              placeholder="Search entries..."
+              [(ngModel)]="searchQuery"
+              (input)="applyFilters()">
+            <span class="input-group-text bg-light border-start-0 text-muted">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+
+        <!-- Action Toolbar Buttons -->
+        <div class="col-md-6 col-lg-8 d-flex justify-content-md-end gap-2">
+          <button
+            class="btn btn-outline-print"
+            type="button"
+            (click)="refreshGrid()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-arrow-clockwise me-1 align-middle" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+              <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+            </svg>
+            Refresh
+          </button>
+
+          <button
+            class="btn btn-outline-print"
+            type="button"
+            (click)="openHistory()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-clock-history me-1 align-middle" viewBox="0 0 16 16">
+              <path d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022zm2.004.45a7 7 0 0 0-.985-.299l.219-.976q.576.129 1.126.342zm1.37.71a7 7 0 0 0-.439-.27l.493-.87a8 8 0 0 1 .979.654l-.615.789a7 7 0 0 0-.418-.302zm1.834 1.79a7 7 0 0 0-.653-.796l.724-.69q.406.429.747.91zm.744 1.352a7 7 0 0 0-.214-.468l.893-.45a8 8 0 0 1 .45 1.088l-.95.313a7 7 0 0 0-.179-.483zm.53 2.507a7 7 0 0 0-.1-1.025l.985-.17q.1.58.116 1.17zm-.131 1.538q.05-.254.075-.512l.995.1a8 8 0 0 1-.178 1.129l-.975-.213q.05-.251.083-.504zm-.877 2.185q.276-.436.487-.908l.914.405q-.24.54-.555 1.038zm-.758.968q.161-.19.308-.39l.804.583a8 8 0 0 1-.443.55z"/>
+              <path d="M8 1a7 7 0 1 0 4.95 11.95l.707.707A8.001 8.001 0 1 1 8 0z"/>
+              <path d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5"/>
+            </svg>
+            History
+          </button>
+        </div>
+
+      </div>
+
+      <!-- MAIN DETAILS GRID (pending only, single-action rows) -->
+      <div class="table-responsive border rounded bg-white">
+        <table class="table table-hover align-middle mb-0 custom-entries-table" id="recurringTable">
+          <thead>
+            <tr>
+              <th width="120">Invoice No</th>
+              <th width="110">Customer ID</th>
+              <th>Customer Name</th>
+              <th width="90" class="text-center">Unit No</th>
+              <th width="70" class="text-center">Days</th>
+              <th width="150" class="text-center">Amount</th>
+              <th width="130" class="text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of filteredDetails">
+              <td>
+                <span class="fw-semibold text-muted">{{ item.invoiceNumber }}</span>
+              </td>
+              <td>{{ item.customer }}</td>
+              <td class="fw-semibold text-dark">{{ item.customerName }}</td>
+              <td class="text-center">{{ item.unitNo }}</td>
+              <td class="text-center">{{ item.noOfDays }}</td>
+              <td class="text-center fw-bold text-navy">
+                AED {{ item.amount | number:'1.2-2' }}
+              </td>
+              <td class="text-center">
+                <button
+                  class="btn btn-sm btn-process-row"
+                  type="button"
+                  [disabled]="isProcessing(item.id)"
+                  (click)="processEntry(item)">
+                  {{ isProcessing(item.id) ? 'Processing...' : 'Process' }}
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="filteredDetails.length === 0">
+              <td colspan="7" class="text-center py-4 text-muted">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-info-circle mb-2 d-block mx-auto text-secondary" viewBox="0 0 16 16">
+                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                  <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                </svg>
+                No pending recurring entries for this period. 
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- HISTORY MODAL -->
+  <div class="modal-overlay" *ngIf="showHistoryModal" (click)="closeHistory()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-header d-flex justify-content-between align-items-center px-4 py-3">
+        <h5 class="mb-0 fw-bold">Recurring Entries History</h5>
+        <button class="btn-close-modal" type="button" (click)="closeHistory()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex gap-4 mb-3">
+          <div><span class="text-muted-dark fw-semibold">Month:</span> {{ selectedMonthLabel }}</div>
+          <div><span class="text-muted-dark fw-semibold">Year:</span> {{ selectedYear }}</div>
+        </div>
+        <div class="table-responsive border rounded">
+          <table class="table table-hover align-middle mb-0 custom-entries-table">
+            <thead>
+              <tr>
+                <th>Invoice No</th>
+                <th>Customer</th>
+                <th class="text-center">Unit</th>
+                <th class="text-center">Amount</th>
+                <th class="text-center">Processed On</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of processedDetails">
+                <td class="fw-semibold">{{ item.invoiceNumber }}</td>
+                <td>{{ item.customerName }}</td>
+                <td class="text-center">{{ item.unitNo }}</td>
+                <td class="text-center fw-bold text-navy">AED {{ item.amount | number:'1.2-2' }}</td>
+                <td class="text-center">{{ item.processedOn }}</td>
+              </tr>
+              <tr *ngIf="processedDetails.length === 0">
+                <td colspan="5" class="text-center py-4 text-muted">
+                  No processed entries yet for this period.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer d-flex justify-content-end px-4 py-3">
+        <button class="btn btn-secondary" type="button" (click)="closeHistory()">Close</button>
+      </div>
+    </div>
+  </div>
+
+</div>
