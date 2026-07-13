@@ -36,8 +36,16 @@ export class AuthLoginComponent {
     const { username, password } = this.loginForm.value;
 
     this.authService.login({ username, password }).subscribe({
-      next: () => {
+      next: (response) => {
         this.isLoading = false;
+        if (response && (response.success === false || !response.data || !response.data.accessToken)) {
+          this.errorMessage = response.message || 'Invalid username or password.';
+          // Clear any partially saved tokens
+          localStorage.removeItem('token');
+          localStorage.removeItem('refresh_token');
+          localStorage.removeItem('username');
+          return;
+        }
         this.router.navigate(['/dashboard/default']);
       },
       error: (err) => {

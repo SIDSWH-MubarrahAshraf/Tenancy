@@ -209,12 +209,12 @@
 
   <!-- Service Type Search Popup Modal -->
   <div *ngIf="showSearchPopup" class="modal-overlay-custom" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.4); display: flex; align-items: center; justify-content: center; z-index: 99999; padding: 20px;">
-    <div class="modal-content-custom" style="background: #ffffff; width: 100%; max-width: 650px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); overflow: hidden; display: flex; flex-direction: column; max-height: 85vh; border: 1px solid var(--erp-border, #CFA5EA);">
+    <div class="modal-content-custom" style="background: #ffffff; width: 100%; max-width: 650px; border-radius: 12px !important; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); overflow: hidden !important; display: flex; flex-direction: column; max-height: 85vh; border: 1px solid var(--erp-border, #CFA5EA);">
       
       <!-- Modal Header -->
-      <div class="modal-header-custom" style="padding: 16px 20px; background: var(--erp-primary-soft, #EAE8FC); border-bottom: 1px solid var(--erp-border, #C6C3F2); display: flex; align-items: center; justify-content: space-between;">
-        <h3 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--erp-primary, #30277C);">Search Service Types</h3>
-        <button type="button" class="btn-close-modal" (click)="showSearchPopup = false" style="background: transparent; border: none; font-size: 1.4rem; line-height: 1; color: var(--erp-muted, #6b7280); cursor: pointer; padding: 0;">&times;</button>
+      <div class="modal-header-custom" style="background: var(--erp-primary, #30277C) !important; color: #ffffff !important; border-bottom: none; display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-top-left-radius: 11px !important; border-top-right-radius: 11px !important;">
+        <h3 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: #ffffff !important;">Search Service Types</h3>
+        <button type="button" class="btn-close-modal" (click)="showSearchPopup = false" style="background: transparent; border: none; font-size: 1.5rem; color: #ffffff; cursor: pointer; padding: 0; filter: brightness(0) invert(1); opacity: 0.85;">&times;</button>
       </div>
 
       <!-- Modal Body -->
@@ -242,11 +242,11 @@
           <div class="table-responsive" style="max-height: 350px; overflow-y: auto; margin: 0 !important; border: none !important; border-radius: 0 !important; box-shadow: none !important;">
             <table class="table mb-0" style="width: 100%; border-collapse: collapse;">
               <thead>
-                <tr style="background: #f8f9fa; border-bottom: 1px solid #dee2e6;">
-                  <th style="padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 700; color: #495057;">Service Code</th>
-                  <th style="padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 700; color: #495057;">Description</th>
-                  <th style="padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 700; color: #495057;">Service Mode</th>
-                  <th style="padding: 10px 12px; text-align: center; font-size: 11px; font-weight: 700; color: #495057; width: 80px;">Action</th>
+                <tr style="background: var(--erp-header-bg) !important; color: var(--erp-text) !important; border-bottom: 1px solid var(--erp-border, #C6C3F2);">
+                  <th style="padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 700; color: var(--erp-text) !important;">Service Code</th>
+                  <th style="padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 700; color: var(--erp-text) !important;">Description</th>
+                  <th style="padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 700; color: var(--erp-text) !important;">Service Mode</th>
+                  <th style="padding: 10px 12px; text-align: center; font-size: 11px; font-weight: 700; color: var(--erp-text) !important; width: 80px;">Action</th>
                 </tr>
               </thead>
               <tbody>

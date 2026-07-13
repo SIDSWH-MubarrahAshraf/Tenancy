@@ -764,18 +764,25 @@ export class UnitComponent implements OnInit {
         
         // Read headers first to check format
         const sheetRows: any[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-        const headersRow: any[] = sheetRows[0] || [];
+        const headersRow: any[] = sheetRows.find(row => row && row.some(cell => cell !== null && cell !== undefined && String(cell).trim() !== '')) || [];
         const actualHeaders = headersRow.map(h => String(h || '').trim());
         
-        const requiredHeaders = ['Unit No', 'Floor', 'Type', 'Bedrooms', 'Bathrooms', 'Area', 'Rent', 'Status'];
         const cleanStr = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
         
-        const missingHeaders = requiredHeaders.filter(req => 
-          !actualHeaders.some(act => cleanStr(act) === cleanStr(req))
+        // Check if essential columns exist (UnitNo, Floor, Type)
+        const essentialHeaders = ['Unit No', 'Floor', 'Type'];
+        const missingEssential = essentialHeaders.filter(req => 
+          !actualHeaders.some(act => {
+            const cleanAct = cleanStr(act);
+            if (req === 'Unit No') return cleanAct === 'unitno' || cleanAct === 'unitnumber' || cleanAct === 'no' || cleanAct === 'unitid' || cleanAct === 'id';
+            if (req === 'Floor') return cleanAct === 'floor';
+            if (req === 'Type') return cleanAct === 'unittype' || cleanAct === 'type';
+            return false;
+          })
         );
         
-        if (missingHeaders.length > 0) {
-          this.headerValidationError = "Invalid Excel format. Please upload a file with the required columns: Unit No, Floor, Type, Bedrooms, Bathrooms, Area, Rent, Status.";
+        if (missingEssential.length > 0) {
+          this.headerValidationError = "Invalid Excel format. Please upload a file with the required columns: Unit No (or UnitNo), Floor, and Type (or UnitType).";
           this.importPreviewData = [];
           this.validationErrorsCount = 0;
           this.validationSuccessCount = 0;
@@ -806,13 +813,21 @@ export class UnitComponent implements OnInit {
             return undefined;
           };
 
-          const unitNoVal = String(getVal(['unitno']) || '').trim();
-          const bedroomsVal = getVal(['bedrooms']) !== undefined ? String(getVal(['bedrooms'])).trim() : '-';
-          const bathroomsVal = getVal(['bathrooms']) !== undefined ? String(getVal(['bathrooms'])).trim() : '-';
+          const unitNoVal = String(getVal(['unitno', 'unitnumber', 'no']) || '').trim();
+          const unitIdVal = String(getVal(['unitid', 'id']) || unitNoVal).trim();
+          const bedroomsVal = getVal(['bedrooms']) !== undefined ? String(getVal(['bedrooms'])).trim() : null;
+          const bathroomsVal = getVal(['bathrooms']) !== undefined ? String(getVal(['bathrooms'])).trim() : null;
+
+          let remarksVal = '';
+          if (bedroomsVal || bathroomsVal) {
+            remarksVal = `Bedrooms: ${bedroomsVal || '-'}, Bathrooms: ${bathroomsVal || '-'}`;
+          } else {
+            remarksVal = String(getVal(['remarks', 'description', 'unitdescription']) || '').trim();
+          }
 
           return {
             rowNum,
-            unitId: unitNoVal, // Generate unitId from unitNo
+            unitId: unitIdVal,
             unitNo: unitNoVal,
             block: String(getVal(['block', 'blk']) || '').trim(),
             floor: String(getVal(['floor', 'flr']) || '').trim(),
@@ -829,7 +844,7 @@ export class UnitComponent implements OnInit {
             acCharge: getVal(['accharge', 'unitaccharge']),
             electricityCharge: getVal(['electricitycharge', 'unitelectricalcharge']),
             serviceType: String(getVal(['servicetype']) || '').trim(),
-            remarks: `Bedrooms: ${bedroomsVal}, Bathrooms: ${bathroomsVal}`,
+            remarks: remarksVal,
             errors: [] as string[]
           };
         });

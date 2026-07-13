@@ -118,11 +118,11 @@
     style="display:block; background:rgba(0,0,0,.5); z-index: 1050;">
     
     <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
+      <div class="modal-content" style="border-radius: 12px !important; overflow: hidden !important; border: 1px solid var(--erp-border, #C6C3F2); box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
         
-        <div class="modal-header">
-          <h5 class="modal-title">{{ isEditMode ? 'Edit Email Template' : 'Add Email Template' }}</h5>
-          <button type="button" class="btn-close" (click)="closeModal()" [disabled]="isSaving"></button>
+        <div class="modal-header" style="background: var(--erp-primary, #30277C) !important; color: #ffffff !important; border-bottom: none; display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-top-left-radius: 11px !important; border-top-right-radius: 11px !important;">
+          <h5 class="modal-title" style="color: #ffffff !important; font-weight: 700; font-size: 1.1rem; margin: 0;">{{ isEditMode ? 'Edit Email Template' : 'Add Email Template' }}</h5>
+          <button type="button" class="btn-close" (click)="closeModal()" [disabled]="isSaving" style="filter: brightness(0) invert(1); opacity: 0.85;"></button>
         </div>
 
         <div class="modal-body">
