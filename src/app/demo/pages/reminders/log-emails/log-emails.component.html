@@ -1,20 +1,29 @@
-<div class="row">
-  <div class="col-sm-12">
-    <div class="card" style="border: 1px solid var(--erp-border, #C6C3F2); border-radius: 12px; overflow: hidden; background: var(--erp-card-bg, #FCFBFE) !important; box-shadow: var(--erp-shadow);">
-      
-      <!-- HEADER / FILTER BAR -->
-      <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-3" style="background: var(--erp-header-bg, #E5E2F8) !important; border-bottom: 1px solid var(--erp-border, #C6C3F2) !important; padding: 16px 24px;">
-        <div>
-          <h4 class="mb-0 fw-bold" style="color: var(--erp-primary, #30277C);">System Email Logs</h4>
-        </div>
+<div class="erp-container full-width">
+  
+  <!-- Page Header -->
+  <header class="erp-page-header">
+    <div class="title-group">
+      <div class="title-icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.5;">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+          <polyline points="22,6 12,13 2,6" />
+        </svg>
       </div>
+      <div class="d-flex align-items-center">
+        <h1>System Email Logs</h1>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN CARD ================= -->
+  <div class="erp-card full-width-card mt-3">
 
       <div class="card-body p-4">
         
         <!-- SEARCH & FILTER ROW -->
         <div class="row g-3 mb-4 align-items-end">
           <div class="col-md-4">
-            <label class="form-label fw-bold text-uppercase" style="font-size: 11.5px; color: var(--erp-primary, #30277C); letter-spacing: 0.5px;">Search Subject / Recipient / CustId</label>
+            <label class="form-label fw-bold" style="font-size: 11.5px; color: var(--erp-primary, #30277C); letter-spacing: 0.5px;">Search Subject / Recipient / CustId</label>
             <input 
               type="text" 
               class="form-control" 
@@ -25,7 +34,7 @@
           </div>
           
           <div class="col-md-3">
-            <label class="form-label fw-bold text-uppercase" style="font-size: 11.5px; color: var(--erp-primary, #30277C); letter-spacing: 0.5px;">Email Type</label>
+            <label class="form-label fw-bold" style="font-size: 11.5px; color: var(--erp-primary, #30277C); letter-spacing: 0.5px;">Email Type</label>
             <div class="custom-dropdown-container">
               <div 
                 class="custom-dropdown-trigger" 
@@ -45,7 +54,7 @@
           </div>
           
           <div class="col-md-3">
-            <label class="form-label fw-bold text-uppercase" style="font-size: 11.5px; color: var(--erp-primary, #30277C); letter-spacing: 0.5px;">Status</label>
+            <label class="form-label fw-bold" style="font-size: 11.5px; color: var(--erp-primary, #30277C); letter-spacing: 0.5px;">Status</label>
             <div class="custom-dropdown-container">
               <div 
                 class="custom-dropdown-trigger" 
@@ -130,7 +139,6 @@
       </div>
     </div>
   </div>
-</div>
 
 <!-- ================= EMAIL DETAILS DIALOG MODAL ================= -->
 <div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.55); z-index: 1050;" *ngIf="showDetailsModal">
@@ -174,21 +182,21 @@
         </div>
 
         <div class="mb-4">
-          <label class="form-label fw-bold text-uppercase" style="font-size: 11px; color: var(--erp-primary, #30277C); letter-spacing: 0.5px;">Email Subject</label>
+          <label class="form-label fw-bold" style="font-size: 11px; color: var(--erp-primary, #30277C); letter-spacing: 0.5px;">Email Subject</label>
           <div class="p-3 border rounded fw-bold text-dark" style="background-color: var(--erp-bg, #F5F4FA); font-size: 14px;">
             {{ selectedLog?.subject }}
           </div>
         </div>
 
         <div class="mb-4">
-          <label class="form-label fw-bold text-uppercase" style="font-size: 11px; color: var(--erp-primary, #30277C); letter-spacing: 0.5px;">Email Message Body</label>
+          <label class="form-label fw-bold" style="font-size: 11px; color: var(--erp-primary, #30277C); letter-spacing: 0.5px;">Email Message Body</label>
           <div class="p-4 border rounded text-dark" style="background-color: #ffffff; white-space: pre-wrap; font-family: monospace; font-size: 13px; line-height: 1.5; max-height: 250px; overflow-y: auto; border-color: var(--erp-border, #C6C3F2) !important;">
             {{ selectedLog?.body }}
           </div>
         </div>
 
         <div *ngIf="selectedLog?.attachments && selectedLog!.attachments.length > 0">
-          <label class="form-label fw-bold text-uppercase" style="font-size: 11px; color: var(--erp-primary, #30277C); letter-spacing: 0.5px;">Attachments ({{ selectedLog!.attachments.length }})</label>
+          <label class="form-label fw-bold" style="font-size: 11px; color: var(--erp-primary, #30277C); letter-spacing: 0.5px;">Attachments ({{ selectedLog!.attachments.length }})</label>
           <div class="d-flex flex-wrap gap-2 mt-1">
             <div *ngFor="let att of selectedLog!.attachments" class="p-2 border rounded d-flex align-items-center justify-content-between gap-3 bg-light" style="font-size: 12.5px; min-width: 240px; border-color: var(--erp-border, #C6C3F2) !important;">
               <div class="d-flex align-items-center gap-2">

@@ -186,5 +186,31 @@ export const NavigationItems: NavigationItem[] = [
         breadcrumbs: false
       }
     ]
+  },
+  {
+    id: 'Contract',
+    title: 'Contract',
+    type: 'group',
+    icon: 'file-text',
+    children: [
+      {
+        id: 'invoice-entry',
+        title: 'Invoice Entry',
+        type: 'item',
+        url: '/invoice-entry',
+        classes: 'nav-item',
+        icon: 'file-text',
+        breadcrumbs: false
+      },
+      {
+        id: 'recurring-entries',
+        title: 'Recurring Entries',
+        type: 'item',
+        url: '/recurring-entries',
+        classes: 'nav-item',
+        icon: 'calendar',
+        breadcrumbs: false
+      }
+    ]
   }
 ];

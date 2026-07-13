@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { calculateSettlementStatus } from '../../utils/receipt-calculation';
@@ -208,5 +208,26 @@ export class SettlementDetailsTabComponent implements OnChanges {
 
   printSettlement(): void {
     window.print();
+  }
+
+  // ── Custom Dropdowns Toggles and Selectors ────────────────────
+  activeServiceTypeRowIndex: number | null = null;
+
+  toggleServiceTypeDropdown(index: number): void {
+    this.activeServiceTypeRowIndex = this.activeServiceTypeRowIndex === index ? null : index;
+  }
+
+  selectServiceType(index: number, type: any, note: any): void {
+    note.serviceType = type;
+    this.activeServiceTypeRowIndex = null;
+    this.markDirty();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.form-select')) {
+      this.activeServiceTypeRowIndex = null;
+    }
   }
 }

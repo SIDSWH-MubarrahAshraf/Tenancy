@@ -133,10 +133,15 @@
               <tbody>
                 <tr *ngFor="let note of form.creditNotes; let i = index">
                   <td>
-                    <select class="form-select form-select-sm bg-white" [(ngModel)]="note.serviceType" (ngModelChange)="markDirty()">
-                      <option value="" disabled>Select Service Type...</option>
-                      <option *ngFor="let type of serviceTypes" [value]="type">{{ type }}</option>
-                    </select>
+                    <div style="position: relative;">
+                      <button type="button" class="form-select form-select-sm text-start" (click)="toggleServiceTypeDropdown(i)">
+                        {{ note.serviceType || 'Select Service Type...' }}
+                      </button>
+                      <div *ngIf="activeServiceTypeRowIndex === i" class="search-popup-dropdown" style="position: absolute; top: 38px; left: 0; width: 100%; min-width: 180px; z-index: 1010; max-height: 200px; overflow-y: auto;">
+                        <div class="dropdown-item-select text-muted" (click)="selectServiceType(i, '', note)">Select Service Type...</div>
+                        <div class="dropdown-item-select" *ngFor="let type of serviceTypes" (click)="selectServiceType(i, type, note)">{{ type }}</div>
+                      </div>
+                    </div>
                   </td>
                   <td>
                     <input type="number" class="form-control form-control-sm bg-white text-end" [(ngModel)]="note.amount" (ngModelChange)="markDirty()" placeholder="0.00">

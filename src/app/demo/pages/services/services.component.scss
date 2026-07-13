@@ -206,7 +206,6 @@ input:checked + .slider:before {
   color: $muted;
   font-size: 0.74rem;
   font-weight: 800;
-  text-transform: uppercase;
 }
 
 .field b {
@@ -283,7 +282,6 @@ input:checked + .slider:before {
   color: $muted;
   font-size: 0.74rem;
   font-weight: 800;
-  text-transform: uppercase;
   line-height: 19px;
   box-sizing: border-box;
 }
@@ -646,4 +644,10 @@ input:checked + .slider:before {
     background: var(--erp-primary, #8E24AA) !important;
     color: #ffffff !important;
   }
+}
+
+.field span,
+.form-label,
+label {
+  text-transform: none !important;
 }

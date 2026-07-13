@@ -15,6 +15,10 @@ export class UnitService {
     return this.http.get<any>(`${this.baseUrl}?propertyId=${propertyId}`);
   }
 
+  getAll(): Observable<any> {
+    return this.http.get<any>(this.baseUrl);
+  }
+
   create(payload: any): Observable<any> {
     return this.http.post<any>(this.baseUrl, payload);
   }

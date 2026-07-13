@@ -26,4 +26,8 @@ export class DocumentNumberService {
   getNextNumber(documentType: string): Observable<ApiResponse<{ documentType: string; number: string }>> {
     return this.http.get<ApiResponse<{ documentType: string; number: string }>>(`${this.baseUrl}/next/${documentType}`);
   }
+
+  getNext(documentType: string): Observable<ApiResponse<any>> {
+    return this.http.get<ApiResponse<any>>(`${this.baseUrl}/next/${documentType}`);
+  }
 }

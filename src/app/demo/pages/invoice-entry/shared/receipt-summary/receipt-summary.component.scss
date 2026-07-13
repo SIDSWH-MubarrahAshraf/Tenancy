@@ -1,7 +1,7 @@
 // Theme Colors
-$primary-color: #0050b3;      // Target Blue requested by User
-$primary-hover: #003a8c;
-$border-color: #ced4da;
+$primary-color: var(--erp-primary);
+$primary-hover: var(--erp-primary-hover);
+$border-color: var(--erp-border);
 
 // Status Badges
 .status-green {

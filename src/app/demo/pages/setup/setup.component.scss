@@ -9,9 +9,9 @@ $line: var(--erp-border, #CFA5EA);
 $panel: var(--erp-card-bg, #FCFBFE);
 
 .setup-shell {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 14px;
+  max-width: 1120px !important;
+  margin: 0 auto !important;
+  padding: 14px !important;
   color: $ink;
 }
 
@@ -102,7 +102,6 @@ h1 {
   color: $muted;
   font-size: 0.74rem;
   font-weight: 800;
-  text-transform: uppercase;
   line-height: 42px !important;
   white-space: nowrap;
 }

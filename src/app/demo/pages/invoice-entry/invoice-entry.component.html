@@ -52,10 +52,15 @@
 
             <div class="col-md-3">
               <label class="form-label fw-semibold">Invoice Type</label>
-              <select class="form-select bg-white" [(ngModel)]="form.invoiceType" (change)="openTypeModal()" [disabled]="isRentalLocked()">
-                <option value="New">New</option>
-                <option value="Renewal">Renewal</option>
-              </select>
+              <div style="position: relative; width: 100%;">
+                <button type="button" class="form-select bg-white text-start" (click)="toggleInvoiceTypeDropdown()" [disabled]="isRentalLocked()">
+                  {{ form.invoiceType || 'New' }}
+                </button>
+                <div *ngIf="showInvoiceTypeDropdown && !isRentalLocked()" class="search-popup-dropdown" style="position: absolute; top: 43px; left: 0; width: 100%; max-height: 200px; overflow-y: auto;">
+                  <div class="dropdown-item-select" (click)="selectInvoiceType('New')">New</div>
+                  <div class="dropdown-item-select" (click)="selectInvoiceType('Renewal')">Renewal</div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -119,12 +124,17 @@
 
             <div class="col-md-3">
               <label class="form-label fw-semibold">Purpose Of Lease</label>
-              <select class="form-select bg-white" [(ngModel)]="form.purposeOfLease" [disabled]="isRentalLocked()">
-                <option value="Commercial">Commercial</option>
-                <option value="Residential">Residential</option>
-                <option value="Office">Office</option>
-                <option value="Warehouse">Warehouse</option>
-              </select>
+              <div style="position: relative; width: 100%;">
+                <button type="button" class="form-select bg-white text-start" (click)="togglePurposeDropdown()" [disabled]="isRentalLocked()">
+                  {{ form.purposeOfLease || 'Commercial' }}
+                </button>
+                <div *ngIf="showPurposeDropdown && !isRentalLocked()" class="search-popup-dropdown" style="position: absolute; top: 43px; left: 0; width: 100%; max-height: 200px; overflow-y: auto;">
+                  <div class="dropdown-item-select" (click)="selectPurpose('Commercial')">Commercial</div>
+                  <div class="dropdown-item-select" (click)="selectPurpose('Residential')">Residential</div>
+                  <div class="dropdown-item-select" (click)="selectPurpose('Office')">Office</div>
+                  <div class="dropdown-item-select" (click)="selectPurpose('Warehouse')">Warehouse</div>
+                </div>
+              </div>
             </div>
 
             <div class="col-md-3">
@@ -153,7 +163,7 @@
             </div>
           </div>
 
-          <ul class="nav modern-tabs mb-4 border-bottom">
+          <ul class="nav modern-tabs mb-4">
             <li class="nav-item">
               <button class="nav-link-tab" [class.active]="activeTab === 'rental'" (click)="setTab('rental')">
                 Rental Details
@@ -293,44 +303,46 @@
                    [(ngModel)]="invoiceModalFilter" (ngModelChange)="filterModalInvoices()">
           </div>
 
-          <table class="table table-hover table-sm table-bordered align-middle mb-0">
-            <thead class="table-light">
-              <tr>
-                <th>Invoice No.</th>
-                <th>Customer</th>
-                <th>Property</th>
-                <th>Unit</th>
-                <th class="text-end">Total (AED)</th>
-                <th>Status</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let inv of filteredInvoiceResults">
-                <td class="fw-semibold">{{ inv.invoiceNumber }}</td>
-                <td>{{ inv.customerName }}</td>
-                <td>{{ inv.propertyName }}</td>
-                <td>{{ inv.unitNo }}</td>
-                <td class="text-end">{{ inv.documentTotal | number:'1.2-2' }}</td>
-                <td>
-                  <span class="badge"
-                        [class.bg-success]="inv.status === 'Posted'"
-                        [class.bg-secondary]="inv.status === 'Draft'"
-                        [class.bg-danger]="inv.status === 'Cancelled'">
-                    {{ inv.status }}
-                  </span>
-                </td>
-                <td>
-                  <button type="button" class="btn btn-sm btn-outline-primary" (click)="selectInvoiceFromLookup(inv)">
-                    Select
-                  </button>
-                </td>
-              </tr>
-              <tr *ngIf="filteredInvoiceResults.length === 0">
-                <td colspan="7" class="text-center text-muted py-3">No invoices found.</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="lookup-table-wrapper">
+            <table class="table table-hover align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>Invoice No.</th>
+                  <th>Customer</th>
+                  <th>Property</th>
+                  <th>Unit</th>
+                  <th class="text-end">Total (AED)</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let inv of filteredInvoiceResults">
+                  <td><span class="lookup-id-badge">{{ inv.invoiceNumber }}</span></td>
+                  <td class="fw-semibold text-dark">{{ inv.customerName }}</td>
+                  <td>{{ inv.propertyName }}</td>
+                  <td>{{ inv.unitNo }}</td>
+                  <td class="text-end fw-semibold">{{ inv.documentTotal | number:'1.2-2' }}</td>
+                  <td>
+                    <span class="status-pill"
+                          [class.status-pill-success]="inv.status === 'Posted'"
+                          [class.status-pill-warning]="inv.status === 'Draft'"
+                          [class.status-pill-danger]="inv.status === 'Cancelled'">
+                      {{ inv.status }}
+                    </span>
+                  </td>
+                  <td>
+                    <button type="button" class="btn btn-select-action" (click)="selectInvoiceFromLookup(inv)">
+                      SELECT
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="filteredInvoiceResults.length === 0">
+                  <td colspan="7" class="text-center text-muted py-3">No invoices found.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -346,8 +358,8 @@
   <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);" *ngIf="showPropertyLookup">
     <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content">
-        <div class="modal-header border-bottom py-3 px-4 bg-light">
-          <h5 class="mb-0 fw-bold text-dark">Select Property</h5>
+        <div class="modal-header py-3 px-4">
+          <h5 class="mb-0 fw-bold">Select Property</h5>
           <button type="button" class="btn-close" (click)="closePropertyLookup()"></button>
         </div>
         <div class="modal-body p-4">
@@ -356,27 +368,33 @@
             <input type="text" class="form-control" placeholder="Search by Property ID or Name..." [(ngModel)]="propertyModalFilter" (keyup)="filterModalProperties()">
           </div>
           
-          <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-            <table class="table table-hover table-bordered mb-0 align-middle">
-              <thead class="table-light sticky-top">
+          <div class="lookup-table-wrapper" style="max-height: 400px; overflow-y: auto;">
+            <table class="table table-hover mb-0 align-middle">
+              <thead>
                 <tr>
                   <th>Property ID</th>
                   <th>Property Name</th>
+                  <th style="width: 100px;"></th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let prop of filteredProperties" class="cursor-pointer" (click)="selectPropertyFromLookup(prop)">
-                  <td class="fw-semibold text-primary">{{ prop.propertyId }}</td>
-                  <td>{{ prop.propertyName }}</td>
+                <tr *ngFor="let prop of filteredProperties">
+                  <td><span class="lookup-id-badge">{{ prop.propertyId }}</span></td>
+                  <td class="fw-semibold text-dark">{{ prop.propertyName }}</td>
+                  <td class="text-end">
+                    <button type="button" class="btn btn-select-action" (click)="selectPropertyFromLookup(prop)">
+                      SELECT
+                    </button>
+                  </td>
                 </tr>
                 <tr *ngIf="filteredProperties.length === 0">
-                  <td colspan="2" class="text-center text-muted py-4">No properties found.</td>
+                  <td colspan="3" class="text-center text-muted py-4">No properties found.</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
-        <div class="modal-footer border-top p-3 px-4 bg-light d-flex justify-content-end rounded-bottom-3">
+        <div class="modal-footer p-3 px-4 d-flex justify-content-end">
           <button type="button" class="btn btn-outline-secondary py-2" (click)="closePropertyLookup()">
             Close
           </button>
@@ -389,8 +407,8 @@
   <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);" *ngIf="showUnitLookup">
     <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content">
-        <div class="modal-header border-bottom py-3 px-4 bg-light">
-          <h5 class="mb-0 fw-bold text-dark">Select Unit</h5>
+        <div class="modal-header py-3 px-4">
+          <h5 class="mb-0 fw-bold">Select Unit</h5>
           <button type="button" class="btn-close" (click)="closeUnitLookup()"></button>
         </div>
         <div class="modal-body p-4">
@@ -399,31 +417,37 @@
             <input type="text" class="form-control" placeholder="Search by Unit ID, Number or Purpose..." [(ngModel)]="unitModalFilter" (keyup)="filterModalUnits()">
           </div>
           
-          <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-            <table class="table table-hover table-bordered mb-0 align-middle">
-              <thead class="table-light sticky-top">
+          <div class="lookup-table-wrapper" style="max-height: 400px; overflow-y: auto;">
+            <table class="table table-hover mb-0 align-middle">
+              <thead>
                 <tr>
                   <th>Unit ID</th>
                   <th>Unit Number</th>
                   <th>Purpose</th>
                   <th>Property ID</th>
+                  <th style="width: 100px;"></th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let unit of filteredUnits" class="cursor-pointer" (click)="selectUnitFromLookup(unit)">
-                  <td class="fw-semibold text-primary">{{ unit.unitId }}</td>
-                  <td>{{ unit.unitNo }}</td>
+                <tr *ngFor="let unit of filteredUnits">
+                  <td><span class="lookup-id-badge">{{ unit.unitId }}</span></td>
+                  <td class="fw-semibold text-dark">{{ unit.unitNo }}</td>
                   <td>{{ unit.unitPurpose }}</td>
                   <td>{{ unit.propertyId }}</td>
+                  <td class="text-end">
+                    <button type="button" class="btn btn-select-action" (click)="selectUnitFromLookup(unit)">
+                      SELECT
+                    </button>
+                  </td>
                 </tr>
                 <tr *ngIf="filteredUnits.length === 0">
-                  <td colspan="4" class="text-center text-muted py-4">No units found.</td>
+                  <td colspan="5" class="text-center text-muted py-4">No units found.</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
-        <div class="modal-footer border-top p-3 px-4 bg-light d-flex justify-content-end rounded-bottom-3">
+        <div class="modal-footer p-3 px-4 d-flex justify-content-end">
           <button type="button" class="btn btn-outline-secondary py-2" (click)="closeUnitLookup()">
             Close
           </button>

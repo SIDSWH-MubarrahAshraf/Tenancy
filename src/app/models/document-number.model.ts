@@ -11,9 +11,4 @@ export interface DocumentNumber {
   updatedBy?: string;
   updatedDate?: string;
 }
-
-export interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  data: T;
-}
+export type ApiResponse<T> = any;

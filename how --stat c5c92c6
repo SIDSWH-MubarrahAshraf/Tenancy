@@ -1,0 +1,19 @@
+[33mcommit f98f795c12861faf066a274bc51684b03e4f81bc[m[33m ([m[1;31murooj/main[m[33m, [m[1;31murooj/HEAD[m[33m)[m
+Author: Urooj Sheikh <uroojsh1510@gmail.com>
+Date:   Fri Jul 10 17:14:23 2026 +0500
+
+    Applied changes to the Invoice Entry module.
+
+ .../auth-login/auth-login.component.ts             |   2 [32m+[m
+ .../invoice-entry/invoice-entry.component.html     | 196 [32m++++[m[31m---[m
+ .../pages/invoice-entry/invoice-entry.component.ts | 569 [32m++++++++++++++++[m[31m-----[m
+ .../shared/check-grid/check-grid.component.html    |   7 [32m+[m[31m-[m
+ .../shared/check-grid/check-grid.component.ts      |  40 [32m+[m[31m-[m
+ .../receipt-details-tab.component.html             |   8 [32m+[m[31m-[m
+ .../receipt-details-tab.component.ts               |  10 [32m+[m
+ .../rental-details-tab.component.html              |   8 [32m+[m
+ .../rental-details-tab.component.ts                |   1 [32m+[m
+ .../invoice-entry/utils/receipt-calculation.ts     |  14 [32m+[m[31m-[m
+ src/app/models/receipt.model.ts                    |   2 [32m+[m[31m-[m
+ src/app/models/unit.model.ts                       |  59 [32m++[m[31m-[m
+ 12 files changed, 685 insertions(+), 231 deletions(-)

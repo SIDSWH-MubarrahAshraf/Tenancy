@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -37,6 +37,13 @@ export class RentalDetailsTabComponent {
   @Output() cancelRental    = new EventEmitter<void>();
   @Output() printRental     = new EventEmitter<void>();
   @Output() generateContract = new EventEmitter<void>();
+
+  // Custom dropdown states
+  showRentTaxGroupDropdown = false;
+  showDepositTaxGroupDropdown = false;
+  showAdminFeeTaxGroupDropdown = false;
+  activeChargeCauseRowIndex: number | null = null;
+  activeChargeTaxRowIndex: number | null = null;
 
   // Dropdown options for Additional Charges
   readonly additionalChargeCauses: string[] = [
@@ -166,5 +173,83 @@ export class RentalDetailsTabComponent {
 
   private round(val: number): number {
     return Math.round((val || 0) * 100) / 100;
+  }
+
+  // ── Custom Dropdowns Toggles and Selectors ────────────────────
+  toggleRentTaxGroupDropdown(): void {
+    this.showRentTaxGroupDropdown = !this.showRentTaxGroupDropdown;
+    this.showDepositTaxGroupDropdown = false;
+    this.showAdminFeeTaxGroupDropdown = false;
+    this.activeChargeCauseRowIndex = null;
+    this.activeChargeTaxRowIndex = null;
+  }
+  selectRentTaxGroup(group: any): void {
+    this.form.rentTaxGroup = group;
+    this.showRentTaxGroupDropdown = false;
+    this.calculateRent();
+  }
+
+  toggleDepositTaxGroupDropdown(): void {
+    this.showDepositTaxGroupDropdown = !this.showDepositTaxGroupDropdown;
+    this.showRentTaxGroupDropdown = false;
+    this.showAdminFeeTaxGroupDropdown = false;
+    this.activeChargeCauseRowIndex = null;
+    this.activeChargeTaxRowIndex = null;
+  }
+  selectDepositTaxGroup(group: any): void {
+    this.form.depositTaxGroup = group;
+    this.showDepositTaxGroupDropdown = false;
+    this.calculateDeposit();
+  }
+
+  toggleAdminFeeTaxGroupDropdown(): void {
+    this.showAdminFeeTaxGroupDropdown = !this.showAdminFeeTaxGroupDropdown;
+    this.showRentTaxGroupDropdown = false;
+    this.showDepositTaxGroupDropdown = false;
+    this.activeChargeCauseRowIndex = null;
+    this.activeChargeTaxRowIndex = null;
+  }
+  selectAdminFeeTaxGroup(group: any): void {
+    this.form.adminFeeTaxGroup = group;
+    this.showAdminFeeTaxGroupDropdown = false;
+    this.calculateAdminFee();
+  }
+
+  toggleChargeCauseDropdown(index: number): void {
+    this.activeChargeCauseRowIndex = this.activeChargeCauseRowIndex === index ? null : index;
+    this.activeChargeTaxRowIndex = null;
+    this.showRentTaxGroupDropdown = false;
+    this.showDepositTaxGroupDropdown = false;
+    this.showAdminFeeTaxGroupDropdown = false;
+  }
+  selectChargeCause(index: number, cause: string, charge: any): void {
+    charge.cause = cause;
+    this.activeChargeCauseRowIndex = null;
+    this.calculateChargeRow(charge);
+  }
+
+  toggleChargeTaxDropdown(index: number): void {
+    this.activeChargeTaxRowIndex = this.activeChargeTaxRowIndex === index ? null : index;
+    this.activeChargeCauseRowIndex = null;
+    this.showRentTaxGroupDropdown = false;
+    this.showDepositTaxGroupDropdown = false;
+    this.showAdminFeeTaxGroupDropdown = false;
+  }
+  selectChargeTax(index: number, group: any, charge: any): void {
+    charge.taxGroup = group;
+    this.activeChargeTaxRowIndex = null;
+    this.calculateChargeRow(charge);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.form-select')) {
+      this.showRentTaxGroupDropdown = false;
+      this.showDepositTaxGroupDropdown = false;
+      this.showAdminFeeTaxGroupDropdown = false;
+      this.activeChargeCauseRowIndex = null;
+      this.activeChargeTaxRowIndex = null;
+    }
   }
 }

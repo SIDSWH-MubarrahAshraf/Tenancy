@@ -3,12 +3,16 @@
   "compileOnSave": false,
   "compilerOptions": {
     "outDir": "./dist/out-tsc",
+    "baseUrl": "./",
     "paths": {
       "src/*": [
         "./src/*"
       ]
     },
     "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "ignoreDeprecations": "6.0",
     // "strict": true,
     "resolveJsonModule": true,
     "noImplicitOverride": true,

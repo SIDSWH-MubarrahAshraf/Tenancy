@@ -118,7 +118,6 @@
   color: var(--erp-primary, #30277C);
   font-size: 0.76rem;
   font-weight: 700;
-  text-transform: uppercase;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
 
@@ -217,4 +216,8 @@
     background-color: var(--erp-sidebar-bg, #1B1647) !important;
     color: #ffffff !important;
   }
+}
+
+.erp-table thead th {
+  text-transform: none !important;
 }

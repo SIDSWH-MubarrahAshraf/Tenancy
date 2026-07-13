@@ -3,7 +3,7 @@
 export * from './common.model';
 export * from './auth.model';
 export * from './attachment.model';
-export * from './document-number.model';
+// export * from './document-number.model';
 export * from './invoice.model';
 export * from './receipt.model';
 export * from './property.model';

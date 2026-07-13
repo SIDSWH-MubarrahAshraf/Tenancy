@@ -1,4 +1,4 @@
-import { Component, DoCheck, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { Component, DoCheck, Input, Output, EventEmitter, ChangeDetectorRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CheckGridComponent } from '../../shared/check-grid/check-grid.component';
@@ -228,5 +228,36 @@ private computeScheduleKey(): string {
     if (bytes < 1024) return bytes + ' B';
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
     return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+  // ── Custom Dropdowns Toggles and Selectors ────────────────────
+  showBankDropdown = false;
+  showChequeDropdown = false;
+
+  toggleBankDropdown(): void {
+    this.showBankDropdown = !this.showBankDropdown;
+    this.showChequeDropdown = false;
+  }
+  selectBank(bank: any): void {
+    this.form.detailsBank = bank;
+    this.showBankDropdown = false;
+  }
+  toggleChequeDropdown(): void {
+    this.showChequeDropdown = !this.showChequeDropdown;
+    this.showBankDropdown = false;
+  }
+  selectCheques(n: number): void {
+    this.form.numberOfChecks = n;
+    this.showChequeDropdown = false;
+    this.onNumberOfChecksChange();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.form-select')) {
+      this.showBankDropdown = false;
+      this.showChequeDropdown = false;
+    }
   }
 }

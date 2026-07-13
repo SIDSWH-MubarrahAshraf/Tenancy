@@ -1,10 +1,10 @@
 // ─────────────────────────────────────────────
 // Theme Tokens
 // ─────────────────────────────────────────────
-$primary-color: #0050b3;
-$primary-hover:  #003a8c;
-$danger-color:   #dc3545;
-$border-color:   #ced4da;
+$primary-color: var(--erp-primary);
+$primary-hover:  var(--erp-primary-hover);
+$danger-color:   var(--erp-danger);
+$border-color:   var(--erp-border);
 
 // ─────────────────────────────────────────────
 // Card
@@ -32,8 +32,8 @@ $border-color:   #ced4da;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 
   &:focus {
-    border-color: lighten($primary-color, 15%);
-    box-shadow: 0 0 0 0.2rem rgba(0, 80, 179, 0.25);
+    border-color: var(--erp-primary) !important;
+    box-shadow: 0 0 0 0.2rem var(--erp-primary-soft) !important;
     outline: 0;
   }
 
@@ -64,11 +64,44 @@ $border-color:   #ced4da;
 // Input Group
 // ─────────────────────────────────────────────
 .input-group {
+  display: flex !important;
+  align-items: stretch !important;
+  border: 1px solid $border-color !important;
+  border-radius: var(--erp-control-radius, 8px) !important;
+  overflow: hidden !important;
+  background-color: #ffffff !important;
+  box-shadow: none !important;
+
+  .form-control,
+  .form-select {
+    border: none !important;
+    background-color: transparent !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    height: 100% !important;
+    padding: 0.375rem 0.75rem !important;
+
+    &:focus {
+      background-color: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+  }
+
   .input-group-text {
-    font-size: 0.85rem;
-    color: #6c757d;
-    background-color: #e9ecef;
-    border: 1px solid $border-color;
+    border: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 12px !important;
+    background-color: var(--erp-primary-soft, #EAE8FC) !important;
+    color: $primary-color !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    border-right: 1px solid $border-color !important;
   }
 }
 
@@ -234,8 +267,8 @@ $border-color:   #ced4da;
 }
 
 .summary-box--balance {
-  background-color: rgba(0, 80, 179, 0.06);
-  border-color: rgba(0, 80, 179, 0.2);
+  background-color: var(--erp-primary-soft);
+  border-color: var(--erp-border);
 
   .summary-box__label {
     color: $primary-color;

@@ -47,17 +47,16 @@
 
         <div class="col-md-3">
           <label class="form-label">Tax Group</label>
-          <select
-            class="form-select"
-            [class.bg-white]="!isLocked"
-            [class.bg-light]="isLocked"
-            [(ngModel)]="form.rentTaxGroup"
-            [disabled]="isLocked"
-            (change)="calculateRent()">
-            <option value="Standard VAT">Standard VAT</option>
-            <option value="Zero Rated">Zero Rated</option>
-            <option value="Out of Scope">Out of Scope</option>
-          </select>
+          <div style="position: relative; width: 100%;">
+            <button type="button" class="form-select text-start" [class.bg-white]="!isLocked" [class.bg-light]="isLocked" (click)="toggleRentTaxGroupDropdown()" [disabled]="isLocked">
+              {{ form.rentTaxGroup || 'Standard VAT' }}
+            </button>
+            <div *ngIf="showRentTaxGroupDropdown && !isLocked" class="search-popup-dropdown" style="position: absolute; top: 43px; left: 0; width: 100%; z-index: 1020; max-height: 200px; overflow-y: auto;">
+              <div class="dropdown-item-select" (click)="selectRentTaxGroup('Standard VAT')">Standard VAT</div>
+              <div class="dropdown-item-select" (click)="selectRentTaxGroup('Zero Rated')">Zero Rated</div>
+              <div class="dropdown-item-select" (click)="selectRentTaxGroup('Out of Scope')">Out of Scope</div>
+            </div>
+          </div>
         </div>
 
         <div class="col-md-2">
@@ -124,17 +123,16 @@
 
         <div class="col-md-3">
           <label class="form-label">Tax Group</label>
-          <select
-            class="form-select"
-            [class.bg-white]="!isLocked"
-            [class.bg-light]="isLocked"
-            [(ngModel)]="form.depositTaxGroup"
-            [disabled]="isLocked"
-            (change)="calculateDeposit()">
-            <option value="Standard VAT">Standard VAT</option>
-            <option value="Zero Rated">Zero Rated</option>
-            <option value="Out of Scope">Out of Scope</option>
-          </select>
+          <div style="position: relative; width: 100%;">
+            <button type="button" class="form-select text-start" [class.bg-white]="!isLocked" [class.bg-light]="isLocked" (click)="toggleDepositTaxGroupDropdown()" [disabled]="isLocked">
+              {{ form.depositTaxGroup || 'Standard VAT' }}
+            </button>
+            <div *ngIf="showDepositTaxGroupDropdown && !isLocked" class="search-popup-dropdown" style="position: absolute; top: 43px; left: 0; width: 100%; z-index: 1020; max-height: 200px; overflow-y: auto;">
+              <div class="dropdown-item-select" (click)="selectDepositTaxGroup('Standard VAT')">Standard VAT</div>
+              <div class="dropdown-item-select" (click)="selectDepositTaxGroup('Zero Rated')">Zero Rated</div>
+              <div class="dropdown-item-select" (click)="selectDepositTaxGroup('Out of Scope')">Out of Scope</div>
+            </div>
+          </div>
         </div>
 
         <div class="col-md-2">
@@ -201,17 +199,16 @@
 
         <div class="col-md-3">
           <label class="form-label">Tax Group</label>
-          <select
-            class="form-select"
-            [class.bg-white]="!isLocked"
-            [class.bg-light]="isLocked"
-            [(ngModel)]="form.adminFeeTaxGroup"
-            [disabled]="isLocked"
-            (change)="calculateAdminFee()">
-            <option value="Standard VAT">Standard VAT</option>
-            <option value="Zero Rated">Zero Rated</option>
-            <option value="Out of Scope">Out of Scope</option>
-          </select>
+          <div style="position: relative; width: 100%;">
+            <button type="button" class="form-select text-start" [class.bg-white]="!isLocked" [class.bg-light]="isLocked" (click)="toggleAdminFeeTaxGroupDropdown()" [disabled]="isLocked">
+              {{ form.adminFeeTaxGroup || 'Standard VAT' }}
+            </button>
+            <div *ngIf="showAdminFeeTaxGroupDropdown && !isLocked" class="search-popup-dropdown" style="position: absolute; top: 43px; left: 0; width: 100%; z-index: 1020; max-height: 200px; overflow-y: auto;">
+              <div class="dropdown-item-select" (click)="selectAdminFeeTaxGroup('Standard VAT')">Standard VAT</div>
+              <div class="dropdown-item-select" (click)="selectAdminFeeTaxGroup('Zero Rated')">Zero Rated</div>
+              <div class="dropdown-item-select" (click)="selectAdminFeeTaxGroup('Out of Scope')">Out of Scope</div>
+            </div>
+          </div>
         </div>
 
         <div class="col-md-2">
@@ -294,17 +291,17 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let charge of form.additionalCharges">
+            <tr *ngFor="let charge of form.additionalCharges; let i = index">
               <td>
-                <select class="form-select form-select-sm"
-                        [class.bg-white]="!isLocked"
-                        [class.bg-light]="isLocked"
-                        [(ngModel)]="charge.cause"
-                        [disabled]="isLocked"
-                        (change)="calculateChargeRow(charge)">
-                  <option [ngValue]="''" disabled>Select a reason...</option>
-                  <option *ngFor="let cause of additionalChargeCauses" [value]="cause">{{ cause }}</option>
-                </select>
+                <div style="position: relative;">
+                  <button type="button" class="form-select form-select-sm text-start" [class.bg-white]="!isLocked" [class.bg-light]="isLocked" (click)="toggleChargeCauseDropdown(i)" [disabled]="isLocked">
+                    {{ charge.cause || 'Select a reason...' }}
+                  </button>
+                  <div *ngIf="activeChargeCauseRowIndex === i && !isLocked" class="search-popup-dropdown" style="position: absolute; top: 38px; left: 0; width: 100%; min-width: 180px; z-index: 1010; max-height: 200px; overflow-y: auto;">
+                    <div class="dropdown-item-select text-muted" (click)="selectChargeCause(i, '', charge)">Select a reason...</div>
+                    <div class="dropdown-item-select" *ngFor="let cause of additionalChargeCauses" (click)="selectChargeCause(i, cause, charge)">{{ cause }}</div>
+                  </div>
+                </div>
               </td>
 
               <td>
@@ -320,16 +317,16 @@
               </td>
 
               <td>
-                <select class="form-select form-select-sm"
-                        [class.bg-white]="!isLocked"
-                        [class.bg-light]="isLocked"
-                        [(ngModel)]="charge.taxGroup"
-                        [disabled]="isLocked"
-                        (change)="calculateChargeRow(charge)">
-                  <option value="Standard VAT">Standard VAT</option>
-                  <option value="Zero Rated">Zero Rated</option>
-                  <option value="Out of Scope">Out of Scope</option>
-                </select>
+                <div style="position: relative;">
+                  <button type="button" class="form-select form-select-sm text-start" [class.bg-white]="!isLocked" [class.bg-light]="isLocked" (click)="toggleChargeTaxDropdown(i)" [disabled]="isLocked">
+                    {{ charge.taxGroup || 'Standard VAT' }}
+                  </button>
+                  <div *ngIf="activeChargeTaxRowIndex === i && !isLocked" class="search-popup-dropdown" style="position: absolute; top: 38px; left: 0; width: 100%; min-width: 150px; z-index: 1010; max-height: 200px; overflow-y: auto;">
+                    <div class="dropdown-item-select" (click)="selectChargeTax(i, 'Standard VAT', charge)">Standard VAT</div>
+                    <div class="dropdown-item-select" (click)="selectChargeTax(i, 'Zero Rated', charge)">Zero Rated</div>
+                    <div class="dropdown-item-select" (click)="selectChargeTax(i, 'Out of Scope', charge)">Out of Scope</div>
+                  </div>
+                </div>
               </td>
 
               <td>

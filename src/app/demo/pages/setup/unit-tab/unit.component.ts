@@ -53,6 +53,18 @@ export class UnitComponent implements OnInit {
   filteredUnits: any[] = [];
   serviceTypes: any[] = [];
 
+  // Bulk Import state properties
+  showBulkImportModal = false;
+  selectedFile: File | null = null;
+  importPreviewData: any[] = [];
+  validationErrorsCount = 0;
+  validationSuccessCount = 0;
+  isImporting = false;
+  importProgress = 0;
+  importedCount = 0;
+  importSummary: { total: number; success: number; failed: number } | null = null;
+  headerValidationError: string | null = null;
+
   constructor(
     private unitService: UnitService,
     private propertyService: PropertyService,
@@ -698,6 +710,340 @@ export class UnitComponent implements OnInit {
         });
       }
     });
+  }
+
+  openBulkImportModal(): void {
+    this.resetImportState();
+    this.showBulkImportModal = true;
+  }
+
+  closeBulkImportModal(): void {
+    this.showBulkImportModal = false;
+  }
+
+  resetImportState(): void {
+    this.selectedFile = null;
+    this.importPreviewData = [];
+    this.validationErrorsCount = 0;
+    this.validationSuccessCount = 0;
+    this.isImporting = false;
+    this.importProgress = 0;
+    this.importedCount = 0;
+    this.importSummary = null;
+    this.headerValidationError = null;
+  }
+
+  onFileChange(event: any): void {
+    const target = event.target as HTMLInputElement;
+    if (target.files && target.files.length > 0) {
+      this.selectedFile = target.files[0];
+      this.parseExcelFile(this.selectedFile);
+    }
+  }
+
+  onFileDrop(event: DragEvent): void {
+    event.preventDefault();
+    if (event.dataTransfer && event.dataTransfer.files.length > 0) {
+      this.selectedFile = event.dataTransfer.files[0];
+      this.parseExcelFile(this.selectedFile);
+    }
+  }
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+  }
+
+  parseExcelFile(file: File): void {
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      const data = new Uint8Array(e.target.result);
+      import('xlsx').then(XLSX => {
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        
+        // Read headers first to check format
+        const sheetRows: any[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        const headersRow: any[] = sheetRows[0] || [];
+        const actualHeaders = headersRow.map(h => String(h || '').trim());
+        
+        const requiredHeaders = ['Unit No', 'Floor', 'Type', 'Bedrooms', 'Bathrooms', 'Area', 'Rent', 'Status'];
+        const cleanStr = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+        
+        const missingHeaders = requiredHeaders.filter(req => 
+          !actualHeaders.some(act => cleanStr(act) === cleanStr(req))
+        );
+        
+        if (missingHeaders.length > 0) {
+          this.headerValidationError = "Invalid Excel format. Please upload a file with the required columns: Unit No, Floor, Type, Bedrooms, Bathrooms, Area, Rent, Status.";
+          this.importPreviewData = [];
+          this.validationErrorsCount = 0;
+          this.validationSuccessCount = 0;
+          this.selectedFile = null;
+          this.cdr.detectChanges();
+          return;
+        } else {
+          this.headerValidationError = null;
+        }
+
+        const rawRows: any[] = XLSX.utils.sheet_to_json(worksheet);
+        if (!rawRows || rawRows.length === 0) {
+          this.showAlert('warning', 'Empty File', 'The uploaded Excel file contains no data rows.');
+          this.selectedFile = null;
+          return;
+        }
+
+        this.importPreviewData = rawRows.map((row, index) => {
+          const rowNum = index + 2;
+          
+          const getVal = (keys: string[]): any => {
+            for (const key of Object.keys(row)) {
+              const cleanKey = key.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+              if (keys.some(k => cleanKey === k.toLowerCase().replace(/[^a-z0-9]/g, ''))) {
+                return row[key];
+              }
+            }
+            return undefined;
+          };
+
+          const unitNoVal = String(getVal(['unitno']) || '').trim();
+          const bedroomsVal = getVal(['bedrooms']) !== undefined ? String(getVal(['bedrooms'])).trim() : '-';
+          const bathroomsVal = getVal(['bathrooms']) !== undefined ? String(getVal(['bathrooms'])).trim() : '-';
+
+          return {
+            rowNum,
+            unitId: unitNoVal, // Generate unitId from unitNo
+            unitNo: unitNoVal,
+            block: String(getVal(['block', 'blk']) || '').trim(),
+            floor: String(getVal(['floor', 'flr']) || '').trim(),
+            unitType: String(getVal(['unittype', 'type']) || '').trim(),
+            unitPurpose: String(getVal(['unitpurpose', 'purpose']) || '').trim(),
+            unitSize: getVal(['unitsize', 'size', 'area']),
+            unitView: String(getVal(['unitview', 'view']) || '').trim(),
+            parking: String(getVal(['parking', 'parkingnumber']) || '').trim(),
+            status: String(getVal(['status']) || 'Vacant').trim(),
+            taxAuthority: String(getVal(['taxauthority', 'tax']) || 'No').trim(),
+            actualRent: getVal(['actualrent', 'rent']),
+            proposedRent: getVal(['proposedrent', 'proposedamount', 'targetrent', 'rent']),
+            securityDeposit: getVal(['securitydeposit', 'deposit']),
+            acCharge: getVal(['accharge', 'unitaccharge']),
+            electricityCharge: getVal(['electricitycharge', 'unitelectricalcharge']),
+            serviceType: String(getVal(['servicetype']) || '').trim(),
+            remarks: `Bedrooms: ${bedroomsVal}, Bathrooms: ${bathroomsVal}`,
+            errors: [] as string[]
+          };
+        });
+
+        this.validateImportData();
+        this.cdr.detectChanges();
+      }).catch(err => {
+        console.error('Failed to parse Excel file:', err);
+        this.showAlert('error', 'Parsing Failed', 'Failed to read the Excel file. Please ensure it is a valid .xlsx file.');
+        this.selectedFile = null;
+      });
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  validateImportData(): void {
+    this.validationErrorsCount = 0;
+    this.validationSuccessCount = 0;
+
+    const selectedPropId = this.searchPropertyId?.trim();
+    const globalErrors: string[] = [];
+    if (!selectedPropId) {
+      globalErrors.push('No property is selected. Please select a property first.');
+    }
+
+    const seenUnitIds = new Set<string>();
+    const seenUnitNos = new Set<string>();
+
+    const dbUnitIds = new Set(this.units.map(u => String(u.unitId || '').toLowerCase().trim()));
+    const dbUnitNos = new Set(this.units.map(u => String(u.unitNo || '').toLowerCase().trim()));
+
+    this.importPreviewData.forEach(row => {
+      const errors: string[] = [];
+
+      if (globalErrors.length > 0) {
+        errors.push(...globalErrors);
+      }
+
+      if (!row.unitId) {
+        errors.push('Unit ID is required.');
+      }
+      if (!row.unitNo) {
+        errors.push('Unit No is required.');
+      }
+
+      const checkNumeric = (val: any, fieldName: string) => {
+        if (val !== undefined && val !== null && val !== '') {
+          const num = Number(String(val).replace(/,/g, ''));
+          if (isNaN(num)) {
+            errors.push(`${fieldName} must be a number.`);
+          }
+        }
+      };
+
+      checkNumeric(row.unitSize, 'Unit Size');
+      checkNumeric(row.actualRent, 'Actual Rent');
+      checkNumeric(row.proposedRent, 'Proposed Rent');
+      checkNumeric(row.securityDeposit, 'Security Deposit');
+      checkNumeric(row.acCharge, 'AC Charge');
+      checkNumeric(row.electricityCharge, 'Electricity Charge');
+
+      if (row.unitId) {
+        const idLower = row.unitId.toLowerCase();
+        if (seenUnitIds.has(idLower)) {
+          errors.push(`Duplicate Unit ID "${row.unitId}" within this file.`);
+        } else {
+          seenUnitIds.add(idLower);
+        }
+      }
+
+      if (row.unitNo) {
+        const noLower = row.unitNo.toLowerCase();
+        if (seenUnitNos.has(noLower)) {
+          errors.push(`Duplicate Unit No "${row.unitNo}" within this file.`);
+        } else {
+          seenUnitNos.add(noLower);
+        }
+      }
+
+      if (row.unitId && dbUnitIds.has(row.unitId.toLowerCase())) {
+        errors.push(`Unit ID "${row.unitId}" already exists in this property.`);
+      }
+
+      if (row.unitNo && dbUnitNos.has(row.unitNo.toLowerCase())) {
+        errors.push(`Unit No "${row.unitNo}" already exists in this property.`);
+      }
+
+      row.errors = errors;
+      if (errors.length > 0) {
+        this.validationErrorsCount++;
+      } else {
+        this.validationSuccessCount++;
+      }
+    });
+  }
+
+  executeBulkImport(): void {
+    if (this.validationErrorsCount > 0 || this.importPreviewData.length === 0) {
+      return;
+    }
+
+    const propId = this.searchPropertyId?.trim();
+    if (!propId) {
+      this.showAlert('warning', 'Property Selection Required', 'Please select a property first.');
+      return;
+    }
+
+    this.isImporting = true;
+    this.importProgress = 0;
+    this.importedCount = 0;
+    this.importSummary = null;
+    this.cdr.detectChanges();
+
+    const totalToImport = this.importPreviewData.length;
+    let successCount = 0;
+    let failedCount = 0;
+
+    const batchSize = 5;
+    let currentIndex = 0;
+
+    const processNextBatch = () => {
+      if (currentIndex >= totalToImport) {
+        this.isImporting = false;
+        this.importSummary = {
+          total: totalToImport,
+          success: successCount,
+          failed: failedCount
+        };
+        this.showAlert(
+          failedCount === 0 ? 'success' : 'warning',
+          'Import Complete',
+          `${successCount} units imported successfully.` + (failedCount > 0 ? ` ${failedCount} units failed.` : '')
+        );
+        this.loadUnitsForProperty(propId);
+        this.cdr.detectChanges();
+        return;
+      }
+
+      const batchPromises: Promise<any>[] = [];
+      const batchEnd = Math.min(currentIndex + batchSize, totalToImport);
+
+      for (let i = currentIndex; i < batchEnd; i++) {
+        const row = this.importPreviewData[i];
+        
+        let sizeNum = 0;
+        if (row.unitSize) {
+          const cleaned = String(row.unitSize).replace(/[^0-9]/g, '');
+          sizeNum = parseInt(cleaned, 10) || 0;
+        }
+
+        const payload = {
+          unitId: row.unitId,
+          propertyId: propId,
+          unitNo: row.unitNo || '',
+          block: row.block || '',
+          floor: row.floor || '',
+          unitType: row.unitType || '',
+          taxAuthority: row.taxAuthority || 'No',
+          unitPurpose: row.unitPurpose || '',
+          unitDescription: '',
+          unitSize: sizeNum,
+          unitDewaPremiseNo: '',
+          unitDefaultAmount: 0,
+          unitAcCharge: parseFloat(row.acCharge) || 0,
+          unitElectricalCharge: parseFloat(row.electricityCharge) || 0,
+          otherServiceCharge: 0,
+          others: '',
+          deposit: parseFloat(row.securityDeposit) || 0,
+          targetRent: parseFloat(row.proposedRent) || 0,
+          actualRent: parseFloat(row.actualRent) || 0,
+          proposedAmount: parseFloat(row.proposedRent) || 0,
+          unitView: row.unitView || '',
+          parkingNumber: row.parking || '',
+          maintenanceDeposit: 0,
+          annualRentMin: 0,
+          annualRentMax: 0,
+          status: row.status || 'Vacant',
+          remarks: '',
+          customerId: '',
+          customerName: '',
+          fromPeriod: '',
+          toPeriod: '',
+          serviceType: row.serviceType || ''
+        };
+
+        const createPromise = new Promise<void>((resolve) => {
+          this.unitService.create(payload).subscribe({
+            next: () => {
+              successCount++;
+              this.importedCount++;
+              this.importProgress = Math.round((this.importedCount / totalToImport) * 100);
+              this.cdr.detectChanges();
+              resolve();
+            },
+            error: (err) => {
+              console.error(`Failed to import unit ${row.unitId}:`, err);
+              failedCount++;
+              this.importedCount++;
+              this.importProgress = Math.round((this.importedCount / totalToImport) * 100);
+              this.cdr.detectChanges();
+              resolve();
+            }
+          });
+        });
+        batchPromises.push(createPromise);
+      }
+
+      currentIndex = batchEnd;
+      Promise.all(batchPromises).then(() => {
+        setTimeout(processNextBatch, 100);
+      });
+    };
+
+    processNextBatch();
   }
 
   private emptyUnitModel(): any {

@@ -769,16 +769,16 @@ input:checked + .slider:before {
    CUSTOM COLORED ATTACHED BUTTONS
    ========================================================== */
 .input-attached .attached-btn.btn-search-attached {
-  background: var(--erp-primary, #30277C) !important;
-  border-left: 1px solid var(--erp-primary, #30277C) !important;
+  background: var(--erp-primary) !important;
+  border-left: 1px solid var(--erp-border) !important;
   
   svg {
     stroke: #ffffff !important;
   }
   
   &:hover {
-    background: #241D5C !important;
-    border-left-color: #241D5C !important;
+    background: var(--erp-primary-hover) !important;
+    border-left-color: var(--erp-primary-hover) !important;
   }
 }
 
@@ -793,5 +793,18 @@ input:checked + .slider:before {
   &:hover {
     background: #C78D24 !important;
     border-left-color: #C78D24 !important;
+  }
+}
+
+.btn-select-user {
+  background-color: var(--erp-primary) !important;
+  border-color: var(--erp-primary) !important;
+  color: white !important;
+  transition: all 0.2s ease-in-out;
+  
+  &:hover {
+    background-color: var(--erp-primary-hover, #7B1FA2) !important;
+    border-color: var(--erp-primary-hover, #7B1FA2) !important;
+    color: white !important;
   }
 }

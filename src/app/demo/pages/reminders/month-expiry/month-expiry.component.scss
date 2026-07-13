@@ -265,3 +265,7 @@
     transform: translateY(0);
   }
 }
+
+.erp-table thead th {
+  text-transform: none !important;
+}

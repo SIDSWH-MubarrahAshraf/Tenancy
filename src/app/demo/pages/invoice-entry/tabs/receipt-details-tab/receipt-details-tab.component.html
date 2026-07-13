@@ -42,27 +42,28 @@
 
         <div class="col-md-4">
           <label class="form-label fw-semibold">Clearing Bank</label>
-          <select class="form-select"
-                  [class.bg-white]="!isLocked"
-                  [class.bg-light]="isLocked"
-                  [(ngModel)]="form.detailsBank"
-                  [disabled]="isLocked">
-            <option value="">-- Select Bank --</option>
-            <option *ngFor="let bank of banksList" [value]="bank">{{ bank }}</option>
-          </select>
+          <div style="position: relative; width: 100%;">
+            <button type="button" class="form-select text-start" [class.bg-white]="!isLocked" [class.bg-light]="isLocked" (click)="toggleBankDropdown()" [disabled]="isLocked">
+              {{ form.detailsBank || '-- Select Bank --' }}
+            </button>
+            <div *ngIf="showBankDropdown && !isLocked" class="search-popup-dropdown" style="position: absolute; top: 43px; left: 0; width: 100%; z-index: 1020; max-height: 200px; overflow-y: auto;">
+              <div class="dropdown-item-select text-muted" (click)="selectBank('')">-- Select Bank --</div>
+              <div class="dropdown-item-select" *ngFor="let bank of banksList" (click)="selectBank(bank)">{{ bank }}</div>
+            </div>
+          </div>
         </div>
 
         <div class="col-md-4">
           <label class="form-label fw-semibold">Number of Cheques</label>
-          <select class="form-select"
-                  [class.bg-white]="!isLocked"
-                  [class.bg-light]="isLocked"
-                  [(ngModel)]="form.numberOfChecks"
-                  (ngModelChange)="onNumberOfChecksChange()"
-                  [disabled]="isLocked">
-            <option [ngValue]="0">-- Select --</option>
-            <option *ngFor="let n of chequeCountOptions" [ngValue]="n">{{ n }}</option>
-          </select>
+          <div style="position: relative; width: 100%;">
+            <button type="button" class="form-select text-start" [class.bg-white]="!isLocked" [class.bg-light]="isLocked" (click)="toggleChequeDropdown()" [disabled]="isLocked">
+              {{ form.numberOfChecks || '-- Select --' }}
+            </button>
+            <div *ngIf="showChequeDropdown && !isLocked" class="search-popup-dropdown" style="position: absolute; top: 43px; left: 0; width: 100%; z-index: 1020; max-height: 200px; overflow-y: auto;">
+              <div class="dropdown-item-select text-muted" (click)="selectCheques(0)">-- Select --</div>
+              <div class="dropdown-item-select" *ngFor="let n of chequeCountOptions" (click)="selectCheques(n)">{{ n }}</div>
+            </div>
+          </div>
           <div class="form-text">Cheque dates are generated automatically from the rental period.</div>
         </div>
 

@@ -349,6 +349,7 @@ select:focus,
 /* Merge headers and cards cleanly */
 .erp-page-header + form .erp-card,
 .erp-page-header + .erp-card,
+.erp-page-header + .tabs-card,
 .erp-page-header + form .service-card,
 .setup-header + .tabs-card,
 .services-header + form .service-card {
@@ -924,11 +925,13 @@ textarea.form-control {
 .badge.bg-primary,
 .status-draft {
   background: var(--erp-primary) !important;
+  color: #ffffff !important;
 }
 
 .badge.bg-success,
 .status-posted {
   background: var(--erp-success) !important;
+  color: #ffffff !important;
 }
 
 .badge.bg-warning,
@@ -940,6 +943,7 @@ textarea.form-control {
 .badge.bg-danger,
 .status-cancelled {
   background: var(--erp-danger) !important;
+  color: #ffffff !important;
 }
 
 .alert {
@@ -1224,4 +1228,35 @@ select.status-select:focus {
 
 .swal2-cancel.swal2-styled:focus {
   box-shadow: 0 0 0 3px rgba(108, 117, 125, 0.2) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Global Custom Dropdowns (rounded corners & dynamic active theme hover)
+   ───────────────────────────────────────────────────────────────────────────── */
+.search-popup-dropdown {
+  background-color: #ffffff !important;
+  border: 1px solid var(--erp-border) !important;
+  border-radius: 12px !important;
+  box-shadow: var(--erp-shadow, 0 8px 24px rgba(48, 39, 124, 0.12)) !important;
+  padding: 6px !important;
+  z-index: 1050 !important;
+}
+
+.dropdown-item-select {
+  padding: 10px 16px !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--erp-text, #2f3542) !important;
+  transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out !important;
+  margin-bottom: 2px !important;
+  text-align: left !important;
+  border-bottom: none !important;
+  background-color: transparent !important;
+
+  &:hover {
+    background-color: var(--erp-primary) !important;
+    color: #ffffff !important;
+  }
 }

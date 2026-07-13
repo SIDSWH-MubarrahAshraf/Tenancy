@@ -66,6 +66,16 @@ const routes: Routes = [
           import('./demo/pages/services/services.component').then((c) => c.ServicesComponent)
       },
       {
+        path: 'invoice-entry',
+        loadComponent: () =>
+          import('./demo/pages/invoice-entry/invoice-entry.component').then((m) => m.InvoiceEntryComponent)
+      },
+      {
+        path: 'recurring-entries',
+        loadComponent: () =>
+          import('./demo/pages/recurring-entries/recurring-entries.component').then((m) => m.RecurringEntriesComponent)
+      },
+      {
         path: 'blank',
         loadComponent: () =>
           import('./demo/pages/blank/blank.component').then((c) => c.BlankComponent)

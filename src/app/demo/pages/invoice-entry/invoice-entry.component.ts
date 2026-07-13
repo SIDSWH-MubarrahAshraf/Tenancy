@@ -255,11 +255,43 @@ export class InvoiceEntryComponent implements OnInit {
 
   setTab(tab: ReceiptTab): void { this.activeTab = tab; }
 
+  showInvoiceTypeDropdown = false;
+  showPurposeDropdown = false;
+
+  toggleInvoiceTypeDropdown(): void {
+    this.showInvoiceTypeDropdown = !this.showInvoiceTypeDropdown;
+    this.showPurposeDropdown = false;
+  }
+
+  selectInvoiceType(type: any): void {
+    this.form.invoiceType = type;
+    this.showInvoiceTypeDropdown = false;
+    this.openTypeModal();
+  }
+
+  togglePurposeDropdown(): void {
+    this.showPurposeDropdown = !this.showPurposeDropdown;
+    this.showInvoiceTypeDropdown = false;
+  }
+
+  selectPurpose(purpose: string): void {
+    this.form.purposeOfLease = purpose;
+    this.showPurposeDropdown = false;
+  }
+
   // ── Close dropdown when clicking outside the component ──────────
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     if (!this.elRef.nativeElement.contains(event.target)) {
       this.showInvoiceDropdown = false;
+      this.showInvoiceTypeDropdown = false;
+      this.showPurposeDropdown = false;
+    } else {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.form-select')) {
+        this.showInvoiceTypeDropdown = false;
+        this.showPurposeDropdown = false;
+      }
     }
   }
 

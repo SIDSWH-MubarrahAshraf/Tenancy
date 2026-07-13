@@ -21,6 +21,13 @@ export class PropertyService {
   }
 
   /**
+   * Get all properties (Alias to getProperties)
+   */
+  getAll(): Observable<any> {
+    return this.getProperties();
+  }
+
+  /**
    * Get property by Id
    */
   getProperty(id: number): Observable<any> {

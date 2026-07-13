@@ -80,7 +80,7 @@ export class FinalSettlementService {
     // I need to be careful to not override the Content-Type header.
     // The authHeaders method in auth.service.ts usually sets application/json.
     // Let's create custom headers for multipart
-    const headers = this.auth.authHeaders().delete('Content-Type');
+    const headers = this.auth.authHeaders();
 
     return this.http.post<ApiResponse<TyAttachment>>(`${this.BASE}/${id}/attachments`, formData, {
       headers: headers,

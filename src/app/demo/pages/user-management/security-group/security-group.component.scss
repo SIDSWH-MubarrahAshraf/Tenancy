@@ -195,3 +195,7 @@ input:checked + .ios-slider:before {
     }
   }
 }
+
+.erp-table thead th {
+  text-transform: none !important;
+}

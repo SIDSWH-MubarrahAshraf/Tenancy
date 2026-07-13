@@ -87,4 +87,14 @@ export class AuthService {
   isLoggedIn(): boolean {
     return !!this.getToken();
   }
+
+  /**
+   * Helper to return standard authorization headers
+   */
+  authHeaders() {
+    const token = this.getToken();
+    return {
+      'Authorization': `Bearer ${token}`
+    };
+  }
 }

@@ -1,8 +1,8 @@
-$primary-color: #0050b3;
-$primary-hover: #003a8c;
-$danger-color: #dc3545;
-$danger-hover: #bd2130;
-$border-color: #ced4da;
+$primary-color: var(--erp-primary);
+$primary-hover: var(--erp-primary-hover);
+$danger-color: var(--erp-danger);
+$danger-hover: var(--erp-danger);
+$border-color: var(--erp-border);
 
 .main-receipt-card {
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -34,8 +34,8 @@ $border-color: #ced4da;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 
   &:focus {
-    border-color: lighten($primary-color, 15%);
-    box-shadow: 0 0 0 0.2rem rgba(0, 80, 179, 0.25);
+    border-color: var(--erp-primary) !important;
+    box-shadow: 0 0 0 0.2rem var(--erp-primary-soft) !important;
     outline: 0;
   }
 
@@ -53,56 +53,136 @@ $border-color: #ced4da;
 }
 
 .input-group {
-  .btn-outline-primary {
-    color: $primary-color;
-    border-color: $border-color;
+  border: none !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  display: flex !important;
+  align-items: stretch !important;
 
-    &:hover {
-      background-color: $primary-color;
-      border-color: $primary-color;
-      color: #ffffff;
+  & > * {
+    margin: 0 !important;
+    border: 1px solid $border-color !important;
+    border-right: none !important;
+    border-radius: 0 !important;
+    height: 40px !important;
+    min-height: 40px !important;
+    box-shadow: none !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  & > *:first-child {
+    border-top-left-radius: var(--erp-control-radius, 8px) !important;
+    border-bottom-left-radius: var(--erp-control-radius, 8px) !important;
+  }
+
+  & > *:last-child {
+    border-right: 1px solid $border-color !important;
+    border-top-right-radius: var(--erp-control-radius, 8px) !important;
+    border-bottom-right-radius: var(--erp-control-radius, 8px) !important;
+  }
+
+  .form-control,
+  .form-select {
+    background-color: #ffffff !important;
+    padding: 0.375rem 0.75rem !important;
+    color: var(--erp-text, #2f3542) !important;
+    font-size: 0.86rem !important;
+
+    &:focus {
+      border-color: var(--erp-primary) !important;
+      background-color: #ffffff !important;
+    }
+
+    &:disabled {
+      background-color: #f1ecf6 !important;
     }
   }
 
-  .btn-outline-danger {
-    color: $danger-color;
-    border-color: $border-color;
+  .input-group-text {
+    background-color: var(--erp-primary-soft, #EAE8FC) !important;
+    color: var(--erp-primary) !important;
+    font-weight: 600 !important;
+    font-size: 0.82rem !important;
+    justify-content: center !important;
+    padding: 0 12px !important;
+  }
 
-    &:hover {
-      background-color: $danger-color;
-      border-color: $danger-color;
-      color: #ffffff;
+  .btn,
+  button.btn {
+    justify-content: center !important;
+    padding: 0 14px !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease-in-out !important;
+
+    &.btn-outline-primary {
+      background-color: $primary-color !important;
+      color: #ffffff !important;
+
+      &:hover:not(:disabled) {
+        background-color: $primary-hover !important;
+        color: #ffffff !important;
+      }
+
+      &:disabled {
+        background-color: $primary-color !important;
+        opacity: 0.5;
+        color: #ffffff !important;
+      }
+    }
+
+    &.btn-outline-danger {
+      background-color: #e3a008 !important;
+      color: #ffffff !important;
+
+      &:hover:not(:disabled) {
+        background-color: #c28807 !important;
+        color: #ffffff !important;
+      }
+
+      &:disabled {
+        background-color: #e3a008 !important;
+        opacity: 0.5;
+        color: #ffffff !important;
+      }
     }
   }
 }
 
 .modern-tabs {
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
+  display: inline-flex !important;
+  background-color: var(--erp-primary-soft, #EAE8FC) !important;
+  padding: 6px !important;
+  border-radius: 50px !important; // Capsule-shape wrapper
+  border: none !important;
+  gap: 6px !important;
+  margin-bottom: 1.5rem !important;
 
   .nav-item {
-    margin-bottom: -1px;
+    margin: 0 !important;
   }
 
   .nav-link-tab {
-    background: transparent;
-    border: none;
-    border-bottom: 3px solid transparent;
-    color: #6c757d;
-    font-weight: 600;
-    font-size: 0.95rem;
-    padding: 0.6rem 0.5rem;
-    transition: all 0.2s ease-in-out;
-    cursor: pointer;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 50px !important; // Capsule-shape tab
+    color: $primary-color !important;
+    font-weight: 700 !important;
+    font-size: 0.88rem !important;
+    padding: 8px 24px !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    cursor: pointer !important;
 
-    &:hover {
-      color: $primary-color;
-      border-bottom-color: lighten($primary-color, 25%);
+    &:hover:not(.active) {
+      background-color: rgba(48, 39, 124, 0.08) !important;
+      color: $primary-color !important;
     }
 
     &.active {
-      color: $primary-color;
-      border-bottom-color: $primary-color;
+      background-color: $primary-color !important;
+      color: #ffffff !important;
+      box-shadow: 0 4px 12px rgba(48, 39, 124, 0.16) !important;
     }
   }
 }
@@ -265,28 +345,28 @@ $border-color: #ced4da;
   cursor: pointer;
 
   &:hover {
-    border-color: lighten($primary-color, 15%);
+    border-color: var(--erp-primary-hover) !important;
     background-color: #fcfdfe;
   }
 
   &.active {
-    border-color: $primary-color !important;
-    background-color: rgba(0, 80, 179, 0.04) !important;
+    border-color: var(--erp-primary) !important;
+    background-color: var(--erp-primary-soft) !important;
 
     label {
-      color: $primary-color !important;
+      color: var(--erp-primary) !important;
     }
 
     .form-check-input {
-      border-color: $primary-color;
-      background-color: $primary-color;
+      border-color: var(--erp-primary);
+      background-color: var(--erp-primary);
     }
   }
 }
 
 .dynamic-modal-inputs {
-  border: 1px solid rgba(0, 80, 179, 0.12) !important;
-  background-color: rgba(0, 80, 179, 0.02) !important;
+  border: 1px solid var(--erp-border) !important;
+  background-color: var(--erp-primary-soft) !important;
 }
 
 @keyframes fadeInOverlay {
@@ -332,8 +412,8 @@ $border-color: #ced4da;
       background-color: #ffffff !important;
 
       &:focus {
-        border-color: lighten($primary-color, 15%);
-        box-shadow: 0 0 0 0.2rem rgba(0, 80, 179, 0.2);
+        border-color: var(--erp-primary) !important;
+        box-shadow: 0 0 0 0.2rem var(--erp-primary-soft) !important;
       }
     }
 
@@ -396,7 +476,7 @@ $border-color: #ced4da;
       &:last-child { border-bottom: none; }
 
       &:hover {
-        background-color: rgba(0, 80, 179, 0.05);
+        background-color: var(--erp-primary-soft) !important;
       }
 
       .invoice-dropdown-number {
@@ -562,5 +642,199 @@ $border-color: #ced4da;
   .small {
     font-size: 0.8rem;
     color: #997a00;
+  }
+}
+
+// Custom Modal Content Styling to match Image 2
+.modal-overlay {
+  .modal-container {
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    border: none !important;
+    box-shadow: 0 10px 30px rgba(48, 39, 124, 0.2) !important;
+    background-color: #ffffff !important;
+  }
+
+  .modal-header {
+    background-color: $primary-color !important; // Dark purple header!
+    color: #ffffff !important;
+    border-bottom: none !important;
+    padding: 1rem 1.5rem !important;
+
+    h5, .modal-title {
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      font-size: 1.1rem !important;
+    }
+
+    .btn-close, .btn-close-modal {
+      filter: invert(1) grayscale(1) brightness(2) !important; // Make close button white!
+      opacity: 0.8;
+      &:hover { opacity: 1; }
+    }
+  }
+
+  .modal-body {
+    padding: 1.5rem !important;
+    background-color: #ffffff !important;
+  }
+
+  .modal-footer {
+    border-top: 1px solid rgba(48, 39, 124, 0.1) !important;
+    background-color: #fcfbfe !important;
+    padding: 1rem 1.5rem !important;
+  }
+}
+
+// Bootstrap modal fallback
+.modal-content {
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  border: none !important;
+  box-shadow: 0 10px 30px rgba(48, 39, 124, 0.2) !important;
+  background-color: #ffffff !important;
+  
+  .modal-header {
+    background-color: $primary-color !important;
+    color: #ffffff !important;
+    border-bottom: none !important;
+    padding: 1rem 1.5rem !important;
+
+    h5 {
+      color: #ffffff !important;
+      font-weight: 700 !important;
+    }
+
+    .btn-close {
+      filter: invert(1) grayscale(1) brightness(2) !important;
+      opacity: 0.8;
+      &:hover { opacity: 1; }
+    }
+  }
+
+  .modal-footer {
+    border-top: 1px solid rgba(48, 39, 124, 0.1) !important;
+    background-color: #fcfbfe !important;
+  }
+}
+
+// Custom Lookup Table styling matching Image 2
+.lookup-table-wrapper {
+  border: 1px solid $border-color !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  background-color: #ffffff !important;
+  margin-top: 1rem;
+
+  table {
+    margin-bottom: 0 !important;
+    border: none !important;
+
+    thead {
+      background-color: rgba(48, 39, 124, 0.08) !important;
+      
+      tr th {
+        color: $primary-color !important;
+        font-weight: 800 !important;
+        font-size: 0.8rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
+        background-color: transparent !important;
+        border-bottom: 1px solid $border-color !important;
+        border-top: none !important;
+        border-left: none !important;
+        border-right: none !important;
+        padding: 10px 12px !important;
+      }
+    }
+
+    tbody {
+      tr {
+        transition: background-color 0.15s ease;
+        &:hover {
+          background-color: rgba(48, 39, 124, 0.02) !important;
+        }
+
+        td {
+          border-bottom: 1px solid rgba(48, 39, 124, 0.06) !important;
+          border-top: none !important;
+          border-left: none !important;
+          border-right: none !important;
+          padding: 10px 12px !important;
+          color: #495057 !important;
+          font-size: 0.88rem !important;
+          vertical-align: middle !important;
+        }
+
+        &:last-child td {
+          border-bottom: none !important;
+        }
+      }
+    }
+  }
+}
+
+// ID capsule badge matching Image 2
+.lookup-id-badge {
+  background-color: rgba(48, 39, 124, 0.06) !important;
+  color: $primary-color !important;
+  font-weight: 600 !important;
+  font-size: 0.8rem !important;
+  padding: 3px 8px !important;
+  border-radius: 4px !important;
+  display: inline-block !important;
+}
+
+// Select button matching Image 2
+.btn-select-action {
+  background-color: $primary-color !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 0.78rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  padding: 5px 16px !important;
+  border-radius: 6px !important;
+  border: none !important;
+  min-height: 28px !important;
+  height: 28px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: background-color 0.15s ease, transform 0.1s ease !important;
+
+  &:hover:not(:disabled) {
+    background-color: $primary-hover !important;
+    transform: translateY(-1px) !important;
+  }
+
+  &:active {
+    transform: translateY(0) !important;
+  }
+}
+
+// Status Badges matching Image 2
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  line-height: 1.2;
+
+  &.status-pill-success {
+    background-color: rgba(40, 167, 69, 0.12) !important;
+    color: #1e7e34 !important;
+  }
+
+  &.status-pill-danger {
+    background-color: rgba(220, 53, 69, 0.12) !important;
+    color: #bd2130 !important;
+  }
+
+  &.status-pill-warning {
+    background-color: rgba(255, 193, 7, 0.15) !important;
+    color: #b88600 !important;
   }
 }
