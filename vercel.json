@@ -1,0 +1,15 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": true,
+  "outputDirectory": "dist/browser",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://tenancyapi.siddev.online/api/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

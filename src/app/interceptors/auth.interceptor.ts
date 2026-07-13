@@ -10,14 +10,22 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const token = authService.getToken();
   
-  let authReq = req;
-  if (token) {
-    authReq = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+  let targetUrl = req.url;
+  // Option B CORS bypass proxy rewrite:
+  if (targetUrl.startsWith('https://tenancyapi.siddev.online/api')) {
+    targetUrl = targetUrl.replace('https://tenancyapi.siddev.online/api', '/api');
+  } else if (targetUrl.startsWith('https://tenancyapi.siddev.online')) {
+    targetUrl = targetUrl.replace('https://tenancyapi.siddev.online', '/api');
   }
+
+  const update: any = { url: targetUrl };
+  if (token) {
+    update.setHeaders = {
+      Authorization: `Bearer ${token}`
+    };
+  }
+
+  const authReq = req.clone(update);
 
   return next(authReq).pipe(
     catchError((error) => {
