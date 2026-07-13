@@ -12,12 +12,21 @@
     </thead>
 
     <tbody>
-      <tr *ngFor="let row of rows" [class.row-check]="row.rowType === 'check'">
+      <tr *ngFor="let row of rows; trackBy: trackByLineNo" [class.row-check]="row.rowType === 'check'">
         <td class="text-center text-muted fw-semibold">{{ row.lineNo }}</td>
         <td class="fw-semibold text-dark">{{ row.description }}</td>
 
         <td>
-          <input type="text" class="form-control bg-light" [value]="row.bank" readonly>
+          <select class="form-select bg-white"
+                  *ngIf="row.editable"
+                  [ngModel]="row.bank"
+                  (ngModelChange)="onBankInput(row, $event)">
+            <option value="">-- Select Bank --</option>
+            <option *ngFor="let b of banksList" [value]="b">{{ b }}</option>
+          </select>
+          <input type="text" class="form-control bg-light"
+                 *ngIf="!row.editable"
+                 [value]="row.bank" readonly>
         </td>
 
         <td>
@@ -49,12 +58,25 @@
         </td>
       </tr>
 
+<<<<<<< HEAD
       <tr *ngIf="rows.length === 0">
         <td colspan="6" class="text-center py-4 text-muted small">
           No schedule rows yet. Select the rental period and number of cheques to generate the payment schedule.
         </td>
       </tr>
     </tbody>
+=======
+          <td>
+            <input type="date" class="form-control form-control-sm"
+                   *ngIf="row.editable"
+                   [class.bg-white]="row.editable"
+                   [ngModel]="row.date"
+                   (ngModelChange)="onDateInput(row, $event)">
+            <input type="text" class="form-control form-control-sm bg-light"
+                   *ngIf="!row.editable"
+                   [value]="row.date ? (row.date | date:'dd-MMM-yyyy') : '—'" readonly>
+          </td>
+>>>>>>> 3f5f207 (Adeed Console Management Screen.)
 
     <tfoot *ngIf="rows.length > 0">
       <tr class="schedule-total-row">

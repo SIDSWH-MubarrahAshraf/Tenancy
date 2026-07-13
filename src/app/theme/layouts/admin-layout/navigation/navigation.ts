@@ -19,8 +19,6 @@ export interface NavigationItem {
 }
 
 export const NavigationItems: NavigationItem[] = [
-
-
   {
     id: 'utilities',
     title: 'TENANCY',
@@ -189,7 +187,7 @@ export const NavigationItems: NavigationItem[] = [
   },
   {
     id: 'Contract',
-    title: 'Contract',
+    title: 'Transactions',
     type: 'group',
     icon: 'file-text',
     children: [
@@ -209,6 +207,15 @@ export const NavigationItems: NavigationItem[] = [
         url: '/recurring-entries',
         classes: 'nav-item',
         icon: 'calendar',
+        breadcrumbs: false
+      },
+      {
+        id: 'console-management',
+        title: 'Console Management',
+        type: 'item',
+        url: '/console-management',
+        classes: 'nav-item',
+        icon: 'dashboard',
         breadcrumbs: false
       }
     ]

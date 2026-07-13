@@ -188,8 +188,15 @@ const routes: Routes = [
         loadComponent: () =>
           import('./demo/pages/reminders/announcement/announcement.component')
             .then(c => c.AnnouncementComponent)
+      },
+      {
+        path: 'console-management',
+        loadComponent: () =>
+          import('./demo/pages/console-management/console-management.component').then(
+            (m) => m.default
+          )
       }
-    ]  
+    ]
   },
   {
     path: '',
