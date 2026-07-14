@@ -39,7 +39,12 @@
         </td>
 
         <td>
+          <input type="date" class="form-control bg-white"
+                 *ngIf="row.editable"
+                 [ngModel]="row.date"
+                 (ngModelChange)="onDateInput(row, $event)">
           <input type="text" class="form-control bg-light"
+                 *ngIf="!row.editable"
                  [value]="row.date ? (row.date | date:'dd-MMM-yyyy') : '—'" readonly >
         </td>
 
@@ -58,25 +63,12 @@
         </td>
       </tr>
 
-<<<<<<< HEAD
       <tr *ngIf="rows.length === 0">
         <td colspan="6" class="text-center py-4 text-muted small">
           No schedule rows yet. Select the rental period and number of cheques to generate the payment schedule.
         </td>
       </tr>
     </tbody>
-=======
-          <td>
-            <input type="date" class="form-control form-control-sm"
-                   *ngIf="row.editable"
-                   [class.bg-white]="row.editable"
-                   [ngModel]="row.date"
-                   (ngModelChange)="onDateInput(row, $event)">
-            <input type="text" class="form-control form-control-sm bg-light"
-                   *ngIf="!row.editable"
-                   [value]="row.date ? (row.date | date:'dd-MMM-yyyy') : '—'" readonly>
-          </td>
->>>>>>> 3f5f207 (Adeed Console Management Screen.)
 
     <tfoot *ngIf="rows.length > 0">
       <tr class="schedule-total-row">
