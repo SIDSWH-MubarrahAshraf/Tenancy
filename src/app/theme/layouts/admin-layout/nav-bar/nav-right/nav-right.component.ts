@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 
 // project import
 import { SharedModule } from 'src/app/theme/shared/shared.module';
+import { ThemeService } from 'src/app/services/theme.service';
 
 // third party
 
@@ -44,6 +45,7 @@ export class NavRightComponent implements OnInit {
   private dashboardService = inject(DashboardService);
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
+  themeService = inject(ThemeService);
 
   notifications: any[] = [];
   unreadCount = 0;
@@ -120,10 +122,13 @@ export class NavRightComponent implements OnInit {
   windowWidth: number;
   screenFull: boolean = true;
   direction: string = 'ltr';
+  showThemePicker = false;
+  activeThemeId: string;
 
   // constructor
   constructor() {
     this.windowWidth = window.innerWidth;
+    this.activeThemeId = this.themeService.getCurrentThemeId();
     this.iconService.addIcon(
       ...[
         CheckCircleOutline,
@@ -146,6 +151,12 @@ export class NavRightComponent implements OnInit {
         WalletOutline
       ]
     );
+  }
+
+  selectTheme(themeId: string): void {
+    this.activeThemeId = themeId;
+    this.themeService.setTheme(themeId);
+    this.showThemePicker = false;
   }
 
   profile = [
