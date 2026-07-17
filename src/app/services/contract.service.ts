@@ -76,4 +76,29 @@ export class ContractService {
       params: params
     });
   }
+
+  getUnitMasters(payload: any): Observable<any> {
+    return this.http.post<any>(`${this.BASE_URL}/api/Property/GetUnitMasters`, payload, {
+      headers: this.authService.authHeaders()
+    });
+  }
+
+  getDocNumList(payload: any): Observable<any> {
+    return this.http.post<any>(`${this.BASE_URL}/api/Contract/GetDocNumList`, payload, {
+      headers: this.authService.authHeaders()
+    });
+  }
+
+  postDocNumList(payload: any): Observable<any> {
+    return this.http.post<any>(`${this.BASE_URL}/api/Contract/PostDocNumList`, payload, {
+      headers: this.authService.authHeaders()
+    });
+  }
+
+  getContractDetails(payload: any): Observable<Blob> {
+    return this.http.post(`${this.BASE_URL}/api/Contract/ContractDetails`, payload, {
+      headers: this.authService.authHeaders(),
+      responseType: 'blob'
+    });
+  }
 }

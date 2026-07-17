@@ -381,9 +381,9 @@ input:checked + .ios-slider:before {
   border: 1px solid var(--erp-border, #CFA5EA);
   border-radius: 8px;
   box-shadow: 0 8px 24px rgba(142, 36, 170, 0.15);
-  z-index: 1000;
+  z-index: 9999 !important;
   padding: 6px;
-  max-height: 180px;
+  max-height: 350px;
   overflow-y: auto;
   
   /* Scrollbar styles matching unit purpose */

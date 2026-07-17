@@ -372,8 +372,8 @@
 @if (showUnitSearchPopup) {
   <div class="modal fade show" tabindex="-1" style="display:block; background:rgba(0,0,0,.45); z-index: 1050;">
     <div class="modal-dialog modal-dialog-centered modal-xl">
-      <div class="modal-content" style="border-radius: 12px; overflow: hidden; border: 1px solid var(--erp-border, #CFA5EA);">
-        <div class="modal-header" style="background: var(--erp-primary, #30277C) !important; color: #ffffff !important; border-bottom: none; display: flex; align-items: center; justify-content: space-between; padding: 16px 20px;">
+      <div class="modal-content" style="border-radius: 12px !important; overflow: hidden !important; border: 1px solid var(--erp-border, #C6C3F2);">
+        <div class="modal-header" style="background: var(--erp-primary, #30277C) !important; color: #ffffff !important; border-bottom: none; display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-top-left-radius: 11px !important; border-top-right-radius: 11px !important;">
           <h5 class="modal-title" style="color: #ffffff !important; font-weight: 700; font-size: 1.05rem; margin: 0;">Units List - Property ID: {{ searchPropertyId }}</h5>
           <button type="button" class="btn-close" (click)="showUnitSearchPopup = false" style="background: transparent; border: none; font-size: 1.4rem; line-height: 1; color: #ffffff; cursor: pointer; padding: 0; filter: brightness(0) invert(1); opacity: 0.85;">&times;</button>
         </div>
@@ -455,10 +455,10 @@
 @if (showBulkImportModal) {
   <div class="modal fade show" tabindex="-1" style="display:block; background:rgba(0,0,0,.5); z-index: 1050; backdrop-filter: blur(4px);">
     <div class="modal-dialog modal-dialog-centered modal-xl">
-      <div class="modal-content" style="border-radius: 16px; overflow: hidden; border: 1px solid var(--erp-border, #C6C3F2); box-shadow: 0 10px 30px rgba(0,0,0,0.25);">
+      <div class="modal-content" style="border-radius: 16px !important; overflow: hidden !important; border: 1px solid var(--erp-border, #C6C3F2); box-shadow: 0 10px 30px rgba(0,0,0,0.25);">
         
         <!-- Modal Header -->
-        <div class="modal-header" style="background: var(--erp-primary, #30277C) !important; color: #ffffff !important; border-bottom: none; display: flex; align-items: center; justify-content: space-between; padding: 16px 20px;">
+        <div class="modal-header" style="background: var(--erp-primary, #30277C) !important; color: #ffffff !important; border-bottom: none; display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-top-left-radius: 15px !important; border-top-right-radius: 15px !important;">
           <div class="d-flex align-items-center gap-2">
             <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2.5;">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />

@@ -49,6 +49,7 @@
                 <div class="custom-dropdown-item" [class.active]="selectedType === 'Renewal'" (click)="selectType('Renewal', $event)">Lease Renewal</div>
                 <div class="custom-dropdown-item" [class.active]="selectedType === 'Move-Out'" (click)="selectType('Move-Out', $event)">Tenant Move-Out</div>
                 <div class="custom-dropdown-item" [class.active]="selectedType === 'Announcement'" (click)="selectType('Announcement', $event)">Announcements</div>
+                <div class="custom-dropdown-item" [class.active]="selectedType === 'Cheque Bounce'" (click)="selectType('Cheque Bounce', $event)">Cheque Bounce</div>
               </div>
             </div>
           </div>
@@ -169,7 +170,8 @@
             <span class="badge mt-1" [ngClass]="{
               'bg-light-primary text-primary': selectedLog?.type === 'Renewal',
               'bg-light-warning text-warning': selectedLog?.type === 'Move-Out',
-              'bg-light-info text-info': selectedLog?.type === 'Announcement'
+              'bg-light-info text-info': selectedLog?.type === 'Announcement',
+              'bg-light-danger text-danger': selectedLog?.type === 'Cheque Bounce'
             }">{{ selectedLog?.type }}</span>
           </div>
           <div class="col-md-3">

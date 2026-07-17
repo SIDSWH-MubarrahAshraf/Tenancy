@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { ReminderService } from 'src/app/services/reminder.service';
+import { EmailTemplate } from 'src/app/models/reminder.model';
 
 @Component({
   selector: 'app-month-expiry',
@@ -15,6 +17,9 @@ export class MonthExpiryComponent implements OnInit {
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
   private ngZone = inject(NgZone);
+  private reminderService = inject(ReminderService);
+
+  emailTemplates: EmailTemplate[] = [];
 
   // Base API URL
   private readonly baseUrl = environment.apiUrl.replace(/\/api$/, '');
@@ -105,6 +110,18 @@ export class MonthExpiryComponent implements OnInit {
     // Load Tenant Move Out
     this.loadMoveoutDetails();
     this.loadMoveoutHistory();
+    this.loadEmailTemplates();
+  }
+
+  loadEmailTemplates(): void {
+    this.reminderService.getEmailTemplates().subscribe({
+      next: (res) => {
+        this.emailTemplates = res?.data || res || [];
+      },
+      error: (err) => {
+        console.error('Failed to load email templates in MonthExpiryComponent', err);
+      }
+    });
   }
 
   // Runtime SweetAlert injection to avoid npm dependencies
@@ -1210,6 +1227,20 @@ export class MonthExpiryComponent implements OnInit {
     return new Date(Number(str.substring(0, 4)), Number(str.substring(4, 6)) - 1, Number(str.substring(6, 8)));
   }
 
+  formatDateAsYYYYMMDD(val: any): string {
+    if (!val) return '';
+    let d = new Date(val);
+    if (isNaN(d.getTime())) {
+      const parsed = this.parseYYYYMMDD(val);
+      if (parsed) d = parsed;
+      else return String(val);
+    }
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
   logSentEmails(rows: any[], type: 'Renewal' | 'Move-Out' | 'Announcement', attachments: any[] = []): void {
     const raw = localStorage.getItem('email_logs');
     const logs = raw ? JSON.parse(raw) : [];
@@ -1226,17 +1257,49 @@ export class MonthExpiryComponent implements OnInit {
         pDate = parsed ? this.formatDDMMYYYY(parsed) : String(pDate);
       }
 
+      let emailSubject = `Move-Out Clearance Guidelines - Unit ${unit}`;
+      let emailBody = `Dear ${item.namecust || item.custName || 'Tenant'},\n\nWe acknowledge that you do not wish to renew your lease for Unit ${unit}.\nPlease refer to the guidelines for move-out and security deposit return.\n\nSincerely,\nAl-Zebaq Admin`;
+
+      if (type === 'Renewal') {
+        const renewalTemplate = this.emailTemplates.find(t => t.templateCode === 'LEASE_EXPIRY_3MONTHS');
+        if (renewalTemplate && renewalTemplate.isActive) {
+          const annualRent = 'AED ' + Number(item.proposedAnnual || item.pAnnual || 0).toLocaleString();
+          if (renewalTemplate.subject) {
+            emailSubject = renewalTemplate.subject;
+          }
+          if (renewalTemplate.bodyHtml) {
+            emailBody = renewalTemplate.bodyHtml
+              .replace(/\{\{\s*renewalDate\s*\}\}/gi, pDate)
+              .replace(/\{\{\s*annualRent\s*\}\}/gi, annualRent);
+          }
+        } else {
+          emailSubject = `Lease Expiry & Renewal Proposal - Unit ${unit}`;
+          emailBody = `Dear ${item.namecust || item.custName || 'Tenant'},\n\nYour lease for Unit ${unit} expires on ${pDate}.\nProposed annual rent: AED ${item.proposedAnnual || item.pAnnual || 0}.\n\nBest regards,\nAl-Zebaq Property Management`;
+        }
+      } else if (type === 'Move-Out') {
+        const moveoutTemplate = this.emailTemplates.find(t => t.templateCode === 'MOVEOUT_INSPECTION');
+        if (moveoutTemplate && moveoutTemplate.isActive) {
+          const tenantName = item.namecust || item.custName || 'Tenant';
+          const moveOutDate = this.formatDateAsYYYYMMDD(item.periodto || item.tPeriod);
+          
+          if (moveoutTemplate.subject) {
+            emailSubject = moveoutTemplate.subject;
+          }
+          if (moveoutTemplate.bodyHtml) {
+            emailBody = moveoutTemplate.bodyHtml
+              .replace(/\{\{\s*tenantName\s*\}\}/gi, tenantName)
+              .replace(/\{\{\s*moveOutDate\s*\}\}/gi, moveOutDate);
+          }
+        }
+      }
+
       logs.push({
         id: logId,
         sender: 'noreply@alzebaq.com',
         recipient: item.idcust ? `${item.idcust.toLowerCase()}@gmail.com` : (item.custCode ? `${item.custCode.toLowerCase()}@gmail.com` : 'tenant@gmail.com'),
         recipientName: item.namecust || item.custName || 'Tenant',
-        subject: type === 'Renewal'
-          ? `Lease Expiry & Renewal Proposal - Unit ${unit}`
-          : `Move-Out Clearance Guidelines - Unit ${unit}`,
-        body: type === 'Renewal'
-          ? `Dear ${item.namecust || item.custName || 'Tenant'},\n\nYour lease for Unit ${unit} expires on ${pDate}.\nProposed annual rent: AED ${item.proposedAnnual || item.pAnnual || 0}.\n\nBest regards,\nAl-Zebaq Property Management`
-          : `Dear ${item.namecust || item.custName || 'Tenant'},\n\nWe acknowledge that you do not wish to renew your lease for Unit ${unit}.\nPlease refer to the guidelines for move-out and security deposit return.\n\nSincerely,\nAl-Zebaq Admin`,
+        subject: emailSubject,
+        body: emailBody,
         sentDate: new Date().toISOString(),
         status: 'Sent',
         type: type,

@@ -1,0 +1,292 @@
+<div class="offer-letter-container">
+
+  <!-- Form Card -->
+  <div class="card erp-card shadow-sm border-0">
+    <div class="card-header py-3 px-4">
+      <div class="header-title-container fw-bold d-flex align-items-center">
+        <i class="bi bi-file-earmark-text me-2"></i>
+        <span>Offer Details</span>
+      </div>
+    </div>
+    
+    <div class="card-body p-4">
+      <form (ngSubmit)="printContract()">
+        
+        <!-- Row 1: Unit ID, Cust Name, Cust Email -->
+        <div class="row g-4">
+          <!-- Unit ID -->
+          <div class="col-md-4">
+            <label class="form-label required">Unit ID</label>
+            <div class="input-group">
+              <input 
+                type="text" 
+                class="form-control" 
+                name="unitId"
+                [(ngModel)]="model.unitId" 
+                placeholder="Select Unit ID" 
+                readonly 
+                required>
+              <button 
+                class="btn search-btn" 
+                type="button" 
+                (click)="openUnitPicker()"
+                title="Search Unit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search text-white" viewBox="0 0 16 16">
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                </svg>
+              </button>
+              <button 
+                class="btn add-new-btn" 
+                type="button" 
+                (click)="resetForm()"
+                title="Add New">
+                <i class="bi bi-plus-lg text-white"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Customer Name -->
+          <div class="col-md-4">
+            <label class="form-label required">Customer Name</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              name="custName"
+              [(ngModel)]="model.custName" 
+              placeholder="Enter Customer Name" 
+              required>
+          </div>
+
+          <!-- Customer Email -->
+          <div class="col-md-4">
+            <label class="form-label required">Customer Email</label>
+            <input 
+              type="email" 
+              class="form-control" 
+              name="custCode"
+              [(ngModel)]="model.custCode" 
+              placeholder="Enter Customer Email" 
+              required>
+          </div>
+        </div>
+
+        <!-- Row 2: Annual Rent, Validity, No of Beds -->
+        <div class="row g-4 mt-2">
+          <!-- Annual Rent -->
+          <div class="col-md-4">
+            <label class="form-label required">Annual Rent</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              name="rent"
+              [(ngModel)]="model.rent" 
+              placeholder="e.g. 45000" 
+              required>
+          </div>
+
+          <!-- Validity -->
+          <div class="col-md-4">
+            <label class="form-label required">Validity</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              name="valid"
+              [(ngModel)]="model.valid" 
+              placeholder="Enter Validity (e.g. 1 Year)" 
+              required>
+          </div>
+
+          <!-- No of Beds -->
+          <div class="col-md-4">
+            <label class="form-label">Number of Beds</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              name="nobed"
+              [(ngModel)]="model.nobed" 
+              placeholder="Enter Number of Beds">
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="d-flex justify-content-end align-items-center mt-4">
+          <button 
+            type="submit" 
+            class="btn btn-success print-contract-btn px-4 py-2"
+            [disabled]="isGenerating">
+            <i class="bi bi-printer me-2" *ngIf="!isGenerating"></i>
+            <span class="spinner-border spinner-border-sm me-2" role="status" *ngIf="isGenerating"></span>
+            {{ isGenerating ? 'Generating Contract...' : 'Print Contract' }}
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ================= MODAL: UNIT SEARCH PICKER ================= -->
+<div 
+  class="modal-backdrop-overlay" 
+  *ngIf="showModal" 
+  (click)="closeUnitPicker()">
+</div>
+
+<div 
+  class="modal custom-modal-overlay show d-block" 
+  *ngIf="showModal" 
+  tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content shadow-lg border-0">
+      
+      <!-- Modal Header -->
+      <div class="modal-header bg-primary text-white py-3 px-4">
+        <h5 class="modal-title text-white fw-bold mb-0">Select Unit</h5>
+        <button 
+          type="button" 
+          class="btn-close btn-close-white" 
+          (click)="closeUnitPicker()"></button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body p-4">
+        
+        <!-- Search filter bar -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div style="width: 320px;">
+            <input 
+              type="text" 
+              class="form-control" 
+              [(ngModel)]="searchTerm" 
+              (ngModelChange)="onSearchChange()" 
+              placeholder="Search by ID, unit no, landlord, build name..."
+              style="border-radius: 8px; border: 1px solid var(--erp-border, #CFA5EA); font-size: 0.86rem; height: 38px;">
+          </div>
+          <div class="text-muted text-sm fw-semibold">
+            Total units found: {{ units.length }}
+          </div>
+        </div>
+
+        <!-- Loading spinner -->
+        <div class="text-center py-5" *ngIf="isLoadingUnits">
+          <div class="spinner-border text-primary mb-2" role="status"></div>
+          <p class="text-muted mb-0">Fetching unit masters from database...</p>
+        </div>
+
+        <!-- Table Grid -->
+        <div class="table-responsive rounded border" style="overflow-x: hidden !important;" *ngIf="!isLoadingUnits && units.length > 0">
+          <table class="table erp-table table-hover align-middle mb-0 w-100">
+            <thead>
+              <tr style="background: var(--erp-primary, #30277C) !important; border-bottom: 1px solid var(--erp-border) !important;">
+                <th style="padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 700; color: #ffffff !important;">#Sr</th>
+                <th (click)="setSort('unitId')" class="sortable-header" style="padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 700; color: #ffffff !important;">
+                  Unit ID
+                </th>
+                <th (click)="setSort('unitNo')" class="sortable-header" style="padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 700; color: #ffffff !important;">
+                  Unit No
+                </th>
+                <th (click)="setSort('block')" class="sortable-header" style="padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 700; color: #ffffff !important;">
+                  Block
+                </th>
+                <th (click)="setSort('floor')" class="sortable-header" style="padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 700; color: #ffffff !important;">
+                  Floor
+                </th>
+                <th (click)="setSort('unitType')" class="sortable-header" style="padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 700; color: #ffffff !important;">
+                  Type
+                </th>
+                <th (click)="setSort('unitPurpose')" class="sortable-header" style="padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 700; color: #ffffff !important;">
+                  Purpose
+                </th>
+                <th (click)="setSort('status')" class="sortable-header" style="padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 700; color: #ffffff !important;">
+                  Status
+                </th>
+                <th (click)="setSort('acCharge')" class="sortable-header" style="padding: 10px 12px; text-align: right; font-size: 11px; font-weight: 700; color: #ffffff !important;">
+                  AC Charge
+                </th>
+                <th (click)="setSort('electricityCharge')" class="sortable-header" style="padding: 10px 12px; text-align: right; font-size: 11px; font-weight: 700; color: #ffffff !important;">
+                  Elec. Charge
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr 
+                *ngFor="let u of filteredUnits; let i = index" 
+                (click)="selectUnit(u)" 
+                class="unit-row"
+                style="cursor: pointer; border-bottom: 1px solid #eee;">
+                <td style="padding: 10px 12px; text-align: left;">{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+                <td style="padding: 10px 12px; text-align: left;">
+                  <span class="badge bg-light-primary text-primary border border-primary-subtle">{{ u.unitId || u.id }}</span>
+                </td>
+                <td style="padding: 10px 12px; text-align: left;" class="fw-bold">{{ u.unitNo }}</td>
+                <td style="padding: 10px 12px; text-align: left;">{{ u.block || '-' }}</td>
+                <td style="padding: 10px 12px; text-align: left;">{{ u.floor || '-' }}</td>
+                <td style="padding: 10px 12px; text-align: left;">
+                  <span class="badge bg-light-secondary text-secondary border border-secondary-subtle">{{ u.unitType || '-' }}</span>
+                </td>
+                <td style="padding: 10px 12px; text-align: left;">{{ u.unitPurpose || '-' }}</td>
+                <td style="padding: 10px 12px; text-align: left;">
+                  <span class="badge border px-2 py-1" style="font-size: 11px; font-weight: 700;"
+                    [class.bg-light-success]="u.status?.toLowerCase() === 'vacant' || !u.status"
+                    [class.text-success]="u.status?.toLowerCase() === 'vacant' || !u.status"
+                    [class.border-success]="u.status?.toLowerCase() === 'vacant' || !u.status"
+                    [class.bg-light-danger]="u.status?.toLowerCase() === 'occupied'"
+                    [class.text-danger]="u.status?.toLowerCase() === 'occupied'"
+                    [class.border-danger]="u.status?.toLowerCase() === 'occupied'"
+                    [class.bg-light-warning]="u.status?.toLowerCase() === 'reserved'"
+                    [class.text-warning]="u.status?.toLowerCase() === 'reserved'"
+                    [class.border-warning]="u.status?.toLowerCase() === 'reserved'">
+                    {{ u.status || 'Vacant' | uppercase }}
+                  </span>
+                </td>
+                <td style="padding: 10px 12px; text-align: right;">{{ u.acCharge | number:'1.2-2' }}</td>
+                <td style="padding: 10px 12px; text-align: right;">{{ u.electricityCharge | number:'1.2-2' }}</td>
+              </tr>
+              <tr *ngIf="filteredUnits.length === 0">
+                <td colspan="10" class="text-center py-4 text-muted" style="font-size: 12px;">
+                  No matching units found in list.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Empty state -->
+        <div class="text-center py-5" *ngIf="!isLoadingUnits && units.length === 0">
+          <i class="bi bi-exclamation-triangle text-warning fs-2 mb-2"></i>
+          <p class="text-muted">No unit masters returned from the API server.</p>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer & Pagination -->
+      <div class="modal-footer d-flex justify-content-between align-items-center py-3 px-4">
+        <!-- Pagination controls -->
+        <div class="d-flex align-items-center" *ngIf="!isLoadingUnits && totalPages > 1">
+          <button 
+            class="btn btn-outline-secondary btn-sm px-3" 
+            [disabled]="currentPage === 1" 
+            (click)="prevPage()">
+            <i class="bi bi-chevron-left me-1"></i> Prev
+          </button>
+          <span class="mx-3 text-muted text-sm">
+            Page <strong>{{ currentPage }}</strong> of <strong>{{ totalPages }}</strong>
+          </span>
+          <button 
+            class="btn btn-outline-secondary btn-sm px-3" 
+            [disabled]="currentPage === totalPages" 
+            (click)="nextPage()">
+            Next <i class="bi bi-chevron-right ms-1"></i>
+          </button>
+        </div>
+        <div *ngIf="isLoadingUnits || totalPages <= 1"></div>
+
+        <button 
+          type="button" 
+          class="btn btn-secondary px-4" 
+          (click)="closeUnitPicker()">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>

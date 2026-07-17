@@ -6,6 +6,8 @@ import { PropertyService } from 'src/app/services/property.service';
 import { UnitService } from 'src/app/services/unit.service';
 import { InvoiceService } from 'src/app/services/invoice.service';
 import { ReceiptService } from 'src/app/services/receipt.service';
+import { ReminderService } from 'src/app/services/reminder.service';
+import { EmailTemplate } from 'src/app/models/reminder.model';
 
 export interface ConsoleChequeVM {
   headerId: number;
@@ -109,17 +111,32 @@ export default class ConsoleManagementComponent implements OnInit {
   newChequeDate: string = '';
   newAmount: number = 0;
 
+  emailTemplates: EmailTemplate[] = [];
+
   constructor(
     private chequeService: ChequeService,
     private invoiceService: InvoiceService,
     private receiptService: ReceiptService,
     private propertyService: PropertyService,
     private unitService: UnitService,
+    private reminderService: ReminderService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.loadData();
+    this.loadEmailTemplates();
+  }
+
+  loadEmailTemplates(): void {
+    this.reminderService.getEmailTemplates().subscribe({
+      next: (res) => {
+        this.emailTemplates = res?.data || res || [];
+      },
+      error: (err) => {
+        console.error('Failed to load email templates in ConsoleManagementComponent', err);
+      }
+    });
   }
 
   loadData(): void {
@@ -429,6 +446,7 @@ export default class ConsoleManagementComponent implements OnInit {
         next: (res) => {
           if (res.success) {
             alert('Cheque marked as Bounced successfully.');
+            this.logBounceEmail();
             this.removeChequeFromTable(detailId);
           } else {
             alert(res.message || 'Failed to update cheque.');
@@ -494,5 +512,87 @@ export default class ConsoleManagementComponent implements OnInit {
       alert(`The backend API currently only supports changing status to 'Realized' or 'Bounce'. Updating to '${this.processingStatus}' is not supported by the database yet.`);
       this.isSaving = false;
     }
+  }
+
+  parseYYYYMMDD(dateStr: any): Date | null {
+    if (!dateStr) return null;
+    const s = dateStr.toString().trim();
+    if (s.length !== 8) return null;
+    const d = new Date(Number(s.substring(0, 4)), Number(s.substring(4, 6)) - 1, Number(s.substring(6, 8)));
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+
+  formatDateHuman(val: any): string {
+    if (!val) return '';
+    const s = val.toString().trim();
+    let d: Date;
+    if (s.length === 8 && /^\d+$/.test(s)) {
+      d = new Date(Number(s.substring(0, 4)), Number(s.substring(4, 6)) - 1, Number(s.substring(6, 8)));
+    } else {
+      d = new Date(val);
+      if (isNaN(d.getTime())) return String(val);
+    }
+    const day = d.getDate();
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    const monthName = months[d.getMonth()];
+    const year = d.getFullYear();
+    return `${day} ${monthName} ${year}`;
+  }
+
+  formatAmountAED(amount: number | string): string {
+    const num = Number(amount);
+    if (isNaN(num)) return String(amount);
+    return 'AED ' + num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  logBounceEmail(): void {
+    if (!this.selectedCheque) return;
+    
+    const cheque = this.selectedCheque;
+    const bounceReason = this.bounceReason || 'Clearance failure';
+    const tenantName = cheque.customerName || 'Tenant';
+    const chequeNo = cheque.chequeNo || 'N/A';
+    const chequeDate = this.formatDateHuman(cheque.chequeDate);
+    const chequeAmount = this.formatAmountAED(cheque.amount);
+    
+    let emailSubject = `Cheque Bounce Notice - Cheque No. ${chequeNo}`;
+    let emailBody = `Dear ${tenantName},\n\nWe regret to inform you that your cheque No. ${chequeNo} for ${chequeAmount} dated ${chequeDate} has bounced due to: ${bounceReason}.\n\nKind Regards,\nAl-Zebaq Real Estate`;
+
+    const bounceTemplate = this.emailTemplates.find(t => t.templateCode === 'CHEQUE_BOUNCE');
+    if (bounceTemplate && bounceTemplate.isActive) {
+      if (bounceTemplate.subject) {
+        emailSubject = bounceTemplate.subject;
+      }
+      if (bounceTemplate.bodyHtml) {
+        emailBody = bounceTemplate.bodyHtml
+          .replace(/\{\{\s*tenantName\s*\}\}/gi, tenantName)
+          .replace(/\{\{\s*chequeNo\s*\}\}/gi, chequeNo)
+          .replace(/\{\{\s*chequeDate\s*\}\}/gi, chequeDate)
+          .replace(/\{\{\s*chequeAmount\s*\}\}/gi, chequeAmount)
+          .replace(/\{\{\s*bounceReason\s*\}\}/gi, bounceReason);
+      }
+    }
+
+    const raw = localStorage.getItem('email_logs');
+    const logs = raw ? JSON.parse(raw) : [];
+    const logId = `MSG-${Math.floor(100 + Math.random() * 900)}`;
+
+    logs.push({
+      id: logId,
+      sender: 'no-reply@sidsoftwarehouse.com',
+      recipient: cheque.customerId ? `${cheque.customerId.toLowerCase()}@gmail.com` : 'tenant@gmail.com',
+      recipientName: tenantName,
+      subject: emailSubject,
+      body: emailBody,
+      sentDate: new Date().toISOString(),
+      status: 'Sent',
+      type: 'Cheque Bounce'
+    });
+
+    localStorage.setItem('email_logs', JSON.stringify(logs));
   }
 }

@@ -29,8 +29,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(authReq).pipe(
     catchError((error) => {
-      // If unauthorized, attempt to perform a silent refresh
-      if (error instanceof HttpErrorResponse && error.status === 401) {
+      // If unauthorized, attempt to perform a silent refresh (except for login/refresh requests themselves)
+      const isAuthRequest = req.url.includes('/auth/login') || req.url.includes('/auth/refresh-token');
+      if (error instanceof HttpErrorResponse && error.status === 401 && !isAuthRequest && token) {
         return handle401Error(authReq, next, authService);
       }
       return throwError(() => error);
@@ -56,11 +57,14 @@ function handle401Error(req: HttpRequest<any>, next: HttpHandlerFn, authService:
           }));
         }
         
+        const err = new Error('Refresh token did not return an access token');
+        refreshTokenSubject.error(err);
         authService.logout();
-        return throwError(() => new Error('Refresh token did not return an access token'));
+        return throwError(() => err);
       }),
       catchError((err) => {
         isRefreshing = false;
+        refreshTokenSubject.error(err);
         authService.logout();
         return throwError(() => err);
       })

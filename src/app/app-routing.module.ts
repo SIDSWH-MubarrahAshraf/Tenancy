@@ -154,7 +154,7 @@ const routes: Routes = [
           {
             path: 'email-templates',
             loadComponent: () =>
-              import('./demo/pages/reminders/email-template/email-template.component')
+              import('./demo/pages/setup/email-template/email-template.component')
                 .then(c => c.EmailTemplateComponent)
           },
           {
@@ -188,6 +188,12 @@ const routes: Routes = [
         loadComponent: () =>
           import('./demo/pages/reminders/announcement/announcement.component')
             .then(c => c.AnnouncementComponent)
+      },
+      {
+        path: 'offer-letter',
+        loadComponent: () =>
+          import('src/app/demo/pages/offer-letter/offer-letter.component')
+            .then(c => c.OfferLetterComponent)
       },
       {
         path: 'console-management',

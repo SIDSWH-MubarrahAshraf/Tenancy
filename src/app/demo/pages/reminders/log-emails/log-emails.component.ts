@@ -19,7 +19,7 @@ interface EmailLog {
   body: string;
   sentDate: string;
   status: 'Sent' | 'Failed';
-  type: 'Renewal' | 'Move-Out' | 'Announcement';
+  type: 'Renewal' | 'Move-Out' | 'Announcement' | 'Cheque Bounce';
   attachments: EmailAttachment[];
 }
 
@@ -396,6 +396,7 @@ export class LogEmailsComponent implements OnInit {
       case 'Renewal': return 'Lease Renewal';
       case 'Move-Out': return 'Tenant Move-Out';
       case 'Announcement': return 'Announcements';
+      case 'Cheque Bounce': return 'Cheque Bounce';
       default: return 'All Types';
     }
   }

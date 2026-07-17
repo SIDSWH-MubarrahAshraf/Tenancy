@@ -175,13 +175,30 @@ export const NavigationItems: NavigationItem[] = [
         ]
       },
       {
-        id: 'announcement',
-        title: 'Announcement',
-        type: 'item',
-        url: '/announcement',
-        classes: 'nav-item',
+        id: 'announcements-group',
+        title: 'Announcements',
+        type: 'collapse',
         icon: 'sound',
-        breadcrumbs: false
+        children: [
+          {
+            id: 'announcement',
+            title: 'Send Announcement',
+            type: 'item',
+            url: '/announcement',
+            classes: 'nav-item',
+            icon: 'sound',
+            breadcrumbs: false
+          },
+          {
+            id: 'offer-letter',
+            title: 'Offer Letter',
+            type: 'item',
+            url: '/offer-letter',
+            classes: 'nav-item',
+            icon: 'file-text',
+            breadcrumbs: false
+          }
+        ]
       }
     ]
   },

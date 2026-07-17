@@ -1285,16 +1285,22 @@ select.status-select:focus {
   }
 
   // Hover state — full white
+  .coded-inner-navbar li > a:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+  }
   .coded-inner-navbar li > a:hover,
   .coded-inner-navbar li > a:hover span,
   .coded-inner-navbar li > a:hover .coded-mtext,
   .coded-inner-navbar li > a:hover .coded-micon,
   .coded-inner-navbar li > a:hover i {
     color: #ffffff !important;
-    background: rgba(255, 255, 255, 0.08) !important;
   }
 
   // Active/selected item
+  .coded-inner-navbar li.active > a,
+  .coded-inner-navbar li.coded-trigger > a {
+    background: var(--erp-primary) !important;
+  }
   .coded-inner-navbar li.active > a,
   .coded-inner-navbar li.active > a span,
   .coded-inner-navbar li.active > a .coded-mtext,
@@ -1306,7 +1312,6 @@ select.status-select:focus {
   .coded-inner-navbar li.coded-trigger > a .coded-micon,
   .coded-inner-navbar li.coded-trigger > a i {
     color: #ffffff !important;
-    background: var(--erp-primary) !important;
   }
 
   // Submenu items

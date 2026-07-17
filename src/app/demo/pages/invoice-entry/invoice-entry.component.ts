@@ -12,6 +12,8 @@ import { InvoiceService } from '../../../services/invoice.service';
 import { ReceiptService } from '../../../services/receipt.service';
 import { DocumentNumberService } from '../../../services/document-number.service';
 import { ChequeService } from '../../../services/cheque.service';
+import { ReminderService } from '../../../services/reminder.service';
+import { EmailTemplate } from '../../../models/reminder.model';
 import { ChequeRequest } from '../../../models/cheque.model';
 import { ReceiptRequest } from '../../../models/receipt.model';
 import {
@@ -218,6 +220,8 @@ export class InvoiceEntryComponent implements OnInit {
   invoiceModalFilter       = '';
   filteredInvoiceResults: Invoice[] = [];
 
+  emailTemplates: EmailTemplate[] = [];
+
   constructor(
     private invoiceService: InvoiceService,
     private receiptService: ReceiptService,
@@ -230,7 +234,9 @@ export class InvoiceEntryComponent implements OnInit {
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
     private elRef: ElementRef,
+    private reminderService: ReminderService,
   ) {}
+
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
 
@@ -238,11 +244,12 @@ export class InvoiceEntryComponent implements OnInit {
       this.loadInvoice(+idParam);
       this.loadProperties();
       this.loadUnits();
-      return;
+    } else {
+      this.loadProperties();
+      this.loadUnits();
     }
 
-    this.loadProperties();
-    this.loadUnits();
+    this.loadEmailTemplates();
 
     const today = new Date().toISOString().substring(0, 10);
     this.form.receiptDate = today; // receipt numbering not mapped yet — stays local
@@ -252,6 +259,17 @@ export class InvoiceEntryComponent implements OnInit {
     this.fetchDocumentNumbers();
 
     this.openTypeModal();
+  }
+
+  loadEmailTemplates(): void {
+    this.reminderService.getEmailTemplates().subscribe({
+      next: (res) => {
+        this.emailTemplates = res?.data || res || [];
+      },
+      error: (err) => {
+        console.error('Failed to load email templates in InvoiceEntryComponent', err);
+      }
+    });
   }
 
   setTab(tab: ReceiptTab): void { this.activeTab = tab; }
@@ -1038,6 +1056,59 @@ private mapFormToReceiptRequest(): ReceiptRequest {
     });
   }
 
+  formatDateHuman(val: any): string {
+    if (!val) return '';
+    const d = new Date(val);
+    if (isNaN(d.getTime())) return String(val);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+  logReceiptEmail(receiptData: any): void {
+    const tenantName = this.form.customerName || 'Tenant';
+    const receiptNo = receiptData.receiptNo || this.form.receiptNumber || 'N/A';
+    const receiptDate = this.formatDateHuman(receiptData.receiptDate || this.form.receiptDate);
+    const paymentAmount = (receiptData.receiptTotal || this.form.invoiceTotal || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' AED';
+
+    let emailSubject = 'Payment Receipt Confirmation';
+    let emailBody = `Dear ${tenantName},\n\nThis is to acknowledge receipt of your payment. Please find the payment details below for your reference:\n\nReceipt Number: ${receiptNo}\nReceipt Date: ${receiptDate}\nPayment Amount: ${paymentAmount}\n\nWe confirm that the above amount has been successfully received and recorded against your account. Thank you for your timely payment.\n\nSincerely,\nAl Yazi Residence Accounts Department`;
+
+    const template = this.emailTemplates.find(t => t.templateCode === 'PAYMENT_RECEIPT');
+    if (template && template.isActive) {
+      if (template.subject) {
+        emailSubject = template.subject;
+      }
+      if (template.bodyHtml) {
+        emailBody = template.bodyHtml
+          .replace(/\{\{\s*tenantName\s*\}\}/gi, tenantName)
+          .replace(/\{\{\s*receiptNo\s*\}\}/gi, receiptNo)
+          .replace(/\{\{\s*receiptDate\s*\}\}/gi, receiptDate)
+          .replace(/\{\{\s*paymentAmount\s*\}\}/gi, paymentAmount);
+      }
+    }
+
+    const raw = localStorage.getItem('email_logs');
+    const logs = raw ? JSON.parse(raw) : [];
+    const logId = `MSG-${Math.floor(100 + Math.random() * 900)}`;
+
+    logs.push({
+      id: logId,
+      sender: 'no-reply@sidsoftwarehouse.com',
+      recipient: this.form.customer ? `${this.form.customer.toLowerCase()}@gmail.com` : 'tenant@gmail.com',
+      recipientName: tenantName,
+      subject: emailSubject,
+      body: emailBody,
+      sentDate: new Date().toISOString(),
+      status: 'Sent',
+      type: 'Payment Receipt',
+      attachments: []
+    });
+
+    localStorage.setItem('email_logs', JSON.stringify(logs));
+  }
+
   postReceiptAction(): void {
     if (!this.canPostReceipt()) { alert('Post Rental Details first, or receipt has already been posted.'); return; }
     const payload = this.mapFormToReceiptRequest();
@@ -1060,6 +1131,7 @@ private mapFormToReceiptRequest(): ReceiptRequest {
               this.isSaving = false;
               if (postRes.success) {
                 this.form = { ...this.form, receiptStatus: 'Posted', receiptPosted: true };
+                this.logReceiptEmail(res.data);
                 alert('Receipt posted successfully. You can now view Settlement Details.');
               } else {
                 alert(postRes.message || 'Failed to post receipt.');

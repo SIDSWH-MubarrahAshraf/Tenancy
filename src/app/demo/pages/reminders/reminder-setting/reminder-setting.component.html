@@ -162,7 +162,7 @@
     style="display:block; background:rgba(0,0,0,.5); z-index: 1050;">
     
     <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content" style="border-radius: 12px !important; overflow: hidden !important; border: 1px solid var(--erp-border, #C6C3F2); box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+      <div class="modal-content" style="border-radius: 12px !important; overflow: visible !important; border: 1px solid var(--erp-border, #C6C3F2); box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
         
         <div class="modal-header" style="background: var(--erp-primary, #30277C) !important; color: #ffffff !important; border-bottom: none; display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-top-left-radius: 11px !important; border-top-right-radius: 11px !important;">
           <h5 class="modal-title" style="color: #ffffff !important; font-weight: 700; font-size: 1.1rem; margin: 0;">{{ isEditMode ? 'Edit Reminder Setting' : 'Add Reminder Setting' }}</h5>
@@ -230,12 +230,12 @@
                 <!-- Custom Dropdown Popup -->
                 <div *ngIf="showTemplateDropdown" class="custom-dropdown-popup">
                   <div
-                    *ngFor="let temp of emailTemplates"
+                    *ngFor="let temp of activeEmailTemplates"
                     class="dropdown-item-select"
                     (click)="selectTemplate(temp.templateCode)">
                     {{ temp.templateName }} ({{ temp.templateCode }})
                   </div>
-                  <div *ngIf="emailTemplates.length === 0" class="p-3 text-center text-muted" style="font-size: 13px;">
+                  <div *ngIf="activeEmailTemplates.length === 0" class="p-3 text-center text-muted" style="font-size: 13px;">
                     No templates available.
                   </div>
                 </div>
